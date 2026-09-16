@@ -2,6 +2,8 @@
 
 先执行 `.aidlc/system/prompts/common.md`。核对本 profile 的批准 Implement 候选与验收基线：standard 读 Spec/AC/Oracle/Fitness；enhance/fix 读批准 change.md 的 AC/Oracle/检查及 Implement verification.md。输出按 profile 覆盖解析，短流程不补造 Spec/Plan/Fitness JSON。
 
+workflow/gates.md 的双 Gate 及 catalog.gates.required_evidence 对全部 profile 的完整 Verify 生效：实际执行两类并收齐结果。kind=leaf 时仅执行 dispatch 指定 Gate、角色与证据契约，写自己的报告；不运行另一类或生成整阶段文件。阶段汇总 child 可引用已验真的 leaf 原始报告，将两类汇总报告写到自己的 evidence，保留原执行 lineage，不能冒称汇总 child 重新执行了命令。缺任一规则或实现时 blocked 并回退对应阶段补建；不能临时只做人工检查、N/A、写一个 PASS 或省略架构 Gate。
+
 1. 使用 `.aidlc/system/skills/aidlc-fitness-check/SKILL.md` 执行已批准 Architecture / Quality 检查。执行前后核对候选；工具缺失、未授权、零测试、跳过或证据不完整不算 PASS。两类 Gate 或独立 AC 检查可向父协调器提出并行请求，仅限同一冻结候选、独立报告/临时目录且没有共享可写数据库、缓存、端口或环境状态；不能确认隔离则串行。
 2. 按批准覆盖映射验证每个 AC。结果引用真实原始日志、报告或人类观察记录，说明时间、方法、环境、候选与来源；不可由“程序没报错”推断业务满足。
 3. 自动与人工结果分别记录。未取得人工证据的 AC 保持未验证；不能把预期说明写成观测事实。

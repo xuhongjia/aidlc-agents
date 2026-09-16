@@ -1,6 +1,8 @@
 {
   "schema_version": 3,
   "work_id": null,
+  "jira_issue": null,
+  "approver": null,
   "profile": null,
   "routing_reason": null,
   "route_history": [],

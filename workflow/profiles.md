@@ -28,7 +28,7 @@ state、dispatch、result、review、approval 的 profile 必须一致；auto/nu
 
 - 默认简述本次新增决定、差异和风险，约一页；必要内容超过一页可以展开，不以字数截掉安全/正确性信息。空章节不生成，无变化写具体基线链接，不复制整段背景。
 - 短流程 change.md 包含需求、范围、AC/Oracle、轻量架构影响、检查和实施计划；fix 加复现/根因。verification.md 合并实施摘要和最终验证，标明哪个结果来自 DEV、哪个来自 QE。新版本引用旧批准快照，不改已批准文件。
-- 短流程 AC/覆盖/逐项结果直接放正文表格，不再强制 acceptance.json、coverage.json、acceptance-results.json 或两份新 Fitness JSON。两类检查仍要有依据：复用项目规则/CI，或在 change 中批准具体补充检查与人工架构边界核对。现有必需 Gate 不可删、不可降低阈值；需要改架构/安全政策时升级 standard。
+- 短流程 AC/覆盖/逐项结果直接放正文，不再强制三份 AC JSON 或两份设计 Pack。Architecture/Quality 双 Gate 必须按 [Gate 契约](gates.md) 有实际可执行检查；缺失就设计、批准、补建并执行，不用人工核对替代。两份 Gate 结果和原始日志是必要技术证据。现有必需规则不可删/降阈值；需要改架构/安全政策时升级 standard。
 - 用户默认只看审查卡与两类正文入口。dispatch/result/state/review/approval 和原始日志保留在 .aidlc，不在聊天逐份打印。这不是承诺磁盘里只有两个文件：隔离 run、不可覆写快照和证据仍有多份记录。
 - 0.4 新工作不再生成重复的 drafts 副本或 handoff.json；run → review 直接晋升，result 是唯一阶段交接。历史 drafts/handoff 保留不迁移。机器追踪记录不得为了“精简”删除。
 

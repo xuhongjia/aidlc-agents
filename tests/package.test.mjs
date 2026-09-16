@@ -142,6 +142,54 @@ test('compact profiles resolve to two human document types with no mandatory leg
   assert.deepEqual(profiles.standard.output_overrides, {}, 'Preserve full-flow artifact compatibility');
 });
 
+test('approver resolution preserves precedence, unknown identity and separate actual decisions', () => {
+  const rule = catalog.approver_resolution;
+  assert.deepEqual(rule.precedence, ['jira_assignee', 'git_config', 'system_login']);
+  assert.equal(rule.refresh_before_approval, true);
+  assert.equal(rule.missing_email, null);
+  const identity = json(rule.template);
+  assert.equal(identity.status, 'pending');
+  for (const key of ['source', 'source_ref', 'account_id', 'display_name', 'email', 'resolved_at']) {
+    assert.equal(identity[key], null, `No fabricated identity: ${key}`);
+  }
+  assert.deepEqual(identity.resolution_notes, []);
+  for (const name of ['state', 'review', 'approval', 'approval-policy']) {
+    assert.equal(json(`templates/work/${name}.json`).approver, null);
+  }
+  const approval = json('templates/work/approval.json');
+  for (const key of ['by', 'decision', 'user_statement', 'decision_source', 'delegation_ref']) {
+    assert.equal(approval[key], null, `Resolving a name cannot preapprove: ${key}`);
+  }
+  assert.equal(json('templates/work/state.json').jira_issue, null, 'No guessed Jira issue');
+});
+
+test('every route requires both executable Gates independently of compact document overrides', () => {
+  const gates = catalog.gates;
+  assert.deepEqual([...gates.required_profiles].sort(), Object.keys(profiles).sort());
+  assert.equal(gates.required_stage, 'verify');
+  assert.equal(gates.minimum_blocking_checks_per_kind, 1);
+  assert.equal(gates.on_missing, 'define_then_implement');
+  assert.equal(gates.allow_manual_substitute, false);
+  assert.ok(existsSync(path.join(root, gates.design_prompt)));
+  assert.deepEqual(gates.required_evidence.map(item => item.kind).sort(), ['architecture', 'quality']);
+  assert.equal(new Set(gates.required_evidence.map(item => item.name)).size, 2);
+  for (const item of gates.required_evidence) {
+    assert.equal(path.basename(item.name), item.name);
+    const report = json(item.template);
+    assert.equal(report.kind, null);
+    assert.equal(report.status, 'NOT_RUN');
+    assert.deepEqual(report.checks, []);
+    assert.deepEqual(report.baseline_refs, []);
+    assert.deepEqual(report.candidate, {scope: [], files: []});
+    assert.ok(report.blockers.length > 0, 'Empty report must not claim PASS');
+  }
+  for (const profile of Object.values(profiles)) {
+    assert.ok(profile.stages.includes(gates.required_stage));
+    assert.ok(!Object.hasOwn(profile, 'gates'), 'No profile-specific Gate opt-out');
+  }
+  assert.deepEqual(json('templates/work/dispatch.json').required_evidence, []);
+});
+
 test('automatic approval is opt-in, work-scoped, attributable and limited to compact routes', () => {
   const state = json('templates/work/state.json');
   const approval = json('templates/work/approval.json');

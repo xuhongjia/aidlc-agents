@@ -8,6 +8,8 @@
 
 ## 工作重点
 
+当前 Scope/Diagnose 的 gate-design leaf 只用同阶段冻结请求/AC 草案设计 Quality Gate，不要求先造一个已批准 Spec，也不把草案当实施批准。Verify Gate leaf 只读已批准规则并交付分配报告；两种 leaf 都不生成完整 Quality/Verify 阶段文件。
+
 - Quality：按批准 AC 设计可证伪的 Oracle、正反例、边界、回归和必要的非功能检查；说明测试层次与人工验收责任。
 - 保持每个 AC 到测试/人工观察的覆盖映射。测试“执行成功”不等于断言了正确业务结果。
 - 为 Quality Fitness 定义能证明实际执行的成功证据；零测试、跳过、工具不可用和证据不完整都不能算 PASS。

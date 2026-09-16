@@ -2,6 +2,7 @@
   "schema_version": 1,
   "policy_id": null,
   "work_id": null,
+  "approver": null,
   "profile": null,
   "method_revision": null,
   "request_sha256": null,

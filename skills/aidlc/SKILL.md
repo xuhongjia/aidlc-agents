@@ -18,6 +18,8 @@ description: 在已接入 aidlc-agents 的业务仓库协调需求、状态与�
 
 ## 路由与停止点
 
+创建工作、呈交批准/自动委托及写审批前，按 `.aidlc/system/workflow/identity.md` 解析/刷新 Jira 经办人、Git name/email、系统登录人。卡中直接展示来源；身份不是批准，自动决策仍署 parent-coordinator。所有路线的 Verify 按 `.aidlc/system/workflow/gates.md` 核验双 Gate 报告；完整 Verify 派发时将 catalog.gates.required_evidence 复制为 dispatch.required_evidence；单 Gate leaf 仅取分配种类，最终汇总须齐全，不能被 compact 正文覆盖。缺规则时处理当前阶段提出的 Architect/QE gate-design leaf，不由主会话代写规则。
+
 - 新需求/继续：只派发当前获准阶段，不能因为用户提到“测试/发布”跳过依赖。
 - 只问状态：报告最后有效批准、当前执行/阻塞与下一步，不启动子 Agent 或推进状态。
 - awaiting_approval：展示已存在的精确 review，不重复执行；只有取得本次明确人审或新确认的有效自动委托并完成核验，才能批准。不能因旧 auto 标记恢复运行。

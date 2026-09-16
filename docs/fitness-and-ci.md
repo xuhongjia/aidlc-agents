@@ -4,7 +4,7 @@
 
 ## 规则契约
 
-standard 的 Architect / QE 阶段交付 fitness JSON 与说明；enhance/fix 直接在 change.md 引用已批准的项目规则与补充检查，不重复生成 Pack。两种形式都应能确定每个 check 的以下信息：
+所有 profile 必须遵守 [双 Gate 契约](../workflow/gates.md)。standard 的 Architect / QE 阶段交付 fitness JSON 与说明；enhance/fix 在 change.md 定义两类 Gate，已有可复用规则就引用，缺少就由对应角色 leaf 设计、Implement 补建，不因短流程跳过或仅人工看过。两种形式都应能确定每个 check 的以下信息：
 
 | 字段 | 含义 |
 |---|---|
@@ -20,11 +20,11 @@ standard 的 Architect / QE 阶段交付 fitness JSON 与说明；enhance/fix �
 
 ## 本地过程
 
-1. 人审当前路线的验收与检查基线（standard 的 Spec/Pack，或短流程的 change.md），明确允许的命令；不把网络安装、删除、部署隐藏进测试命令。短流程可合并文档，不能取消现有必需 Gate。
+1. 有效批准当前路线的验收与检查基线（standard 的 Spec/Pack，或短流程的 change.md），明确允许的命令；不把网络安装、删除、部署隐藏进测试命令。短流程可合并文档，不能取消任一 Gate；没有现成检查时先补建，至少每类一项相关、可执行的 blocking 检查。
 2. 实施完成后固定候选文件集合和摘要，独立核对测试 Oracle 与已批准设计。
 3. Verify 子 Agent 用宿主工具执行批准命令，保存 stdout/stderr、退出码、报告、测试数量、跳过项和时间；主 Agent 只调度与收回核验。命令未运行就标 NOT_RUN/UNKNOWN。
 4. 比较运行前后候选；变化则结果失效。逐项 AC 核对真实证据，不能仅看总体进程 exit 0。
-5. 输出审查卡等人批准。无法运行的集成/性能/人工验收如实 blocked 或保持未验证，不能伪造生产结果。
+5. 保存 architecture-gate.json / quality-gate.json 与原始证据，再按审批策略处理审查卡。无法运行的集成/性能/人工验收如实 blocked 或保持未验证，不能伪造生产结果。
 
 Architecture Gate 与 Quality Gate 可以由主 Agent 派发独立 leaf 子 Agent 并行执行，但必须绑定同一冻结 candidate 与已批准规则，并隔离报告目录、生成物、数据库、端口等可写资源；不能证明无冲突时串行子 Agent。等待所有必需检查后，由 Verify 汇总 child 合成 AC 结果，主 Agent 验真再呈交人审。Gate 期间不允许开发 worker 继续改候选。详见 [调度协议](../workflow/orchestration.md)。
 

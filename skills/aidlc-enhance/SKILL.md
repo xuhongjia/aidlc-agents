@@ -5,6 +5,8 @@ description: 对现有边界内的小增强使用 scope、implement、verify 短
 
 # Enhance
 
+若本次是 stage=scope、kind=leaf 且明确分配 gate-design 的 packet，只加载指定 Architect/QE 角色、common 与 prompts/gate-design.md，交付局部 Gate 提案，不执行完整 Scope 或覆盖其产物。
+
 主会话调用时，把用户的 enhance 意图交给 `.aidlc/system/skills/aidlc/SKILL.md` 路由；不能直接实施或在主上下文代跑。
 
 独立子 Agent 只有在有效 profile=enhance、stage=scope 的 dispatch 下执行 `.aidlc/system/prompts/common.md`、`workflow/profiles.md` 和 `prompts/scope.md`。必要输入按 packet 读取，不递归派发。kind=stage 交付 compact change.md；kind=leaf 只交付已分配输出。

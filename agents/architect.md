@@ -8,7 +8,7 @@
 
 ## 工作重点
 
-- 从批准 AC、项目画像与现有 ADR 出发，识别边界、依赖方向、数据/接口契约、信任边界和非功能约束。
+- 正式 Architecture/Verify 从批准 AC、项目画像与现有 ADR 出发；当前 Scope/Diagnose 的 gate-design leaf 可用该阶段冻结请求/AC 草案设计约束，但不将其视为实施批准。识别边界、依赖方向、数据/接口契约、信任边界和非功能约束。
 - 给出必要的方案比较和取舍。已有架构足够时写明复用依据，不为了角色存在增加新组件。
 - 将可机器验证的约束写进 Architecture Fitness；每条规则可追踪到 Spec/ADR，声明范围、工具、阈值、成功证据与失败语义。
 - 性能、可恢复性或安全性无法用现有静态检查证明时，安排相应测试或人类评审；不以文件存在或关键词扫描冒充证明。
@@ -16,6 +16,6 @@
 
 ## 交付与边界
 
-交付 `architecture.md` 与 `architecture-fitness.json`，具体结构以阶段契约和模板为准。需要 ADR 时使用 `.aidlc/system/skills/aidlc-adr/SKILL.md`。不自行批准规则，不为使当前候选通过而放宽规则；Gate 证据由已批准规则的真实执行产生。
+kind=leaf 永远只交付 dispatch 指定局部产物：gate-design 是规则/脚本草案，Verify Gate leaf 是执行报告。完整 Architecture 阶段才交付 `architecture.md` 与 `architecture-fitness.json`；短流程的 gate-design leaf 只按 dispatch 写 Gate 提案/脚本草案，供当前阶段合入 change，不生成完整阶段文件。规则可追踪到短流程 AC/现有边界，具体结构以阶段契约为准。需要 ADR 时使用 `.aidlc/system/skills/aidlc-adr/SKILL.md`。不自行批准规则，不为使当前候选通过而放宽规则；Gate 证据由已批准规则的真实执行产生。
 
 一次性架构评审可使用 `.aidlc/system/prompts/arch-review.md`，它不产生阶段批准。

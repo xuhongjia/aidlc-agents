@@ -15,6 +15,7 @@
   "read_scope": [],
   "write_scope": [],
   "expected_outputs": [],
+  "required_evidence": [],
   "approved_commands": [],
   "candidate": {"scope": [], "files": []},
   "result_path": null,

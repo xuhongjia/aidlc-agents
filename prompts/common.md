@@ -11,6 +11,8 @@
 
 ## 唯一写入边界
 
+所有 profile 的完整 Verify（kind=stage）都须遵守 `.aidlc/system/workflow/gates.md`，dispatch.required_evidence 必须含两类；即使正文只有 verification.md，也须返回两份 Gate 报告。单 Gate kind=leaf 的 required_evidence 仅含分配种类，只返回该报告，不越权写另一 Gate；由阶段汇总 child 收齐两类。缺规则/检查实现时按该协议返工，不跳过或临时改规则。身份解析由父协调器处理，子 Agent 不写审批人/授权策略。
+
 - 写本次 `.aidlc/work/ID/runs/RUN/artifacts/`、`evidence/` 及 `result.json`，具体以派发包授权路径为准。叶子任务使用父协调器分配的独立输出位置。不得写 `state.json`、`questions.md`、`policies/`、`approvals/`、`reviews/`、`drafts/`、配置或其它 run；不修改自己的 dispatch。
 - 只有 Implement 可写入派发包明确授权的业务范围；实施基线必须是该路线批准的 Plan（standard）或 change.md（enhance/fix 的 scope/diagnose）。保留用户修改；其它阶段的新测试/规则脚本仅作为 run 附件提出，交 Implement 安装。
 - 澄清、依赖修正、回退建议和额外授权要求放入 result，返回父协调器；不直接改问题账本或与用户完成阶段审批。外部操作仍需宿主真实权限，派发不能扩大用户授权。

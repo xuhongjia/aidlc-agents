@@ -8,6 +8,8 @@ AIDLC_DRAFT — 同一报告类型先由 DEV 提交实施版本，再由新的 Q
 
 ## 证据
 
+分别给出 Architecture Gate / Quality Gate 的独立结论；Verify 链接本 run evidence 中 architecture-gate.json、quality-gate.json 及原始日志，候选与批准规则必须匹配。两类缺一均阻塞，不能因短流程跳过。Implement 阶段标明新检查的实际安装路径、自测和负向样例结果；未跑的独立 Gate 不得冒称通过。
+
 | AC / 架构或质量检查 | DEV 自测或 QE 验证 | 实际结果 | 命令/环境/退出码/数量或人工观察 | 原始证据路径 |
 |---|---|---|---|---|
 

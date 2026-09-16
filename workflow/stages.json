@@ -1,6 +1,24 @@
 {
   "schema_version": 3,
   "default_profile": "auto",
+  "approver_resolution": {
+    "precedence": ["jira_assignee", "git_config", "system_login"],
+    "template": "templates/work/approver.json",
+    "missing_email": null,
+    "refresh_before_approval": true
+  },
+  "gates": {
+    "required_profiles": ["standard", "enhance", "fix"],
+    "required_stage": "verify",
+    "minimum_blocking_checks_per_kind": 1,
+    "on_missing": "define_then_implement",
+    "allow_manual_substitute": false,
+    "design_prompt": "prompts/gate-design.md",
+    "required_evidence": [
+      {"kind": "architecture", "name": "architecture-gate.json", "template": "templates/work/gate-result.json"},
+      {"kind": "quality", "name": "quality-gate.json", "template": "templates/work/gate-result.json"}
+    ]
+  },
   "approval": {
     "default_mode": "manual",
     "auto_low_risk": {

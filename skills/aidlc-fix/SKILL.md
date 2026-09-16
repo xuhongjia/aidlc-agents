@@ -5,6 +5,8 @@ description: 对局部且可复现的既有行为缺陷使用 diagnose、impleme
 
 # Fix
 
+若本次是 stage=diagnose、kind=leaf 且明确分配 gate-design 的 packet，只加载指定 Architect/QE 角色、common 与 prompts/gate-design.md，交付局部 Gate 提案，不执行完整 Diagnose 或覆盖其产物。
+
 主会话调用时，把用户的 fix 意图交给 `.aidlc/system/skills/aidlc/SKILL.md` 路由；不是直接改代码的授权。
 
 独立子 Agent 只有在有效 profile=fix、stage=diagnose 的 dispatch 下执行 `.aidlc/system/prompts/common.md`、`workflow/profiles.md` 和 `prompts/diagnose.md`。只按 packet 读取输入，不递归派发。kind=stage 交付 compact change.md；kind=leaf 只交付已分配输出。

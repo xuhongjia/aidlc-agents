@@ -9,6 +9,8 @@ description: 执行 AIDLC 已批准的 Architecture 和 Quality Fitness，记录
 
 ## 执行前
 
+先读 `.aidlc/system/workflow/gates.md`。所有路线均要求 Architecture 与 Quality；缺规则或实现时阻塞并按该协议回退补建，不在 Verify 自造替代规则，不用人工观察/N/A 替代执行。
+
 1. 核对规则来源、revision、真实 SHA-256 和候选文件摘要；查看每条命令、范围、运行目录、依赖、超时、阈值及副作用。缺少 hash 工具或必要权限时阻塞。
 2. 使用宿主工具实际执行项目已批准的检查入口。不能执行的命令标为 UNKNOWN，不用自行编写的“等价”检查替代批准规则。
 3. 未获授权不联网、安装工具、访问外部系统或改变文件权限；不把 shell 包装或环境变量隐藏在不透明命令中。
@@ -23,4 +25,4 @@ description: 执行 AIDLC 已批准的 Architecture 和 Quality Fitness，记录
 - 检查后重新核对候选；检查改变了相关源码/配置/测试时，证据失效并报告，不在 Verify 自动修复。
 - 证据文件保留来源并按协议纳入 review 清单。摘要必须由工具实际计算，不能根据内容猜造。
 
-总结 Architecture、Quality 和逐 AC 证据各自的结论、限制及阻塞。AI 汇总不是确定性 Gate 引擎；生产 CI 必须用项目工具的退出码、明确阈值与权限保护来强制执行。
+按 gate-result 模板分别写 architecture-gate.json、quality-gate.json，记录非零 blocking 检查和原始输出，并总结逐 AC 结论、限制及阻塞。单 Gate leaf 只写分配种类，Verify 汇总 child 收齐两类并核验同一候选。AI 汇总不是确定性 Gate 引擎；生产 CI 必须用项目工具的退出码、明确阈值与权限保护来强制执行。

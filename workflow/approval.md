@@ -4,6 +4,8 @@
 
 ## 开启、范围和撤销
 
+先按 [身份解析](identity.md) 自动读取审批人并展示来源，冻结策略 approver 快照；authorization.by 必须是实际授权者，不能因取到了 Jira 经办人/Git 用户就认为取得委托。责任人变更或身份待确认时暂停并撤销活动自动策略，先澄清后重新授权。
+
 用户可说“为 REQ-001 开启自动批准并继续”。父协调器先给一张授权卡：需求/路线、允许改动路径、允许执行的具体命令及 cwd/副作用、是否自动继续、停止条件。取得针对该卡的确认后，按 [策略模板](../templates/work/approval-policy.json) 写 `policies/POLICY.json`，冻结真实授权原话、来源、时间、需求摘要和方法版本；计算文件 SHA-256，写入 state.approval_policy_ref，设置 approval_mode=auto_low_risk，并在 approval_policy_history 追加 {event, at, policy_ref, source, reason} 激活事件。不反复确认每个阶段。
 
 授权卡展示前保存为不可覆盖的 `policies/POLICY-card.md`，记录完整授权条款和卡 ID；确认必须明确绑定该卡。policy.authorization.card_ref 保存它的项目相对路径及 SHA-256，不能只存“确认”或不可读取的会话链接。policy 字段必须与确认卡一致；额外停止条件写 additional_stop_conditions，只能收紧本协议，不能取消必需门禁。allowed_commands 每项记录 {command, cwd, entrypoint_refs, resources, side_effects, timeout_seconds}，入口引用为 {path, sha256}。卡、策略和原始确认缺一或不一致都不能自动批准；完整原始请求直接授权时也冻结原文作为卡，不能补造用户没确认的条款。
@@ -21,14 +23,14 @@
 1. 有有效、未撤销的用户授权；work/profile/request/method/policy 摘要匹配。仅限该路线的 scope 或 diagnose、implement、verify；standard 永不自动批准。
 2. profiles.md 中所有高风险升级条件均未出现；没有待决定问题、验收歧义、未确认假设或范围/Oracle/规则变化。当前检查所需命令及实施路径是委托范围的子集。首次 Scope/Diagnose 还必须有可核对的低风险依据、稳定 AC、明确计划；Fix 必须有可信复现和已确认根因。
 3. 按 protocol/orchestration 重新核对上游批准、真实 worker/dispatch/result、完整产物、证据、候选和文件范围，无漂移、越权、未收齐子任务或占位内容。产品变更仍只有 Implement 可写。
-4. 本阶段全部必需检查有真实通过证据。Implement 的 DEV 自测必须已执行并通过；独立 QE 的未来项目可以 NOT_RUN，但明确留给 Verify。Verify 的所有必需 AC/Gate 必须通过且证据独立，fix 还需修复前失败、修复后通过及回归；不能把 DEV PASS 抄成 QE PASS。人工 AC/架构观察需要真实授权观察者的证据，自动批准不会自动补出人工结论。
+4. 本阶段全部必需检查有真实通过证据。Implement 的 DEV 自测必须已执行并通过；独立 QE 的未来项目可以 NOT_RUN，但明确留给 Verify。Verify 必须按 gates.md 取得 architecture/quality 两份真实报告，所有必需 AC/Gate 通过且证据独立，fix 还需修复前失败、修复后通过及回归；不能把 DEV PASS 抄成 QE PASS。人工 AC/架构观察需要真实授权观察者的证据，自动批准不会自动补出人工结论。
 5. 无自动重试或自动返工。遇到 FAIL、当前必需项 NOT_RUN/UNKNOWN、缺证据、升级、范围变化或任何策略失效，撤销本轮自动模式、追加原因，转人工处理。执行/验收未满足仍为 blocked，不能通过一次人工点击将失败变 PASS；仅缺新的授权且产物有效则 awaiting_approval。
 
 自动模式不批准修改策略/权限、安装依赖、读取生产数据、网络写入、付费、push/merge/deploy 或业务接受；这些须单独授权，仍遵守宿主工具审批。Setup/update 从不激活自动批准，也不能用它自动结束旧工作以绕过升级阻塞。
 
 ## 记录与继续
 
-使用同一 approval 模板和精确 review_digest；人审写 `approval_mode=manual`、真实用户 by/user_statement、policy_ref=null。自动批准写 `approval_mode=auto_low_risk`、by=parent-coordinator、user_statement=null，policy_ref 指向完整委托文件及摘要，decision_checks 逐项记录 {condition, result, evidence} 的实际依据/证据引用，时间为实际执行时间。decision=approved 只表示该批准来源下的通过；不能署用户名或伪造“用户同意此版本”。子 Agent 引用自动上游批准时，须验证其策略与委托范围，不要求再补同一阶段人审。
+使用同一 approval 模板和精确 review_digest；人审写 `approval_mode=manual`，按 identity.md 预填真实署名 by 与 approver 快照，保存实际 user_statement/decision_source、必要的 delegation_ref，policy_ref=null。自动批准写 `approval_mode=auto_low_risk`、by=parent-coordinator、user_statement=null、decision_source 为实际父协调器运行来源，approver 保留责任人快照，policy_ref 指向完整委托文件及摘要，decision_checks 逐项记录 {condition, result, evidence} 的实际依据/证据引用，时间为实际执行时间。decision=approved 只表示该批准来源下的通过；不能署用户名或伪造“用户同意此版本”。子 Agent 引用自动上游批准时，须验证其策略与委托范围，不要求再补同一阶段人审。
 
 每次展示一行“自动批准 work/profile/stage/rN”及正文/审计链接，完整控制 JSON 不刷屏。auto_continue=true 且授权仍有效时，记录 next_stage_authorized=true，派发**下一阶段的新 child**；否则 next_stage_authorized=false，记录后停止。Verify 为终点，永不派发下一阶段且 next_stage_authorized=false。
 

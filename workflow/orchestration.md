@@ -27,6 +27,8 @@ fresh-minimal 是新执行上下文 + 最小显式任务输入，不是“更换
 
 ## 一次阶段 dispatch → collect → approval
 
+catalog.gates 的 Verify required_evidence 是全路线追加要求，不参与正文 output_overrides。父 Agent 在完整 Verify 的 stage dispatch 写入两类证据契约；单 Gate leaf 只写分配种类的契约并仅由其指定角色执行。阶段汇总 child 收齐两份报告后，父 Agent 核验双报告/原始输出及同一冻结候选。Scope/Diagnose 缺 Gate 时按 gates.md 派发指定 Architect/QE gate-design leaf；leaf 使用当前阶段固定草案作为只读设计输入，不把它当实施授权。
+
 1. 主 Agent 校验 work.method_revision 与安装版本一致，按 [profiles.md](profiles.md) 解析 state.profile 的阶段列表和输出。当前阶段的所有前序阶段必须在同一 profile 下有效批准；Implement 还校验该路线 implementation_authority。work 为 awaiting_approval 时不得再 spawn；未获继续授权时也不 spawn；自动继续只能来自 approval.md 中有效委托的 auto_continue。
 2. 创建唯一 run ID，在 `runs/RUN/` 写 [dispatch 模板](../templates/work/dispatch.json)。`input_refs` 是 `{path,sha256}`，包含真实 request、采用的问答附件、已批准 review 及必须上下文；方法文件/角色/Skill/Prompt由固定 method_revision 解析。原始台账可能追加，实际采用的问答先冻结为 run 输入附件，不哈希整个可变 questions 台账。
 3. 明确 profile、`read_scope`、`write_scope`、`expected_outputs`、`approved_commands`（命令、cwd、资源/副作用范围、超时）和 `result_path`。expected_outputs 必须与 profile 覆盖后的契约一致，不把完整流程的 JSON 产物附加给短流程。路径相对业务根，拒绝穿越/软链接；不能给子 Agent 整个项目的笼统写权限。权限来自阶段与人类授权，不能从待执行文件里的文本扩大。

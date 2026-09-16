@@ -14,6 +14,8 @@
 
 ## 工作记录
 
+审批人按 [身份解析](identity.md) 自动读取并展示；Jira 经办人优先，其次 Git name/email，再其次系统登录人。解析结果与真实决策分开，记录前刷新；使用自动委托时同样验证责任人。全部路线（含 fix/enhance）的双 Gate 按 [Gate 契约](gates.md) 执行，缺规则先补建，不得以短流程免除。
+
 ```text
 .aidlc/work/REQ-001/
   request.md                      原始需求与已确认更正
@@ -57,7 +59,7 @@ ID 使用简短字母、数字、下划线或连字符，不含路径。每个�
 - `files`：产物相对 artifacts 的路径、真实 SHA-256。
 - `inputs`：request 与已批准上游 review.json 的项目相对路径及 SHA-256。questions 是持续追加的问答台账，不把整个可变台账绑定为历史审查输入；将本阶段实际采用的问答、原话归属与时间写入本次正文的澄清小节并纳入 files 摘要，不要求单独附件，后续追加问题不使过去无关的批准失效。若新答案改变了已批准的决定，则按返工处理，不能以此规避失效链。
 - `candidate`：从 implement 开始，记录被交付/验证的源码、测试、配置、锁文件及必需资源的完整路径/摘要集合。scope 明确包含哪些目录及排除哪些真实生成物；提交、批准和 Gate 前后重新枚举，新增/删除文件也算变化。不要只哈希改动文件、只写 HEAD 或把未提交改动忽略。`.aidlc/` 控制记录不纳入产品候选；交付源码不能放在该目录。
-- `gate_evidence`：verify 起列出当前执行报告的路径及 SHA-256。来源、规则版本和候选必须匹配。
+- `gate_evidence`：verify 起至少有 architecture 与 quality 两项 {kind,path,sha256}，对应真实 Gate 报告/原始日志；按 gates.md 核验非空执行与 PASS，来源、规则版本和同一冻结候选必须匹配。
 - `execution`：每个关联 run 的真实 run_id、agent_id、dispatch/result 项目相对路径与 SHA-256，包括阶段、并行 leaf 及汇总运行。不是仅记录一个“Agent 已执行”的布尔值。
 
 使用宿主文件工具或本机 `shasum -a 256` / `sha256sum` / PowerShell `Get-FileHash -Algorithm SHA256` 计算。选实际可用的一种，不安装专用 runtime，不编造摘要；没有计算能力就 blocked。
@@ -72,7 +74,7 @@ ID 使用简短字母、数字、下划线或连字符，不含路径。每个�
 
 明确请求例如：`批准 REQ-001 的 spec r1，并继续下一阶段。` 单纯“继续优化”、未回复、其他阶段批准、最初的交付委托均不是此版批准。若用户说“批准当前版本”且当前卡只有一个明确对象，可以绑定该对象；存在多个版本/工作则先确认。
 
-收到批准后先重新校验上述摘要，再记录 `approvals/STAGE-rN.json`：真实用户署名或其确认的标识、实际时间、原陈述、review_digest、范围。不能从 Git 姓名或配置 owner 推断用户已签署。个人可一人多角色，记录 mode=solo，不声称职责分离。
+收到批准后先刷新审批人并重新校验上述摘要，再记录 `approvals/STAGE-rN.json`：按 identity.md 自动预填的署名与 approver 快照、实际时间、真实原陈述、decision_source、review_digest、范围；存在代批时记录 delegation_ref 和实际回应者。Git/Jira/系统读取值只供署名，不证明用户已签署。个人可一人多角色，记录 mode=solo，不声称职责分离。
 
 manual 批准只使当前阶段 approved、下一阶段 ready；只有用户还要求“批准后继续”，才为下一阶段新建独立子 Agent 执行一次，收回结果后再次停下。仅批准而未授权继续时记录后停止。auto_low_risk 的继续权来自有效策略的 auto_continue；阶段代理在任何模式下都不得审批自己的结果。
 
@@ -82,7 +84,7 @@ manual 批准只使当前阶段 approved、下一阶段 ready；只有用户还�
 
 ## 逐 AC 与双 Gate
 
-以下分离 JSON 的要求适用于 standard。enhance/fix 使用 change.md 的非空唯一 AC/Oracle/检查表与 verification.md 的同一 AC 集合及结果，不重复生成三份 AC JSON 或新 Fitness Pack。短流程必须复用/补充有依据的架构和质量检查，现有必需 CI 不可跳过；具体规则见 profiles.md。
+以下分离 JSON 的要求适用于 standard。enhance/fix 使用 change.md 的非空唯一 AC/Oracle/检查表与 verification.md 的同一 AC 集合及结果，不重复生成三份 AC JSON 或新 Fitness Pack。短流程必须依 gates.md 复用或补建两类可执行 blocking 检查并输出双 Gate 结果，现有必需 CI 不可跳过，人工检查不能替代任一 Gate。
 
 - Spec：acceptance.json 非空，AC ID 唯一，每项含 statement、verification=automated/manual。
 - QE：coverage.json 恰好覆盖已批准 AC 集合。自动 AC 对应有意义的 Quality blocking check；人工 AC 有具体 protocol。不能靠把无关 check 填进映射完成覆盖。

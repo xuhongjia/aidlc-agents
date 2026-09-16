@@ -1,6 +1,9 @@
 {
   "schema_version": 1,
   "work_id": null,
+  "approver": null,
+  "decision_source": null,
+  "delegation_ref": null,
   "profile": null,
   "stage": null,
   "revision": null,
