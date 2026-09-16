@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "work_id": null,
+  "method_revision": null,
+  "current_stage": "intake",
+  "status": "ready",
+  "current_revision": 1,
+  "blockers": [],
+  "delivery_status": "in_progress",
+  "business_outcome": "not_evaluated",
+  "stages": {}
+}

@@ -1,0 +1,17 @@
+---
+description: Route AIDLC delivery requests through the repository's approved workflow.
+alwaysApply: true
+---
+
+<!-- AIDLC-AGENTS:START -->
+## AIDLC Agents
+
+For AIDLC requirements, implementation, review, or continuation requests, explicitly read these repository-root files:
+
+1. `.aidlc/system/skills/aidlc/SKILL.md`
+2. `.aidlc/system/workflow/protocol.md`
+
+Load only the current stage and its required context, and read the current work record before continuing. Stop at required human approvals for the exact artifact revision presented. Do not infer approval or invent test and gate evidence.
+
+Preserve all applicable project rules and tool permissions. This rule does not grant additional authority or install background agents. If required files cannot be read or instructions conflict, report the issue before proceeding with the AIDLC workflow.
+<!-- AIDLC-AGENTS:END -->

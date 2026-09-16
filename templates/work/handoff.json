@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "status": "blocked",
+  "summary": "尚未执行；这是模板，不是已完成的交接。",
+  "blockers": [
+    "等待基于真实需求完成本阶段产物与检查"
+  ],
+  "evidence": []
+}

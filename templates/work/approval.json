@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "work_id": null,
+  "stage": null,
+  "revision": null,
+  "decision": null,
+  "by": null,
+  "at": null,
+  "user_statement": null,
+  "review_digest": null,
+  "scope": [],
+  "next_stage_authorized": false
+}
