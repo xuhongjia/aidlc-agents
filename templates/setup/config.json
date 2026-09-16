@@ -13,6 +13,11 @@
   "profile": "auto",
   "owner": null,
   "mode": "solo",
+  "update_policy": {
+    "mode": "before_new_work",
+    "ref": "refs/heads/main",
+    "authorization": null
+  },
   "execution": {
     "mode": "isolated-subagents",
     "context_policy": "fresh-minimal",

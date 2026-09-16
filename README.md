@@ -2,14 +2,14 @@
 
 **让 AI 按需求大小选流程，每阶段独立子 Agent 执行，默认交给你批准，也支持有限自动批准。**
 
-AI-assisted、Spec-driven、Human-governed。没有 Python 安装器、额外 Agent CLI 或常驻服务。当前包版本 **0.6.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents)
+AI-assisted、Spec-driven、Human-governed。没有 Python 安装器、额外 Agent CLI 或常驻服务。当前包版本 **0.7.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents)
 
 ## 一句话接入
 
 在具有本地文件和独立子 Agent 能力的 AI 工具中，打开**业务仓库**，发送：
 
 ```text
-请读取 https://raw.githubusercontent.com/xuhongjia/aidlc-agents/main/bootstrap/setup.md，按说明把 aidlc-agents 配置到当前仓库；保留已有规则和业务代码，完成子 Agent 能力自检后停止。
+请读取 https://raw.githubusercontent.com/xuhongjia/aidlc-agents/main/bootstrap/setup.md，按说明把 aidlc-agents 配置到当前仓库；启用新需求运行前检查 GitHub 并自动更新，已有需求保持原版本；保留已有规则和业务代码，完成子 Agent 能力自检后停止。
 ```
 
 AI 固定来源版本，配置项目 `.aidlc/` 和当前工具的最小入口，再实际验证子 Agent 启动与返回。没有独立上下文能力就阻塞，不在主会话模拟角色。Codex、Claude Code、Cursor、Copilot 的支持取决于当前客户端能力，见 [工具支持](docs/tool-support.md)。
@@ -91,15 +91,21 @@ Release 自动从业务 Git 仓库和 CI 获取候选提交、PR/MR、流水线�
 
 失败、当前阶段必需证据缺失、范围变化、高风险或待决定问题都会停下转人工；`standard` 仍逐阶段人审。路由 `auto` 不等于自动批准，setup/update 不会开启它。详见 [审批策略](workflow/approval.md)。
 
-## 已安装过：一句话更新
+## 每次运行先查新
+
+新需求：**检查 GitHub main → 有新版先更新 → 重读新版规则 → 创建需求并运行**。无冲突的常规更新不重复询问；已是最新就直接进入工作流。比较完整 commit，不只比较版本号。
+
+继续已有需求也会查新，但该需求始终使用原锁定版本；更新延后到现有工作结束，新需求不能绕过待更新。联网失败时新需求暂停，已有需求可在完整原版本上继续；状态查询、审批和直接终结不受影响。冲突、删除或不兼容迁移交给你决定，不覆盖项目定制。明确固定 commit/本地副本的安装保持 pinned。见 [运行前检查](workflow/preflight.md)。
+
+## 已安装过：一次更新后自动生效
 
 在已接入的业务仓库发送：
 
 ```text
-请读取 https://raw.githubusercontent.com/xuhongjia/aidlc-agents/main/bootstrap/update.md，检查并准备更新当前仓库的 aidlc-agents；保留项目规则、需求、审批和证据，先展示差异、冲突及活动工作，等我确认后应用；为今后的新需求启用 auto 分级。
+请读取 https://raw.githubusercontent.com/xuhongjia/aidlc-agents/main/bootstrap/update.md，检查并准备更新当前仓库的 aidlc-agents；保留项目规则、需求、审批和证据，先展示差异、冲突及活动工作，等我确认后应用；启用每次新需求先检查 GitHub main 并自动更新，已有需求保持原版本。
 ```
 
-更新会固定版本、三方比较、确认后备份切换。未结束需求或活 worker 存在时延后，旧版继续可用；不迁移旧批准、不重置项目规则。已有 profile 偏好保留，改为 auto 需在更新计划中确认。离线可明确使用本地副本 `bootstrap/update.md`。见 [Update / 恢复](bootstrap/update.md)。
+更新会固定版本、三方比较、确认后备份切换。未结束需求或活 worker 存在时延后，旧版继续可用；不迁移旧批准、不重置项目规则。**旧安装需先执行这一次更新**，不会自动获得尚未安装的查新入口；以后直接提需求即可。已有 profile 偏好和业务审批模式不变。离线可明确使用本地副本 `bootstrap/update.md`。见 [Update / 恢复](bootstrap/update.md)。
 
 ## 工程边界与维护
 

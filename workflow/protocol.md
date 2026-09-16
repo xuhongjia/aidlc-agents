@@ -38,7 +38,7 @@
 
 ID 使用简短字母、数字、下划线或连字符，不含路径。每个新需求独立目录，不把 demo 当真实状态。已有多个活动需求且用户没给 ID 时询问，不按最近修改时间猜。一个工作树同时只有一条实施流；并行需求使用用户已有的独立 checkout/worktree，不自行创建分支或复制生产数据。
 
-工作级 `status`：`ready | working | blocked | awaiting_approval | completed | closing | closed`。closing/closed 按 [直接终结](closure.md) 处理，不参与阶段推进。阶段级另可 `approved | superseded`。state 的 `stages[stage]` 记录 revision、review_path、review_digest、approval_path、输入版本和状态；未知字段不得猜填。active_runs / run_history 记录真实 worker ID、run ID、方法版本、时间、隔离选项与状态；只有主 Agent 写中央状态。工作绑定 `method_revision`（完整来源 commit 或 local-unreleased 摘要清单）；跨会话先核对，没有自动升级。未结束工作或活动 worker 存在时延后应用方法更新，不重写旧 method_revision。
+工作级 `status`：`ready | working | blocked | awaiting_approval | completed | closing | closed`。closing/closed 按 [直接终结](closure.md) 处理，不参与阶段推进。阶段级另可 `approved | superseded`。state 的 `stages[stage]` 记录 revision、review_path、review_digest、approval_path、输入版本和状态；未知字段不得猜填。active_runs / run_history 记录真实 worker ID、run ID、方法版本、时间、隔离选项与状态；只有主 Agent 写中央状态。工作绑定 `method_revision`（完整来源 commit 或 local-unreleased 摘要清单）；跨会话先核对，已有工作不自动迁移。每次需要执行的入口按 [preflight](preflight.md) 检查 GitHub；新工作先更新，旧工作仍使用原固定版本。未结束工作或活动 worker 存在时延后应用方法更新，不重写旧 method_revision。
 
 ## 接收、执行、停下
 

@@ -11,7 +11,7 @@ description: 在已接入 aidlc-agents 的业务仓库协调需求、状态与�
 
 先识别终结控制意图：明确终结、status=closing 或 closed 按 `.aidlc/system/workflow/closure.md` 处理，不进入阶段派发/能力探针；关闭无需补跑阶段。status=completed 同样只报告既有结果。只有需实际阶段执行时才走下面的派发步骤。
 
-1. 确认业务仓库根目录，读取 `.aidlc/config.json`、`.aidlc/system/workflow/protocol.md`、`.aidlc/system/workflow/orchestration.md`、`.aidlc/system/workflow/stages.json`。缺失安装或编排能力时停止，不自行安装运行器或另起 AI CLI。
+1. 确认业务仓库根目录与新需求/已有 work，读取 `.aidlc/config.json`，先按 `.aidlc/system/workflow/preflight.md` 检查 GitHub 最新 commit；新需求有更新先完成 update，已有需求保持锁定版本。检查未放行前不创建 work/run、不启动阶段。更新后重读安装后的 router、`.aidlc/system/workflow/protocol.md`、`.aidlc/system/workflow/orchestration.md`、`.aidlc/system/workflow/stages.json` 再派发；本次调用不递归查新。缺失安装或编排能力时停止，不自行安装运行器或另起 AI CLI。
 2. 确认 work ID；存在歧义时询问。新工作先读 `.aidlc/system/workflow/profiles.md`，结合用户路线意图和 config.profile 初选 standard/enhance/fix，记录 state.profile/routing_reason，从该路线首阶段启动；auto/null 不进入实际执行。首 child 核实风险，首张审查卡确认路线和范围，不额外增加 Intake/Triage。恢复工作以 state.profile 为准，不按当前偏好换轨。
 3. 按协议维护请求和必要澄清记录，验证当前路线的当前阶段及所有前序批准。根据 `.aidlc/system/templates/work/dispatch.json` 建立 run：记录 profile 和按 profile 解析的 outputs、实施授权基线、最小输入/摘要及写入范围。短流程不补跑九阶段，也不漏掉自身批准。
 4. 使用 `.aidlc/system/prompts/dispatch.md` 和宿主真实子 Agent 能力启动全新上下文。子 Agent 根据派发包加载自己的阶段 Skill、角色与 Prompt；父协调器保存真实执行标识并等待结果。

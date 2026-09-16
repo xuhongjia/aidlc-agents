@@ -29,7 +29,7 @@ test('manifest describes an instruction-only payload and all declared entrypoint
   assert.equal(manifest.runtime, 'none');
   assert.equal(manifest.repository, 'https://github.com/xuhongjia/aidlc-agents');
   for (const name of [...manifest.payload_directories, ...manifest.payload_files,
-    manifest.bootstrap, manifest.update, manifest.entrypoint, manifest.protocol, manifest.orchestration, manifest.stage_catalog]) {
+    manifest.bootstrap, manifest.update, manifest.preflight, manifest.entrypoint, manifest.protocol, manifest.orchestration, manifest.stage_catalog]) {
     assert.ok(!path.isAbsolute(name) && !name.split('/').includes('..'));
     assert.ok(existsSync(path.join(root, name)), `Missing payload: ${name}`);
   }
@@ -76,6 +76,19 @@ test('execution contract requires fresh children and agrees with install configu
   for (const key of ['dispatch_template', 'result_template']) {
     assert.ok(existsSync(path.join(root, execution[key])));
   }
+});
+
+test('workflow preflight is reachable from every tool without pre-authorizing updates or business approvals', () => {
+  const config = json('templates/setup/config.json');
+  assert.equal(config.update_policy.authorization, null, 'Setup must record real authorization');
+  assert.equal(config.update_policy.mode, 'before_new_work');
+  assert.equal(config.update_policy.ref, 'refs/heads/main');
+  assert.ok(read(manifest.entrypoint).includes(`.aidlc/system/${manifest.preflight}`));
+  for (const adapter of ['codex.md', 'claude-code.md', 'cursor.mdc', 'github-copilot.md']) {
+    assert.ok(read(`adapters/${adapter}`).includes(`.aidlc/system/${manifest.preflight}`));
+  }
+  assert.equal(json('templates/work/state.json').approval_mode, 'manual');
+  assert.equal(json('templates/work/approval.json').decision, null);
 });
 
 test('run and review templates preserve identity, constrained writes and non-approval returns', () => {

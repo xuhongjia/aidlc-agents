@@ -4,7 +4,7 @@
 
 ## 0. 确认能力和授权边界
 
-用户要求“把 aidlc-agents setup 到当前仓库”即授权下面列明的项目级配置写入；无需为每个新建文件重复提问。它不授权覆盖冲突文件、改业务代码、安装依赖、改全局设置、提交 Git、push、创建 PR、部署，或除读取用户指定来源之外的额外外部连接。
+用户要求“把 aidlc-agents setup 到当前仓库”即授权下面列明的项目级配置写入；无需为每个新建文件重复提问。从默认 GitHub main 接入并启用运行前更新时，该请求也授权 [preflight](../workflow/preflight.md) 限定的后续只读查新与无冲突受管更新；报告中明确展示此策略及其授权来源。用户明确固定 tag/commit 或本地未发布来源时保持 pinned，不擅自跟随 main。它不授权覆盖冲突文件、改业务代码、安装依赖、改全局设置、提交 Git、push、创建 PR、部署，或除读取用户指定来源及已启用的同源版本检查之外的额外外部连接。
 
 需要：能读取指定来源、读写当前项目文件，并能通过宿主文件/终端工具计算真实 SHA-256；宿主还必须能创建全新隔离上下文的原生子 agent，并让父会话收集结果。阶段执行禁止在父会话内完成，禁止用继承整段聊天的“子 agent”冒充隔离执行。读取 `workflow/orchestration.md` 确认能力要求；工具品牌或说明文档不等于实际能力已验证。网页聊天若不能访问本地文件，只能给操作说明，不能报告 setup 成功。工具访问和执行权限遵守宿主规则，不绕过权限限制。
 
@@ -45,7 +45,7 @@
 ## 3. 安装最小项目级内容
 
 1. 将 `manifest.json` 以及 payload_directories 的内容复制到 `.aidlc/system/`。不复制源仓库 `.git`、测试夹具、维护者 CI、下载缓存或历史工作记录。不使用指向临时下载目录的软链接。
-2. 根据 `templates/setup/config.json` 建立 schema 2 config。新安装 profile=auto（支持 standard/enhance/fix），实际工作按 profiles.md 选定具体路线。审批默认 manual；路由 auto 不等于 auto approval，setup 不创建或激活工作委托策略。其他字段填真实值，未知 owner 可 null，不伪造签署人；installed_at 使用实际时间。execution 保持 isolated-subagents/fresh-minimal，最多两个 worker，探针真实通过才填 capability=true。solo 是人类角色模式，不是同上下文执行。
+2. 根据 `templates/setup/config.json` 建立 schema 2 config。新安装 profile=auto（支持 standard/enhance/fix），实际工作按 profiles.md 选定具体路线。审批默认 manual；路由 auto 不等于 auto approval，setup 不创建或激活工作委托策略。按 [preflight](../workflow/preflight.md) 设置 update_policy：默认 GitHub main 接入建议 before_new_work；README 的接入请求已明确启用，authorization 记录其真实 user_statement/source/at，不再重复询问。若用户只说 setup、没有启用自动更新的意思，首次安装范围说明中询问一次策略；未获答复可完成安装并保留 authorization=null，但报告需说明交付运行前还须确定策略，不把泛指 setup 当持续授权。用户明确固定 tag/commit 或 local-unreleased 则 mode=pinned，记录真实选择。其他字段填真实值，未知 owner 可 null，不伪造签署人；installed_at 使用实际时间。execution 保持 isolated-subagents/fresh-minimal，最多两个 worker，探针真实通过才填 capability=true。solo 是人类角色模式，不是同上下文执行。
 3. 为每个受管文件记录 `{path,sha256,upstream_sha256}`，path 相对目标项目根；首次原样复制时两个摘要相同。`sha256` 是实际安装结果，`upstream_sha256` 是原始包基线；后续保留用户定制时不能将定制结果冒充上游基线。摘要真实计算；排除 config 自身、setup-report 和动态工作记录，避免自引用。bridge 另记录 `managed_block: {start_marker,end_marker,sha256,upstream_sha256}`，其 hash 覆盖含 marker 的精确块字节；整个文件 sha256 只是安装时快照，不是上游 adapter 基线。以后仅块外增加用户内容不算本包冲突，不允许通过恢复整个旧文件覆盖用户内容。
 4. 只配置当前工具的 bridge；未知工具使用明确读取 canonical router 的 fallback，并在报告中说明没有验证自动加载。不改全局目录、不自动配置其他工具、不安装插件或 MCP。
 5. 可选原生 Skill 仅复制 `skills/aidlc/` 到当前工具的项目 Skill 目录。router 使用项目根相对路径，因此不需要硬编码本机路径。阶段与复用 Skills 保持 canonical，由 router 按需读；不要复制多份不同版本。
@@ -71,7 +71,7 @@
 
 幂等身份按解析后的完整 commit 比较；本地未发布来源按完整 payload 路径集合与 SHA-256 比较，不只比较 semver、tag 或 main。身份相同且受管块/文件无漂移：只验证并报告已安装，不重复追加 bridge、不重置 state、不改变原安装记录；已验证能力若当前宿主变化或无证据可依，重新执行只读探针并单独记录检查，不伪造首次安装记录。
 
-身份不同或 schema 1 安装需要迁移时，停在“已安装，需显式 update”，给出 [update 指引](update.md)，不自动替换，即使 package_version 相同也一样。升级必须经用户审阅差异并确认；任一未完成工作或活 worker 存在就延后，保持旧版可用。不得以新建工作或修改 `method_revision` 绕过这个限制；本版不提供并存方法版本的解析器。
+身份不同或 schema 1 安装需要迁移时，停在“已安装，需显式 update”，给出 [update 指引](update.md)，不自动替换，即使 package_version 相同也一样。本节重复 setup 不绕过显式 update；后续工作流入口若已有有效 update_policy，可按 preflight 的有限授权完成常规升级，否则经用户审阅差异并确认。任一未完成工作或活 worker 存在就延后，保持旧版可用。不得以新建工作或修改 `method_revision` 绕过这个限制；本版不提供并存方法版本的解析器。
 
 中途失败：报告已创建/未创建的精确文件，保留可恢复现场；不运行递归删除。恢复仅补齐同一版本且确认属于本次安装的未完成文件，有未知改动则再次询问。
 

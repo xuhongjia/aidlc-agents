@@ -28,4 +28,4 @@
 
 > 请先读取当前仓库的 `.aidlc/system/skills/aidlc/SKILL.md`、`.aidlc/system/workflow/protocol.md` 和 `.aidlc/system/workflow/orchestration.md`；验证当前工具能创建独立上下文子 Agent 并收集返回结果后，主对话只编排，每个阶段派发新子 Agent，完成后返回结果并等待我的审批。
 
-显式读取只补足规则加载，不能替代子 Agent 能力。缺少新建、上下文隔离或结果回收任一能力时，报告阻塞并切换支持的客户端，不允许退回当前上下文执行阶段。不编造跨工具通用的 spawn API，也不自动改全局配置。工具适配的验证范围与官方文档见 [支持矩阵](../docs/tool-support.md)。已有安装先按 [update 指引](../bootstrap/update.md) 升级，不直接覆盖现有桥或工作记录。
+显式读取只补足规则加载，不能替代子 Agent 能力。缺少新建、上下文隔离或结果回收任一能力时，报告阻塞并切换支持的客户端，不允许退回当前上下文执行阶段。不编造跨工具通用的 spawn API，也不自动改全局配置。工具适配的验证范围与官方文档见 [支持矩阵](../docs/tool-support.md)。已有安装先按 [update 指引](../bootstrap/update.md) 升级，不直接覆盖现有桥或工作记录。上述首次接入/手动修改的确认规则，不重复阻塞已授权的 [preflight](../workflow/preflight.md) 常规更新：其可替换三方比较无本地改动的精确受管块/文件，仍须保留块外内容，冲突由用户决定。

@@ -1,11 +1,12 @@
 {
   "schema_version": 1,
   "name": "aidlc-agents",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "kind": "instruction-package",
   "repository": "https://github.com/xuhongjia/aidlc-agents",
   "bootstrap": "bootstrap/setup.md",
   "update": "bootstrap/update.md",
+  "preflight": "workflow/preflight.md",
   "entrypoint": "skills/aidlc/SKILL.md",
   "protocol": "workflow/protocol.md",
   "orchestration": "workflow/orchestration.md",
