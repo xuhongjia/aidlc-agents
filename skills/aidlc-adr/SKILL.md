@@ -5,7 +5,7 @@ description: 为 AIDLC 中影响后续交付的架构选择记录 ADR 草案，�
 
 # 决策记录
 
-此 Skill 产出决策草案，不自动批准架构。已接入项目先读取 `.aidlc/system/workflow/protocol.md`、当前状态和 `.aidlc/system/prompts/common.md`；只写调用阶段允许的草稿位置，不修改批准 ADR。
+此 Skill 为阶段子 Agent 产出决策草案，不批准架构。在主会话的正式 AIDLC 请求先交 `.aidlc/system/skills/aidlc/SKILL.md` 派发；有效 dispatch 子 Agent 按 `.aidlc/system/prompts/common.md` 执行，不递归派发。只写本 run artifacts，不修改批准 ADR；结果汇入调用阶段 result 交父协调器，不写状态/审批/review。
 
 1. 读取已有 ADR 与相关 Spec/AC，确认是否存在真正需要记录的选择。现有决定适用时引用，不重复制造 ADR。
 2. 使用项目已有格式；无格式时包含标题/ID、状态、背景与约束、候选与取舍、建议决定、后果/风险、验证方式与来源。

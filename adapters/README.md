@@ -1,6 +1,6 @@
 # AI 工具接入桥
 
-这些小模板把当前 AI 工具接入同一份 AIDLC 工作流。**只安装使用者当前选择的工具桥，不一次安装全部工具配置。** 业务流程只保存在 `.aidlc/system/`，桥文件负责发现和按需读取，不复制整套 Prompt。
+这些小模板把当前 AI 工具接入同一份 AIDLC 工作流。**只安装使用者当前选择的工具桥，不一次安装全部工具配置。** 业务流程只保存在 `.aidlc/system/`，桥文件负责发现和按需读取，不复制整套 Prompt。v0.3 起主对话只编排，每次阶段执行或返工都派发新的独立上下文子 Agent；桥文件本身不提供这项运行能力。
 
 | 当前工具 | 本目录模板 | 目标仓库入口 | 安装方式 |
 | --- | --- | --- | --- |
@@ -20,10 +20,12 @@
 
 ## 完成标准
 
-安装后必须能读取目标仓库中的 `.aidlc/system/skills/aidlc/SKILL.md` 与 `.aidlc/system/workflow/protocol.md`。让当前工具解析 Intake 的角色、Prompt、输出和人工审批点；不创建需求或批准记录，完成接入检查后即停下。文件检查、显式读取与工具自动加载分别报告；setup 的 `ready` 不表示已验证自动发现或阶段审批行为。用户另行要求时，才以单独的需求演练验证阶段完成后是否实际停在审批点。
+安装后必须能读取目标仓库中的 router、protocol 与 [orchestration.md](../workflow/orchestration.md)。按 [setup 指引](../bootstrap/setup.md) 做只读子 Agent 探针：实际创建新子 Agent、确认未继承父对话历史、取得结构化结果。记录真实调用/子 Agent 标识、上下文模式与返回证据；不能只凭文件已写入或模型声称支持就通过。不创建需求或批准记录、不改业务代码，完成检查后即停下。
+
+文件检查、显式读取、工具自动加载与子 Agent 能力分别报告。只有前三项通过但没有子 Agent 能力，仍然不能运行阶段。探针通过也不表示已验证真实需求、完整审批行为或 CI Gate。用户另行要求时才开始需求演练。
 
 若自动加载没有生效，先开新会话/重新载入项目，再使用明确读取提示：
 
-> 请先读取当前仓库的 `.aidlc/system/skills/aidlc/SKILL.md` 和 `.aidlc/system/workflow/protocol.md`，按 AIDLC 处理我的需求，每个需要人工审批的阶段完成后停下。
+> 请先读取当前仓库的 `.aidlc/system/skills/aidlc/SKILL.md`、`.aidlc/system/workflow/protocol.md` 和 `.aidlc/system/workflow/orchestration.md`；验证当前工具能创建独立上下文子 Agent 并收集返回结果后，主对话只编排，每个阶段派发新子 Agent，完成后返回结果并等待我的审批。
 
-这也是其他具备本地文件能力的 AI 工具的通用接入方式；它不依赖特定 slash command。工具适配的验证范围与官方文档见 [支持矩阵](../docs/tool-support.md)。
+显式读取只补足规则加载，不能替代子 Agent 能力。缺少新建、上下文隔离或结果回收任一能力时，报告阻塞并切换支持的客户端，不允许退回当前上下文执行阶段。不编造跨工具通用的 spawn API，也不自动改全局配置。工具适配的验证范围与官方文档见 [支持矩阵](../docs/tool-support.md)。已有安装先按 [update 指引](../bootstrap/update.md) 升级，不直接覆盖现有桥或工作记录。

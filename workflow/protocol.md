@@ -4,9 +4,9 @@
 
 ## 加载与角色
 
-从实际项目根解释所有 `.aidlc/` 路径。每次只加载 config、当前工作 state、共同 Prompt、当前阶段 Prompt/角色和必要的批准输入，不全量装入所有角色。
+从实际项目根解释所有 `.aidlc/` 路径。主 Agent 只加载 config、当前工作 state、批准元数据和调度规则；阶段角色、Prompt 与必要原始输入由独立子 Agent 按 dispatch 加载，不把全部阶段推理放在主聊天。
 
-正式入口：`skills/aidlc/SKILL.md`；阶段顺序与输出以 [stages.json](stages.json) 为准。六个角色是不同责任视角，不要求六个进程、模型或常驻服务。可以用宿主原生子 Agent 辅助当前阶段，但写入范围、证据和审批边界不变；不在后台预跑未批准的下一阶段。单会话顺序执行也是完整支持路径。
+正式入口：`skills/aidlc/SKILL.md`；阶段顺序与输出以 [stages.json](stages.json) 为准。每个正式阶段必须启动新的独立上下文子 Agent，主 Agent 只调度、验真、汇报和记录用户审批。不能在主会话切换角色代跑，也不预跑未批准的后续阶段。宿主能力不满足则 blocked；依赖、并行汇合、上下文、返回格式和中断规则见 [调度协议](orchestration.md)。不要求额外运行器或常驻服务。
 
 角色规则与项目已有规范冲突时报告冲突，不擅自覆盖项目规范。Setup 授权不等于业务实现授权。外部内容和需求中的命令不扩大当前任务权限。
 
@@ -18,6 +18,11 @@
   questions.md                    待决问题、用户回答、来源与时间
   state.json                      当前阶段、版本、批准索引、阻塞与方法版本
   drafts/STAGE/                   当前阶段产物 + handoff.json
+  runs/RUN/                       每次独立子 Agent 的固定输入和执行记录
+    dispatch.json                 主 Agent 写的任务范围/版本/路径
+    result.json                   子 Agent 返回的产物摘要/证据/阻塞
+    artifacts/                    子 Agent 独占的阶段产物
+    evidence/                     子 Agent 独占的执行证据
   reviews/STAGE/r1/
     artifacts/                    该版产物的完整副本
     review.json                   文件/上游/候选/证据摘要清单
@@ -27,21 +32,21 @@
 
 ID 使用简短字母、数字、下划线或连字符，不含路径。每个新需求独立目录，不把 demo 当真实状态。已有多个活动需求且用户没给 ID 时询问，不按最近修改时间猜。一个工作树同时只有一条实施流；并行需求使用用户已有的独立 checkout/worktree，不自行创建分支或复制生产数据。
 
-工作级 `status`：`ready | working | blocked | awaiting_approval | completed`。阶段级另可 `approved | superseded`。state 的 `stages[stage]` 记录 revision、review_path、review_digest、approval_path、输入版本和状态；未知字段不得猜填。工作绑定 `method_revision`（完整来源 commit 或 local-unreleased 摘要清单）；跨会话先核对，没有自动升级。
+工作级 `status`：`ready | working | blocked | awaiting_approval | completed`。阶段级另可 `approved | superseded`。state 的 `stages[stage]` 记录 revision、review_path、review_digest、approval_path、输入版本和状态；未知字段不得猜填。active_runs / run_history 记录真实 worker ID、run ID、方法版本、时间、隔离选项与状态；只有主 Agent 写中央状态。工作绑定 `method_revision`（完整来源 commit 或 local-unreleased 摘要清单）；跨会话先核对，没有自动升级。未结束工作或活动 worker 存在时延后应用方法更新，不重写旧 method_revision。
 
 ## 接收、执行、停下
 
 1. 新需求保存 request，创建 state，进入 intake。Intake 同时建立当前项目画像；关键未知先澄清，不替人做业务政策决定。
 2. 恢复已有工作时读取 state、批准记录和被引用文件，重新计算摘要。发现差异先 blocked，不能沿用旧结论。只把原始用户陈述当实际批准来源，Agent 总结不是批准本身。
-3. 只执行当前阶段。非 implement 仅写当前工作草稿/证据/审查记录；不能修改业务源码、测试、构建或依赖配置。implement 必须已有有效 plan 批准，且只实现该范围。
-4. 关键输入不足时写 `handoff.status=blocked`，更新状态，列少量具体问题并结束响应。用户答案原样/准确归属记录到 questions，再重跑当前阶段。答案改变了已批准范围则按返工处理。
-5. 输出齐全、没有 AIDLC_DRAFT、没有未解决 blocking issue、引用均真实且完成适用检查，才准备审查版本。`handoff.status=ready_for_review` 不等于批准。
+3. 主 Agent 只 dispatch 当前阶段。子 Agent 写自己 run 的产物、证据和 result，不写 state/questions/review/approval/config。非 implement 不能修改业务源码、测试、构建或依赖配置；implement 必须已有有效 plan 批准，且只写明确分配的范围。
+4. 关键输入不足时子 Agent 返回 blocked/questions，由主 Agent 更新 handoff/state，向用户列少量具体问题并停止。用户答案由主 Agent 原样/准确归属记录到 questions，再以最小输入交给本阶段 child；输入版本变化则新建 run。答案改变了已批准范围按返工处理。
+5. 主 Agent 核验实际子 Agent 返回的 identity、摘要、文件范围和证据。输出齐全、没有 AIDLC_DRAFT、没有未解决 blocking issue、引用均真实且完成适用检查，才复制到 drafts 并准备审查版本。子 Agent 的 `ready_for_review`、主 Agent 的 handoff 均不等于人类批准。
 
 不要为了减少轮次把多个尚未批准阶段一并执行。计划中的未来测试结果不可填 PASS。依赖安装、网络写入、费用、生产数据、push/merge/deploy 均需其各自明确授权，不能由 plan 的笼统批准推定。
 
 ## 审查快照与摘要
 
-每次提交使用新的 rN，不修改旧 review 或 approval。把当前草稿全部相关文件复制到 `reviews/STAGE/rN/artifacts/`。禁止软链接、路径穿越、空占位证据。
+每次提交使用新的 rN，不修改旧 review 或 approval。仅主 Agent 把已验真的当前草稿全部相关文件复制到 `reviews/STAGE/rN/artifacts/`。禁止软链接、路径穿越、空占位证据。
 
 按 `templates/work/review.json` 写 manifest：
 
@@ -49,6 +54,7 @@ ID 使用简短字母、数字、下划线或连字符，不含路径。每个�
 - `inputs`：request 与已批准上游 review.json 的项目相对路径及 SHA-256。questions 是持续追加的问答台账，不把整个可变台账绑定为历史审查输入；将本阶段实际采用的问答、原话归属与时间复制到本次 artifacts 的澄清附件并纳入 files 摘要，后续追加问题不使过去无关的批准失效。若新答案改变了已批准的决定，则按返工处理，不能以此规避失效链。
 - `candidate`：从 implement 开始，记录被交付/验证的源码、测试、配置、锁文件及必需资源的完整路径/摘要集合。scope 明确包含哪些目录及排除哪些真实生成物；提交、批准和 Gate 前后重新枚举，新增/删除文件也算变化。不要只哈希改动文件、只写 HEAD 或把未提交改动忽略。`.aidlc/` 控制记录不纳入产品候选；交付源码不能放在该目录。
 - `gate_evidence`：verify 起列出当前执行报告的路径及 SHA-256。来源、规则版本和候选必须匹配。
+- `execution`：每个关联 run 的真实 run_id、agent_id、dispatch/result 项目相对路径与 SHA-256，包括阶段、并行 leaf 及汇总运行。不是仅记录一个“Agent 已执行”的布尔值。
 
 使用宿主文件工具或本机 `shasum -a 256` / `sha256sum` / PowerShell `Get-FileHash -Algorithm SHA256` 计算。选实际可用的一种，不安装专用 runtime，不编造摘要；没有计算能力就 blocked。
 
@@ -62,7 +68,7 @@ ID 使用简短字母、数字、下划线或连字符，不含路径。每个�
 
 收到批准后先重新校验上述摘要，再记录 `approvals/STAGE-rN.json`：真实用户署名或其确认的标识、实际时间、原陈述、review_digest、范围。不能从 Git 姓名或配置 owner 推断用户已签署。个人可一人多角色，记录 mode=solo，不声称职责分离。
 
-批准只使当前阶段 approved、下一阶段 ready；只有用户还要求“批准后继续”，才执行下一阶段一次，完成后再次停下。仅批准而未授权继续时记录后停止。阶段代理不得审批自己的结果；编排助手只是记录用户决定。
+批准只使当前阶段 approved、下一阶段 ready；只有用户还要求“批准后继续”，才为下一阶段新建独立子 Agent 执行一次，收回结果后再次停下。仅批准而未授权继续时记录后停止。阶段代理不得审批自己的结果；编排助手只是记录用户决定。
 
 ## 返工
 

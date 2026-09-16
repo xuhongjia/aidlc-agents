@@ -22,9 +22,11 @@ Architect / QE 阶段交付各自的 fitness JSON 及可读说明。推荐每个
 
 1. 人审 Spec 和两份规则，明确允许执行的命令；不把网络安装、删除、部署隐藏进测试命令。
 2. 实施完成后固定候选文件集合和摘要，独立核对测试 Oracle 与已批准设计。
-3. AI 用宿主工具执行批准命令，保存 stdout/stderr、退出码、报告、测试数量、跳过项和时间。命令未运行就标 NOT_RUN/UNKNOWN。
+3. Verify 子 Agent 用宿主工具执行批准命令，保存 stdout/stderr、退出码、报告、测试数量、跳过项和时间；主 Agent 只调度与收回核验。命令未运行就标 NOT_RUN/UNKNOWN。
 4. 比较运行前后候选；变化则结果失效。逐项 AC 核对真实证据，不能仅看总体进程 exit 0。
 5. 输出审查卡等人批准。无法运行的集成/性能/人工验收如实 blocked 或保持未验证，不能伪造生产结果。
+
+Architecture Gate 与 Quality Gate 可以由主 Agent 派发独立 leaf 子 Agent 并行执行，但必须绑定同一冻结 candidate 与已批准规则，并隔离报告目录、生成物、数据库、端口等可写资源；不能证明无冲突时串行子 Agent。等待所有必需检查后，由 Verify 汇总 child 合成 AC 结果，主 Agent 验真再呈交人审。Gate 期间不允许开发 worker 继续改候选。详见 [调度协议](../workflow/orchestration.md)。
 
 ## 在业务仓库 CI 中实施硬门禁
 

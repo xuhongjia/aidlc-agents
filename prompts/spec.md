@@ -7,4 +7,4 @@
 3. 对每项需求建立 AC 覆盖；明确不做的内容。把无法从输入确定的业务决定留给人类，不用通用“最佳实践”替业务取舍。
 4. 需要接口/数据契约时给出字段、错误、版本兼容和敏感性；涉及架构选择仅陈述需求约束，把方案决定交给 Architecture。
 
-按模板交付 `spec.md` 和 `acceptance.json`，两者语义一致。可按需读取 `.aidlc/system/skills/aidlc-spec-generation/SKILL.md`。交人类审批验收口径后停止，不直接实现。
+按模板交付 `spec.md` 和 `acceptance.json`，两者语义一致。可按需读取 `.aidlc/system/skills/aidlc-spec-generation/SKILL.md`。在本 run artifacts 交付，按 common 返回 result 供父协调器校验及请求人类审批，不直接实现。

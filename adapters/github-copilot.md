@@ -5,8 +5,13 @@ For AIDLC requirements, implementation, review, or continuation requests, explic
 
 1. `.aidlc/system/skills/aidlc/SKILL.md`
 2. `.aidlc/system/workflow/protocol.md`
+3. `.aidlc/system/workflow/orchestration.md`
 
-Do not assume a linked file is already in context. Use the router to select the current stage, read its work record, and load only the context it needs. Stop at required human approvals for the exact artifact revision presented; do not approve on the user's behalf.
+Do not assume a linked file is already in context. The parent conversation is orchestration-only: read the work record, validate dependencies, dispatch, collect results, and ask for human approval. For EVERY stage execution or rework, start a NEW child agent with fresh context using the current client's actual supported tools. Pass only the dispatch contract and required approved artifact references, not the parent conversation history. Do not execute stages inline or reuse a previous stage's child. A custom agent profile, skill invocation, or manually selected chat is not proof of parent-child delegation.
 
-Keep existing repository instructions and permissions. If this Copilot surface cannot read/write local files or run required checks, say what is unavailable and request an appropriate agent-enabled environment. Do not describe suggested edits as applied, or unexecuted checks as passing. Missing canonical files or conflicting instructions must be resolved before proceeding with the AIDLC workflow.
+Require the setup capability probe to demonstrate child creation, fresh context, and result collection on this exact Copilot surface. If any capability is unavailable or unverified, block stage execution and request a supported client; never fall back to inline execution. Follow orchestration.md for safe parallelism and result validation. The parent alone presents the exact artifact revision for human approval and records the user's actual decision. Children never approve or advance stages.
+
+If you are already the child named in a valid dispatch, execute only that bounded assignment and return its result; do not re-route yourself as the parent or recursively delegate the whole stage.
+
+Keep existing repository instructions and permissions. Missing file access, required checks, canonical files, or conflicting instructions must be resolved before proceeding. Do not describe suggested edits as applied, or unexecuted children/checks as successful. This bridge does not install a separate runtime or change global settings.
 <!-- AIDLC-AGENTS:END -->

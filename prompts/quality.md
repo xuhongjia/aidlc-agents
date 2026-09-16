@@ -8,4 +8,4 @@
 4. 定义 Quality Fitness 的真实执行入口、运行范围、超时、阈值、成功证据、零测试/跳过/失败/未知的处理。覆盖率不能单独证明业务正确。
 5. 检查 Architect 规则与 QE 规则是否有互相冲突或遗漏；要更改批准约束时退回相应阶段。
 
-按模板交付 `quality-design.md`、`quality-fitness.json`、`coverage.json`。AC 集合与批准 Spec 一致；测试源码如需新增只写草稿附件。可复用 `.aidlc/system/skills/aidlc-test-generation/SKILL.md`，向人类审阅 Oracle 与执行副作用后停止。
+按模板交付 `quality-design.md`、`quality-fitness.json`、`coverage.json`。AC 集合与批准 Spec 一致；测试源码如需新增只写本 run artifacts 附件。可复用 `.aidlc/system/skills/aidlc-test-generation/SKILL.md`，可按独立 AC 组提议并行测试设计，由本阶段检查重复、遗漏和 Oracle 冲突。按 common 返回 result，将 Oracle 与副作用交父协调器呈现给人类。

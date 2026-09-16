@@ -20,6 +20,14 @@ AIDLC_DRAFT — 安装完成后用本次实际检查替换本标志及说明；�
 
 确认入口能解析到已安装指令、模板和角色，且未把示例需求、模板或历史通过记录当成真实活动需求。未验证工具自动发现时明确写未验证。
 
+## 隔离子 agent 探针
+
+记录实际宿主及接口、子 agent ID、fresh-context 参数/语义证据、给入的明确文件列表、收回的结果及核对依据、探针时间。任务仅只读解析 intake 文件，不创建工作或批准。分别记录 spawn、isolated_context、collect_results 是否实际验证；未知不能填 true。失败就 blocked，不在父会话补跑以冒充成功。
+
+记录 `execution.mode=isolated-subagents`、`context_policy=fresh-minimal`、实际并发上限。默认 2 只是上限，不表示已经验证了业务并行执行或并行写安全。
+
+`ready` 仅代表包文件和这次只读子 agent 探针通过，不代表原生入口自动发现、真实阶段审批、功能验收或 CI Gate 已通过。
+
 ## 待确认与下一步
 
 列出工具权限、来源信任及其他未解决项。用户尚未明确姓名时 `owner` 保留 `null`，在首次审批前确认；不得从 Git 配置推断签署人。

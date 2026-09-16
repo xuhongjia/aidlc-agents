@@ -10,8 +10,13 @@ For AIDLC requirements, implementation, review, or continuation requests, explic
 
 1. `.aidlc/system/skills/aidlc/SKILL.md`
 2. `.aidlc/system/workflow/protocol.md`
+3. `.aidlc/system/workflow/orchestration.md`
 
-Load only the current stage and its required context, and read the current work record before continuing. Stop at required human approvals for the exact artifact revision presented. Do not infer approval or invent test and gate evidence.
+The parent conversation is orchestration-only: read the work record, validate dependencies, dispatch, collect results, and ask for human approval. For EVERY stage execution or rework, start a NEW child agent with fresh context using the current client's supported tools. Pass only the dispatch contract and required approved artifact references, not the parent conversation history. Do not execute stages inline or reuse a previous stage's child. A role name or skill invocation is not delegation.
 
-Preserve all applicable project rules and tool permissions. This rule does not grant additional authority or install background agents. If required files cannot be read or instructions conflict, report the issue before proceeding with the AIDLC workflow.
+Require the setup capability probe to demonstrate child creation, fresh context, and result collection. If any capability is unavailable or unverified, block stage execution and ask for a supported client; never fall back to inline execution. Follow orchestration.md for safe parallelism and result validation. The parent alone presents the exact artifact revision for human approval and records the user's actual decision. Children never approve or advance stages.
+
+If you are already the child named in a valid dispatch, execute only that bounded assignment and return its result; do not re-route yourself as the parent or recursively delegate the whole stage.
+
+Preserve all applicable project rules and tool permissions. This rule does not grant additional authority, install background services, or change global settings. If required files cannot be read or instructions conflict, report the issue before proceeding. Do not invent child execution, approval, test, or gate evidence.
 <!-- AIDLC-AGENTS:END -->

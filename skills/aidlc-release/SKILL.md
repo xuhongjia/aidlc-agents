@@ -1,12 +1,22 @@
 ---
 name: aidlc-release
-description: 在 AIDLC 当前 Release 阶段检查候选与证据，准备运行和回滚材料；不执行部署。
+description: 在 AIDLC release 阶段通过全新隔离子 Agent 检查候选及证据并准备发布与回滚材料，将结果返回父协调器。
 ---
 
-# Release 阶段
+# release 阶段
 
-先读 `.aidlc/system/workflow/protocol.md`、`.aidlc/system/workflow/stages.json` 和当前 work 状态，核对当前有效候选与验证批准。阶段不符时返回入口。
+## 主会话入口与子 Agent 执行
 
-执行 `.aidlc/system/prompts/common.md`、`.aidlc/system/agents/engineer.md`、`.aidlc/system/prompts/release.md`。按契约交付 `release-readiness.md` 和 handoff。
+- 在主会话调用本 Skill：只返回 `.aidlc/system/skills/aidlc/SKILL.md` 的派发流程，由父协调器创建新的隔离子 Agent；不得在当前上下文直接执行本阶段。
+- 在子 Agent 调用本 Skill：必须已有父协调器提供且有效的 dispatch 包，阶段须为 `release`。按 `.aidlc/system/workflow/orchestration.md` 核对输入/批准、方法版本和权限；无包、错阶段或漂移则返回 blocked，不自行创建派发或跳阶段。
+- 有效子 Agent 执行 `.aidlc/system/prompts/common.md`、`.aidlc/system/agents/engineer.md`、`.aidlc/system/prompts/release.md`。不再派发自己，不继承父聊天历史，不启动下一阶段。
 
-区分技术验证、UAT、发布授权与实际部署。未演练步骤标明局限，明确外部待办。只写草稿与证据，形成 review 后停止；发布就绪批准不授权推送、合并或部署。
+## 产物与返回
+
+若 dispatch 的 kind=leaf，只完成其局部任务和 expected_outputs，不生成整阶段产物；以下完整交付要求适用于 kind=stage。
+
+按阶段契约在本 run 授权的 artifacts 目录交付 release-readiness.md；证据写本 run 的 evidence。根据 `.aidlc/system/templates/work/stage-result.json` 写 `result.json`，状态仅 ready_for_review、blocked 或 failed，向父协调器返回路径与结论，然后停止。
+
+区分技术验证、UAT、发布授权与实际部署。只产出运行/回滚材料，不推送、合并、部署或改代码。
+
+除明确授权的 Implement 业务写入外，只能写 dispatch 分配的 run 输出。不得写 state、questions、approvals、drafts、reviews 或配置；review 晋升、状态维护和人类批准由父协调器处理。需要独立叶子任务时只向父协调器提出有边界的建议，不自行递归派发。

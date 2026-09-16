@@ -1,12 +1,22 @@
 ---
 name: aidlc-intake
-description: 在 AIDLC 当前 Intake 阶段澄清需求范围并建立项目画像，产出待人类审核的输入基线。
+description: 在 AIDLC intake 阶段通过全新隔离子 Agent 澄清需求范围并建立项目画像，将结果返回父协调器。
 ---
 
-# Intake 阶段
+# intake 阶段
 
-从业务仓库根读取 `.aidlc/system/workflow/protocol.md`、`.aidlc/system/workflow/stages.json` 和当前 work 状态；确认当前阶段是 Intake。未接入或阶段不符时返回 AIDLC 入口，不自行跳阶段。
+## 主会话入口与子 Agent 执行
 
-执行 `.aidlc/system/prompts/common.md`、`.aidlc/system/agents/ba.md` 与 `.aidlc/system/prompts/intake.md`。按 stages.json 和模板交付 `intake.md`、`project-context.md`，并依协议维护 handoff。
+- 在主会话调用本 Skill：只返回 `.aidlc/system/skills/aidlc/SKILL.md` 的派发流程，由父协调器创建新的隔离子 Agent；不得在当前上下文直接执行本阶段。
+- 在子 Agent 调用本 Skill：必须已有父协调器提供且有效的 dispatch 包，阶段须为 `intake`。按 `.aidlc/system/workflow/orchestration.md` 核对输入/批准、方法版本和权限；无包、错阶段或漂移则返回 blocked，不自行创建派发或跳阶段。
+- 有效子 Agent 执行 `.aidlc/system/prompts/common.md`、`.aidlc/system/agents/ba.md`、`.aidlc/system/prompts/intake.md`。不再派发自己，不继承父聊天历史，不启动下一阶段。
 
-重点区分原始需求、AI 假设、当前项目事实和待决范围。接入成功不等于范围批准；输出 review 后停止。只写当前阶段草稿与证据，不改业务文件。
+## 产物与返回
+
+若 dispatch 的 kind=leaf，只完成其局部任务和 expected_outputs，不生成整阶段产物；以下完整交付要求适用于 kind=stage。
+
+按阶段契约在本 run 授权的 artifacts 目录交付 intake.md、project-context.md；证据写本 run 的 evidence。根据 `.aidlc/system/templates/work/stage-result.json` 写 `result.json`，状态仅 ready_for_review、blocked 或 failed，向父协调器返回路径与结论，然后停止。
+
+区分原始需求、假设、项目事实和待决范围；接入成功不等于范围批准。
+
+除明确授权的 Implement 业务写入外，只能写 dispatch 分配的 run 输出。不得写 state、questions、approvals、drafts、reviews 或配置；review 晋升、状态维护和人类批准由父协调器处理。需要独立叶子任务时只向父协调器提出有边界的建议，不自行递归派发。

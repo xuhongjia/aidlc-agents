@@ -8,4 +8,4 @@
 4. 说明每个命令的运行范围、权限、超时、依赖和副作用；缺少工具或指标时提出补齐方案，不能用永远成功的检查占位。
 5. 无法自动验证的架构性质单列人工评审/实验及所需证据；不声称静态扫描证明了系统性能、安全或可恢复性。
 
-按模板交付 `architecture.md`、`architecture-fitness.json`。必要脚本仅放草稿并纳入审批附件；由 Implement 安装。需要 ADR 时读取 `.aidlc/system/skills/aidlc-adr/SKILL.md`。显示规则与影响后停止，等待人类批准。
+按模板交付 `architecture.md`、`architecture-fitness.json`。必要脚本仅放本 run artifacts 并作为待审批附件；由 Implement 安装。需要 ADR 时读取 `.aidlc/system/skills/aidlc-adr/SKILL.md`。独立组件/安全边界的只读分析可向父协调器提议并行，但本阶段统一决策及规则。按 common 返回 result，不创建 review，不自行批准。

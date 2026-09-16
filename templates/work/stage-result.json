@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "work_id": null,
+  "stage": null,
+  "run_id": null,
+  "kind": "stage",
+  "dispatch_digest": null,
+  "status": "blocked",
+  "summary": "尚未执行；不能当作阶段完成或人类批准。",
+  "artifacts": [],
+  "evidence": [],
+  "changed_files": [],
+  "checks": [],
+  "blockers": ["等待真实子 Agent 执行"],
+  "questions": [],
+  "parallel_requests": [],
+  "risks": [],
+  "next_recommendation": null
+}

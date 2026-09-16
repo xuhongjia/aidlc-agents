@@ -27,11 +27,68 @@ test('manifest describes an instruction-only payload and all declared entrypoint
   assert.equal(manifest.runtime, 'none');
   assert.equal(manifest.repository, 'https://github.com/xuhongjia/aidlc-agents');
   for (const name of [...manifest.payload_directories, ...manifest.payload_files,
-    manifest.bootstrap, manifest.entrypoint, manifest.protocol, manifest.stage_catalog]) {
+    manifest.bootstrap, manifest.update, manifest.entrypoint, manifest.protocol, manifest.orchestration, manifest.stage_catalog]) {
     assert.ok(!path.isAbsolute(name) && !name.split('/').includes('..'));
     assert.ok(existsSync(path.join(root, name)), `Missing payload: ${name}`);
   }
   assert.ok(!all.some(file => /\.(py|pyc|pyo|exe|sh|ps1)$/.test(file)), 'No executable installer/runtime');
+});
+
+test('formal stages form an approval-ordered DAG without concurrent stage shortcuts', () => {
+  const completed = new Set();
+  for (const [index, stage] of stages.entries()) {
+    assert.deepEqual(stage.requires_approved, index === 0 ? [] : [stages[index - 1].id]);
+    for (const dependency of stage.requires_approved) assert.ok(completed.has(dependency));
+    assert.equal(new Set(stage.parallel_lanes).size, stage.parallel_lanes.length);
+    assert.ok(stage.parallel_lanes.length > 0);
+    completed.add(stage.id);
+  }
+  assert.deepEqual(stages.find(s => s.id === 'verify').parallel_lanes, ['architecture-gate', 'quality-gate']);
+});
+
+test('execution contract requires fresh children and agrees with install configuration', () => {
+  const execution = json('workflow/stages.json').execution;
+  const config = json('templates/setup/config.json');
+  assert.equal(config.schema_version, 2);
+  assert.equal(execution.mode, 'isolated-subagents');
+  assert.equal(execution.context_policy, 'fresh-minimal');
+  assert.equal(execution.coordinator, 'parent');
+  assert.equal(execution.inline_fallback, false);
+  assert.equal(execution.new_agent_per_stage, true);
+  for (const key of ['mode', 'context_policy', 'max_parallel_workers']) {
+    assert.equal(execution[key], config.execution[key]);
+  }
+  assert.equal(execution.max_parallel_workers, 2);
+  assert.deepEqual(config.execution.capabilities, {spawn: null, isolated_context: null, collect_results: null});
+  assert.equal(config.execution.probe, null, 'Never preclaim host support');
+  for (const key of ['dispatch_template', 'result_template']) {
+    assert.ok(existsSync(path.join(root, execution[key])));
+  }
+});
+
+test('run and review templates preserve identity, constrained writes and non-approval returns', () => {
+  const dispatch = json('templates/work/dispatch.json');
+  const result = json('templates/work/stage-result.json');
+  const state = json('templates/work/state.json');
+  for (const key of ['work_id', 'stage', 'run_id']) {
+    assert.equal(dispatch[key], null);
+    assert.equal(result[key], null);
+  }
+  assert.equal(dispatch.kind, 'stage');
+  assert.equal(dispatch.context_policy, 'fresh-minimal');
+  for (const key of ['input_refs', 'read_scope', 'write_scope', 'expected_outputs', 'approved_commands']) {
+    assert.deepEqual(dispatch[key], [], `No implicit scope or authority: ${key}`);
+  }
+  assert.equal(dispatch.result_path, null);
+  assert.equal(result.dispatch_digest, null);
+  assert.equal(result.status, 'blocked');
+  assert.ok(result.blockers.length > 0);
+  for (const key of ['artifacts', 'evidence', 'checks', 'parallel_requests']) assert.deepEqual(result[key], []);
+  assert.ok(!Object.hasOwn(result, 'approval'));
+  assert.equal(state.execution_mode, 'isolated-subagents');
+  assert.deepEqual(state.active_runs, []);
+  assert.deepEqual(state.run_history, []);
+  assert.deepEqual(json('templates/work/review.json').execution, []);
 });
 
 test('stage catalog resolves roles, prompts, skills and every required template', () => {

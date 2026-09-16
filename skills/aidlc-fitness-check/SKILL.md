@@ -5,13 +5,15 @@ description: 执行 AIDLC 已批准的 Architecture 和 Quality Fitness，记录
 
 # Fitness 执行与证据
 
-先读取 `.aidlc/system/workflow/protocol.md`、当前 work 状态、`.aidlc/system/prompts/common.md`、批准候选和两类 Fitness。由协议区分开发自测与正式 Verify；此 Skill 不修改批准规则，也不推进或批准阶段。
+在主会话的正式 AIDLC 请求先交 `.aidlc/system/skills/aidlc/SKILL.md` 派发；有效 dispatch 子 Agent 读取 `.aidlc/system/prompts/common.md`、批准候选和本任务 Fitness。由协议区分 Implement 自测与正式 Verify；本 Skill 不修改批准规则，不推进/批准阶段，不递归派发。证据仅写父协调器分配的本 run 路径，结论汇入调用阶段 result，不写状态/审批/review。
 
 ## 执行前
 
 1. 核对规则来源、revision、真实 SHA-256 和候选文件摘要；查看每条命令、范围、运行目录、依赖、超时、阈值及副作用。缺少 hash 工具或必要权限时阻塞。
 2. 使用宿主工具实际执行项目已批准的检查入口。不能执行的命令标为 UNKNOWN，不用自行编写的“等价”检查替代批准规则。
 3. 未获授权不联网、安装工具、访问外部系统或改变文件权限；不把 shell 包装或环境变量隐藏在不透明命令中。
+
+只有同一冻结候选、独立证据/临时目录、无共享可写数据库/缓存/端口/环境状态时，才向父协调器建议将 Architecture 与 Quality Gate 拆成并行叶子任务。父协调器分配容量和唯一路径；本 Skill 不自行启动 Agent。存在资源冲突或无法证明隔离时串行运行。
 
 ## 结果判断
 

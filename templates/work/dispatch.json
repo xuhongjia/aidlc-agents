@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "work_id": null,
+  "stage": null,
+  "run_id": null,
+  "kind": "stage",
+  "parent_run_id": null,
+  "method_revision": null,
+  "context_policy": "fresh-minimal",
+  "task": null,
+  "role_path": null,
+  "stage_prompt_path": null,
+  "input_refs": [],
+  "read_scope": [],
+  "write_scope": [],
+  "expected_outputs": [],
+  "approved_commands": [],
+  "candidate": {"scope": [], "files": []},
+  "result_path": null,
+  "parallel_budget": 2
+}

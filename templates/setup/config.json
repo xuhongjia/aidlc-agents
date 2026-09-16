@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "package": "aidlc-agents",
   "package_version": null,
   "source": {
@@ -13,6 +13,17 @@
   "profile": "standard",
   "owner": null,
   "mode": "solo",
+  "execution": {
+    "mode": "isolated-subagents",
+    "context_policy": "fresh-minimal",
+    "max_parallel_workers": 2,
+    "capabilities": {
+      "spawn": null,
+      "isolated_context": null,
+      "collect_results": null
+    },
+    "probe": null
+  },
   "installed_at": null,
   "managed_files": []
 }

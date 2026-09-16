@@ -5,7 +5,7 @@ description: 为 AIDLC 需求细化可检验的验收标准与 Spec 草案，维
 
 # 可检验 Spec
 
-这是复用能力，不推进阶段。已接入项目先读 `.aidlc/system/workflow/protocol.md`、当前状态、`.aidlc/system/prompts/common.md`，只在调用阶段允许的位置产出草稿。
+这是阶段子 Agent 可按需复用的能力，不推进阶段。在主会话的正式 AIDLC 请求先交 `.aidlc/system/skills/aidlc/SKILL.md` 派发，不能用本 Skill 绕过隔离。持有效 dispatch 的子 Agent 按 `.aidlc/system/prompts/common.md` 执行，只写该 run 授权的 artifacts/evidence；结果由调用阶段汇入 result 返回父协调器，不递归派发或写状态/审批/review。
 
 1. 读取原始需求、批准 Intake、项目上下文和已有 AC。区分必须实现的行为、设计建议、约束和未知。
 2. 为每个行为给出稳定 AC ID、参与者/前置条件、动作/输入、可观察结果、验证方式。异常、边界、权限和兼容性只按适用业务规则展开。

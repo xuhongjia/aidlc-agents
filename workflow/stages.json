@@ -1,16 +1,25 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "profile": "standard",
-  "execution": "host-ai-tool",
+  "execution": {
+    "mode": "isolated-subagents",
+    "context_policy": "fresh-minimal",
+    "coordinator": "parent",
+    "inline_fallback": false,
+    "new_agent_per_stage": true,
+    "max_parallel_workers": 2,
+    "dispatch_template": "templates/work/dispatch.json",
+    "result_template": "templates/work/stage-result.json"
+  },
   "stages": [
-    {"id":"intake","role":"BA / PO","agent":"ba","prompt":"prompts/intake.md","outputs":["intake.md","project-context.md"],"approval":"需求人 / PO","product_write":false},
-    {"id":"spec","role":"BA / PO","agent":"po","prompt":"prompts/spec.md","outputs":["spec.md","acceptance.json"],"approval":"PO","product_write":false},
-    {"id":"architecture","role":"Architect","agent":"architect","prompt":"prompts/architecture.md","outputs":["architecture.md","architecture-fitness.json"],"approval":"架构责任人","product_write":false},
-    {"id":"quality","role":"QE","agent":"qe","prompt":"prompts/quality.md","outputs":["quality-design.md","quality-fitness.json","coverage.json"],"approval":"质量责任人","product_write":false},
-    {"id":"plan","role":"PM / DEV / QE","agent":"pm","prompt":"prompts/plan.md","outputs":["plan.md"],"approval":"交付责任人","product_write":false},
-    {"id":"implement","role":"DEV","agent":"engineer","prompt":"prompts/implement.md","outputs":["implementation.md"],"approval":"代码审查人","product_write":true},
-    {"id":"verify","role":"QE / Architect","agent":"qe","prompt":"prompts/verify.md","outputs":["verification.md","acceptance-results.json"],"approval":"质量 / 架构责任人","product_write":false},
-    {"id":"release","role":"Service Owner / DEV / QE","agent":"engineer","prompt":"prompts/release.md","outputs":["release-readiness.md"],"approval":"服务责任人","product_write":false},
-    {"id":"learn","role":"PO / PM / Service Owner","agent":"po","prompt":"prompts/learn.md","outputs":["outcome.md","outcome.json"],"approval":"PO / 服务责任人","product_write":false}
+    {"id":"intake","requires_approved":[],"role":"BA / PO","agent":"ba","prompt":"prompts/intake.md","outputs":["intake.md","project-context.md"],"approval":"需求人 / PO","product_write":false,"parallel_lanes":["business-context","repository-context"]},
+    {"id":"spec","requires_approved":["intake"],"role":"BA / PO","agent":"po","prompt":"prompts/spec.md","outputs":["spec.md","acceptance.json"],"approval":"PO","product_write":false,"parallel_lanes":["ac-review","nfr-review"]},
+    {"id":"architecture","requires_approved":["spec"],"role":"Architect","agent":"architect","prompt":"prompts/architecture.md","outputs":["architecture.md","architecture-fitness.json"],"approval":"架构责任人","product_write":false,"parallel_lanes":["dependency-review","security-performance-review"]},
+    {"id":"quality","requires_approved":["architecture"],"role":"QE","agent":"qe","prompt":"prompts/quality.md","outputs":["quality-design.md","quality-fitness.json","coverage.json"],"approval":"质量责任人","product_write":false,"parallel_lanes":["functional-design","nonfunctional-design"]},
+    {"id":"plan","requires_approved":["quality"],"role":"PM / DEV / QE","agent":"pm","prompt":"prompts/plan.md","outputs":["plan.md"],"approval":"交付责任人","product_write":false,"parallel_lanes":["implementation-estimate","verification-estimate"]},
+    {"id":"implement","requires_approved":["plan"],"role":"DEV","agent":"engineer","prompt":"prompts/implement.md","outputs":["implementation.md"],"approval":"代码审查人","product_write":true,"parallel_lanes":["approved-independent-tasks"]},
+    {"id":"verify","requires_approved":["implement"],"role":"QE / Architect","agent":"qe","prompt":"prompts/verify.md","outputs":["verification.md","acceptance-results.json"],"approval":"质量 / 架构责任人","product_write":false,"parallel_lanes":["architecture-gate","quality-gate"]},
+    {"id":"release","requires_approved":["verify"],"role":"Service Owner / DEV / QE","agent":"engineer","prompt":"prompts/release.md","outputs":["release-readiness.md"],"approval":"服务责任人","product_write":false,"parallel_lanes":["rollback-review","observability-review"]},
+    {"id":"learn","requires_approved":["release"],"role":"PO / PM / Service Owner","agent":"po","prompt":"prompts/learn.md","outputs":["outcome.md","outcome.json"],"approval":"PO / 服务责任人","product_write":false,"parallel_lanes":["business-observation","delivery-retrospective"]}
   ]
 }

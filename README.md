@@ -2,19 +2,19 @@
 
 **把需求交给你正在使用的 AI 工具，按阶段交付，由你批准后再继续。**
 
-AI-native、Spec-driven、Human-approved 的 AI-assisted delivery 工作包。提供角色、Skills、阶段 Prompt、产物模板和工作协议，直接配置到你的本地仓库。**没有 Python 安装器，也不要求安装另一套 Agent CLI、服务或运行框架。**
+AI-native、Spec-driven、Human-approved 的 AI-assisted delivery 工作包。每个阶段在独立子 Agent 的新上下文中执行，主 Agent 收回结果、给你审查并等待批准。提供角色、Skills、阶段 Prompt、产物模板和工作协议，直接配置到你的本地仓库。**没有 Python 安装器，也不要求安装另一套 Agent CLI、服务或运行框架。**
 
-仓库：[xuhongjia/aidlc-agents](https://github.com/xuhongjia/aidlc-agents) · 当前包版本：`0.2.0`
+仓库：[xuhongjia/aidlc-agents](https://github.com/xuhongjia/aidlc-agents) · 当前包版本：`0.3.0`
 
 ## 一句话接入
 
-在 Codex、Claude Code、Cursor 或具有本地文件操作能力的其他 AI 工具中，**打开你的业务仓库**，发送：
+在具备本地文件和独立子 Agent 能力的 AI 工具中，**打开你的业务仓库**，发送：
 
 ```text
 请读取 https://raw.githubusercontent.com/xuhongjia/aidlc-agents/main/bootstrap/setup.md，按其中说明把 aidlc-agents 配置到当前仓库；保留已有规则和业务代码，完成接入自检后停止。
 ```
 
-AI 会取得一个确定版本，检查冲突，将方法包配置到项目 `.aidlc/`，为当前工具添加一个简短入口，再报告实际自检结果。你不需要运行 setup 命令，也不需要自己拼装六个角色。
+AI 会取得一个确定版本，检查冲突，将方法包配置到项目 `.aidlc/`，为当前工具添加一个简短入口，执行只读子 Agent 的启动/返回探针，再报告实际自检结果。你不需要运行 setup 命令，也不需要自己拼装六个角色。
 
 如果网络不可用，可以先取得这个仓库的本地副本，再说：
 
@@ -24,7 +24,52 @@ AI 会取得一个确定版本，检查冲突，将方法包配置到项目 `.ai
 
 正式团队使用建议固定已审核的 commit/tag；setup 会记录实际来源版本，不让每次运行偷偷跟随 main。源文件还未 push 到 GitHub 或访问受限时，在线提示词不会凭空生效，请使用明确的本地副本。
 
-> 前提是 AI 能读取来源、读写当前项目并计算文件摘要。只有网页聊天、没有本地文件能力时，不能自动 setup；模型是否能访问代码及相关数据也须符合你的项目政策。完整规则见 [setup 协议](bootstrap/setup.md)。
+> 前提是 AI 能读取来源、读写当前项目、计算文件摘要，并实际支持新上下文子 Agent 与结果回收。不支持时明确 blocked，不在主聊天模拟角色继续执行。模型是否能访问代码及相关数据也须符合你的项目政策。完整规则见 [setup 协议](bootstrap/setup.md)。
+
+## 已安装过：一句话更新
+
+在**已安装 aidlc-agents 的业务仓库**中发送：
+
+```text
+请读取 https://raw.githubusercontent.com/xuhongjia/aidlc-agents/main/bootstrap/update.md，检查当前仓库已安装的 aidlc-agents 并准备更新；保留项目规则、需求、审批和证据，先展示版本差异、冲突及活动工作，等我确认后应用，完成子 Agent 能力自检后停止。
+```
+
+更新不是重新安装覆盖：固定目标 commit，对比旧版记录 / 当前文件 / 新版文件，展示差异，经确认后备份与切换。原有项目规则、owner 等配置和 `.aidlc/work/` 不重置。同一 commit 且无漂移时只报告已是该版本。
+
+**有未结束需求或运行中的子 Agent 时，本版默认延后应用更新**，旧版继续可用。不会给进行中的需求偷偷换方法、迁移审批或重新计算旧签署。等旧流程完成后再更新；新需求采用新版本。0.2 → 0.3 是执行方式变化，需要真实验证宿主子 Agent 能力；之前的文件接入成功不能直接继承为新能力已验证。
+
+发布前或无法联网时，可把上面 URL 换为你明确选择的本地副本 `bootstrap/update.md` 路径，并声明以本地副本为来源。它会标记为 `local-unreleased`，不冒充 GitHub 发布版。恢复与回退规则见 [update 指引](bootstrap/update.md)。
+
+## 主 Agent 和子 Agent 怎么协作
+
+```text
+你 ↔ 主 Agent：需求、澄清、进度、审查、批准
+          │ 仅传任务信封 + 最小必要文件引用
+          ▼
+     新建阶段子 Agent（独立上下文）
+          │ 执行、产物、证据、结构化结果
+          ▼
+     主 Agent 验真 → 给你审查 → 等批准
+          │ 批准并继续
+          ▼
+     新建下一阶段子 Agent（不复用上一阶段）
+```
+
+主聊天不执行阶段分析、写业务代码或承担完整测试过程。详细调查与中间日志留在子 Agent / 文件中，返回摘要、产物位置、真实检查结果、风险和问题。主 Agent 保留审批状态，并按需读取原文件校验，避免只相信子 Agent 的“完成”。
+
+一个阶段一个新 child；返工另建 run；子 Agent 不写中央 state、review 或 approval，不批准自己，不自行进入下一阶段。相同阶段内必要的补充可以回送原 child；完整聊天历史不传下去。具体契约见 [子 Agent 调度](workflow/orchestration.md)。
+
+### 可以并行什么
+
+| 并行点 | 条件 |
+|---|---|
+| Intake 的业务信息 / 仓库调查 | 独立只读来源，结果汇总后再审查 |
+| Architecture / Quality 各自阶段内的专项分析 | 同一已批准输入；不是两个正式阶段同时提前跑 |
+| Implement 的独立任务 | 已批准 Plan DAG、依赖已完成、独占文件和资源；最后集成验证 |
+| Verify 的 Architecture Gate / Quality Gate | 同一冻结候选及规则、分开的输出与测试资源，全部收齐才形成结论 |
+| Release 的回滚 / 观测准备评审 | 只做准备，不获得部署权限 |
+
+默认最多 **2 个 live 子 Agent**，服从更低的宿主限制；小任务不强拆。冲突或资源不能隔离时串行子 Agent。九个正式阶段仍按依赖和人工审批顺序推进，不把“可并行”当成跳过 approval。完整逐阶段表见调度协议。
 
 ## 配好以后怎么用
 
@@ -88,7 +133,7 @@ Intake → Spec → Architecture → Quality → Plan → Implement → Verify �
 | Release | Service Owner / DEV / QE | 发布、回滚、观测准备；不自动部署 |
 | Learn | PO / PM / Service Owner | 实际观察、业务接受/拒绝、改进项 |
 
-一人团队可以由同一人戴不同角色帽子，不需要六个账号。Agent 也不一定是六个进程：可以由同一 AI 工具按阶段切换职责，或使用宿主已有的子 Agent 能力。**角色不同不等于独立人类审核或职责分离已经成立。**
+一人团队可以由同一人戴不同角色帽子，不需要六个账号。角色是专业视角，执行单位则是每阶段新建的宿主子 Agent，不需要六个常驻进程。**独立子 Agent 不等于独立人类审核、文件系统隔离或职责分离已经成立。**
 
 PM 负责节奏和依赖，不代替 PO 的业务决定、Architect 的约束、QE 的测试预期。大需求先拆成可独立审查的小切片。当前没有自动跳阶段/轻量 profile；可以减少文档深度、核对并复用既有规则，但不能用空规则制造通过。
 
@@ -112,7 +157,7 @@ Spec 是否忠实表达需求、测试是否相关、Oracle 是否正确、人�
 | 层 | 谁做 | 放行依据 |
 |---|---|---|
 | 定义规则 | Architect / QE Agent 提案，人类批准 | Spec/ADR/AC、规则范围、命令、阈值、失败策略 |
-| 本地验证 | 当前 AI 工具执行批准的项目检查 | 实际命令、退出码、原始报告、候选和规则版本 |
+| 本地验证 | 独立子 Agent 执行批准的项目检查，主 Agent 收回核验 | 实际命令、退出码、原始报告、候选和规则版本 |
 | CI 硬门禁 | GitHub Actions / GitLab CI 等执行 | 受保护检查、真实报告、平台权限与审批 |
 
 模型说“PASS”不是 Gate。缺工具、没运行、零测试、全部跳过、空扫描范围、超时或证据过期都不能放行。DEV 不能修改预期或降低阈值来让代码变绿。
@@ -129,7 +174,7 @@ Spec 是否忠实表达需求、测试是否相关、Oracle 是否正确、人�
 | GitHub Copilot | `.github/copilot-instructions.md` | 依客户端指令支持与本地工具权限 |
 | 其他本地 AI 工具 | 显式读取 router + protocol | 不假设其支持原生 Skill 自动发现 |
 
-仅配置当前使用的工具，不一次写入所有工具的配置。已有规则以受控小块追加，不覆盖全文。自动发现是否生效要实际观察，不能因文件存在就报告成功。工具限制与官方资料见 [支持矩阵](docs/tool-support.md)。
+仅配置当前使用的工具，不一次写入所有工具的配置。已有规则以受控小块追加，不覆盖全文。表中入口文件存在不证明能跑子 Agent；必须验证当前客户端的 spawn、独立上下文与结果返回能力。不支持时停止并选择支持的客户端，不退回主上下文代跑。自动发现是否生效另行观察。工具限制与官方资料见 [支持矩阵](docs/tool-support.md)。
 
 ## 配置到业务仓库后的结构
 
@@ -139,12 +184,14 @@ your-project/
 └── .aidlc/
     ├── config.json                     # 来源版本、工具、受管文件摘要
     ├── setup-report.md                 # 实际自检及未验证范围
+    ├── updates/                       # 更新计划、精确备份、恢复记录
     ├── system/                        # 固定版本的方法包
     └── work/REQ-001/
         ├── request.md
         ├── questions.md
         ├── state.json
         ├── drafts/
+        ├── runs/                      # dispatch / result / 独占产物与证据
         ├── reviews/                   # 各阶段不可静默覆盖的版本副本
         ├── approvals/                 # 实际人类决定及对应版本
         └── evidence/                  # 执行和观察记录
@@ -155,11 +202,11 @@ your-project/
 ## 本仓库结构与扩展方式
 
 ```text
-bootstrap/      AI 执行的一次性项目接入说明
+bootstrap/      AI 执行的 setup 与 update 指引
 agents/         BA、PO、PM、Engineer、QE、Architect 职责
 skills/         一个 router、九阶段、四个可复用能力
 prompts/        共同规则、阶段任务、一次性任务
-workflow/       状态/审批/返工协议与阶段目录
+workflow/       状态/审批/返工、子 Agent 调度与阶段依赖
 templates/      setup、工作记录与阶段产物模板
 adapters/       各工具的最小项目入口
 docs/           Gate、工具支持、安全、验证说明
@@ -168,7 +215,7 @@ tests/          仅维护者用的包一致性测试，不参与 setup
 
 共享规则只在共同协议维护；项目差异进入 Intake 的项目画像与批准产物，不复制一套隐含流程。具体阶段只读相关 Prompt 和必要输入，避免每次把整库塞进上下文。角色文件不会自行执行任何命令。
 
-重复 setup 同一版本应无重复 marker、无状态重置。升级需用户明确要求，先显示差异并核对本地修改；活动需求不能静默切换方法版本。详见 [setup 的重跑与升级](bootstrap/setup.md#5-重跑升级和恢复)。
+重复 setup 同一来源版本应无重复 marker、无状态重置。升级需用户明确要求，先显示差异并核对本地修改；活动需求不切换方法版本。详见 [update 的备份、应用和恢复](bootstrap/update.md)。
 
 ## 状态与边界
 
