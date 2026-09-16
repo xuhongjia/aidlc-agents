@@ -15,7 +15,7 @@ description: 在 AIDLC verify 阶段通过全新隔离子 Agent 在冻结候选�
 
 若 dispatch 的 kind=leaf，只完成其局部任务和 expected_outputs，不生成整阶段产物；以下完整交付要求适用于 kind=stage。
 
-按阶段契约在本 run 授权的 artifacts 目录交付 verification.md、acceptance-results.json；证据写本 run 的 evidence。根据 `.aidlc/system/templates/work/stage-result.json` 写 `result.json`，状态仅 ready_for_review、blocked 或 failed，向父协调器返回路径与结论，然后停止。
+按 profile 输出：standard 为 verification.md 与 acceptance-results.json；enhance/fix 仅为 compact verification.md，逐 AC/检查结果在正文表格中记录。不得给短流程追加 AC JSON 或 Release/Learn。证据写本 run evidence；按 result 模板返回 profile、真实摘要和状态，交父协调器等人批准。
 
 业务文件和批准规则只读；失败或未知要报告，不边验边改。两类 Gate 仅在冻结候选、隔离输出与无共享可写资源时向父协调器建议并行。
 

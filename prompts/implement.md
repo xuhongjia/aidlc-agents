@@ -1,11 +1,15 @@
 # Implement · 按批准计划交付候选
 
-先执行 `.aidlc/system/prompts/common.md`。确认当前 work 已得到所需上游批准且无漂移；阅读批准计划、AC、Oracle、Fitness 和相关源码。
+先执行 `.aidlc/system/prompts/common.md`。按 profile 校验前置批准与实施授权基线：standard 的 Plan/Spec/Oracle/Fitness；enhance 的 scope change.md；fix 的 diagnose change.md 及复现/根因证据。不能要求短流程补造 Plan，也不能省掉对应 change 的人审。
 
-1. 检查未提交修改与任务边界；保留用户工作。只修改批准 Plan 且 dispatch 明确授权的业务文件/模块。需要扩大所有权时返回父协调器，不自行认领其它 worker 的文件。
+1. 检查未提交修改与任务边界；保留用户工作。只修改当前路线批准的实施范围且 dispatch 明确授权的文件。需要扩大范围或出现高风险时停止，按 profiles.md 回退/升级，不自行认领其它 worker 的文件。
 2. 按批准 Oracle 实现并测试。选择与风险相称的最小完整实现，不把未请求重构混入需求。
 3. 安装批准的检查/测试附件时核对来源和内容。不能通过更改 AC、Oracle、阈值或删除失败检查来让候选通过。
 4. 运行可用的局部自测，保留真实命令、环境和结果；区分已有失败、本次回归和未执行。需要越权/联网/外部系统时先按宿主机制确认。
 5. 如发现规格缺陷或范围改变，提出回退到对应阶段；不要改完代码再要求上游补签。
 
-交付 `implementation.md`：变更摘要、AC 与文件/测试对照、验证结果、限制、依赖/数据变化和候选标识。按协议真实计算候选摘要；产物写本 run artifacts，按 common 返回 result，由父协调器校验并创建 review，交人类审核后冻结候选。按批准 Plan 可向父协调器请求独立模块叶子任务；明确每个文件唯一写者，自己不得同时编辑分配出去的模块。共享锁文件/接口变更与最终集成测试串行执行。自测通过不等于正式 Quality Gate、部署或业务验收。
+fix 先使批准回归用例在未修复候选失败（可在隔离旧候选/有效历史证据中证明，不回滚用户树），再实施最小修复并证明同一 Oracle 通过，另跑邻近回归。缺复现/根因或无法证明前后差异则 blocked，不能改验收预期让测试变绿。
+
+enhance/fix **只交付 compact verification.md**，合并变更摘要、自测、候选、未完成 QE 项和回滚提示；不另写 implementation.md、AC JSON 或 Release 报告。自测与 QE 正式验证分清，QE 尚未跑应写 NOT_RUN。kind=leaf 仍只交付分配输出。完成后按 common 返回结果，停在候选审批。
+
+standard 交付 `implementation.md`：本次变更、AC/文件/测试对照、真实自测、限制与候选。按协议计算摘要，父协调器验真后呈交候选审批。所有路线按批准范围可请求独立叶子任务，明确唯一写者；共享文件、接口、资源及最终集成检查串行。自测通过不等于 QE 验证、部署或业务验收。

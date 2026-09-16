@@ -4,4 +4,4 @@
 
 缺失业务规则先询问，不以实现返回值作为唯一 Oracle。不添加无断言或总为真的测试。未执行仅称测试设计/源码草案。
 
-若已接入 AIDLC，先读取 `.aidlc/system/workflow/protocol.md` 与当前状态：非 Implement 仅在当前草稿位置提出测试附件，不能写入项目测试目录；Implement 也须在批准 Plan 范围内。此 Prompt 本身不产生批准。
+若已接入 AIDLC，先读取 `.aidlc/system/workflow/protocol.md` 与当前状态：非 Implement 仅在本 run 的 artifacts 中提出测试附件，不能写入项目测试目录；Implement 也须在本 profile 的批准实施范围内。此 Prompt 本身不产生批准。

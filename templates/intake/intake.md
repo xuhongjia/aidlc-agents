@@ -20,4 +20,4 @@ AIDLC_DRAFT — 基于真实需求填写并替换本标志；AI 建议不能代�
 
 ## 澄清与审核焦点
 
-引用 `questions.md`。列出当前阻断项和需要用户明确批准的范围；未答复的关键问题使 handoff 保持 `blocked`。
+有问题时引用 `questions.md`；无问题不为占位创建文件。列出实际阻断项和待批准范围，关键问题未答复则 result 保持 blocked。

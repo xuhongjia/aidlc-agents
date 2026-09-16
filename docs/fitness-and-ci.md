@@ -4,7 +4,7 @@
 
 ## 规则契约
 
-Architect / QE 阶段交付各自的 fitness JSON 及可读说明。推荐每个 check 记录：
+standard 的 Architect / QE 阶段交付 fitness JSON 与说明；enhance/fix 直接在 change.md 引用已批准的项目规则与补充检查，不重复生成 Pack。两种形式都应能确定每个 check 的以下信息：
 
 | 字段 | 含义 |
 |---|---|
@@ -20,7 +20,7 @@ Architect / QE 阶段交付各自的 fitness JSON 及可读说明。推荐每个
 
 ## 本地过程
 
-1. 人审 Spec 和两份规则，明确允许执行的命令；不把网络安装、删除、部署隐藏进测试命令。
+1. 人审当前路线的验收与检查基线（standard 的 Spec/Pack，或短流程的 change.md），明确允许的命令；不把网络安装、删除、部署隐藏进测试命令。短流程可合并文档，不能取消现有必需 Gate。
 2. 实施完成后固定候选文件集合和摘要，独立核对测试 Oracle 与已批准设计。
 3. Verify 子 Agent 用宿主工具执行批准命令，保存 stdout/stderr、退出码、报告、测试数量、跳过项和时间；主 Agent 只调度与收回核验。命令未运行就标 NOT_RUN/UNKNOWN。
 4. 比较运行前后候选；变化则结果失效。逐项 AC 核对真实证据，不能仅看总体进程 exit 0。

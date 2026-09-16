@@ -9,7 +9,9 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const read = relative => readFileSync(path.join(root, relative), 'utf8');
 const json = relative => JSON.parse(read(relative));
 const manifest = json('manifest.json');
-const stages = json('workflow/stages.json').stages;
+const catalog = json('workflow/stages.json');
+const stages = catalog.stages;
+const profiles = catalog.profiles;
 const ids = ['intake', 'spec', 'architecture', 'quality', 'plan', 'implement', 'verify', 'release', 'learn'];
 function files(directory = root) {
   return readdirSync(directory, { withFileTypes: true })
@@ -34,14 +36,23 @@ test('manifest describes an instruction-only payload and all declared entrypoint
   assert.ok(!all.some(file => /\.(py|pyc|pyo|exe|sh|ps1)$/.test(file)), 'No executable installer/runtime');
 });
 
-test('formal stages form an approval-ordered DAG without concurrent stage shortcuts', () => {
-  const completed = new Set();
-  for (const [index, stage] of stages.entries()) {
-    assert.deepEqual(stage.requires_approved, index === 0 ? [] : [stages[index - 1].id]);
-    for (const dependency of stage.requires_approved) assert.ok(completed.has(dependency));
+test('each profile has its own ordered approval chain and implementation authority', () => {
+  assert.equal(catalog.schema_version, 3);
+  assert.equal(catalog.default_profile, 'auto');
+  assert.deepEqual(Object.keys(profiles).sort(), ['enhance', 'fix', 'standard']);
+  assert.deepEqual(profiles.standard.stages, ids);
+  assert.deepEqual(profiles.enhance.stages, ['scope', 'implement', 'verify']);
+  assert.deepEqual(profiles.fix.stages, ['diagnose', 'implement', 'verify']);
+  for (const profile of Object.values(profiles)) {
+    assert.equal(new Set(profile.stages).size, profile.stages.length, 'No cycles or duplicate stages');
+    assert.ok(profile.stages.every(id => stages.some(stage => stage.id === id)));
+    assert.equal(profile.stages.at(-1), profile.terminal_stage);
+    assert.equal(profile.stages[profile.stages.indexOf('implement') - 1], profile.implementation_authority);
+  }
+  for (const stage of stages) {
+    assert.ok(!Object.hasOwn(stage, 'requires_approved'), 'No global dependency contradicting short profiles');
     assert.equal(new Set(stage.parallel_lanes).size, stage.parallel_lanes.length);
     assert.ok(stage.parallel_lanes.length > 0);
-    completed.add(stage.id);
   }
   assert.deepEqual(stages.find(s => s.id === 'verify').parallel_lanes, ['architecture-gate', 'quality-gate']);
 });
@@ -50,6 +61,7 @@ test('execution contract requires fresh children and agrees with install configu
   const execution = json('workflow/stages.json').execution;
   const config = json('templates/setup/config.json');
   assert.equal(config.schema_version, 2);
+  assert.equal(config.profile, 'auto');
   assert.equal(execution.mode, 'isolated-subagents');
   assert.equal(execution.context_policy, 'fresh-minimal');
   assert.equal(execution.coordinator, 'parent');
@@ -70,7 +82,7 @@ test('run and review templates preserve identity, constrained writes and non-app
   const dispatch = json('templates/work/dispatch.json');
   const result = json('templates/work/stage-result.json');
   const state = json('templates/work/state.json');
-  for (const key of ['work_id', 'stage', 'run_id']) {
+  for (const key of ['work_id', 'profile', 'stage', 'run_id']) {
     assert.equal(dispatch[key], null);
     assert.equal(result[key], null);
   }
@@ -86,29 +98,53 @@ test('run and review templates preserve identity, constrained writes and non-app
   for (const key of ['artifacts', 'evidence', 'checks', 'parallel_requests']) assert.deepEqual(result[key], []);
   assert.ok(!Object.hasOwn(result, 'approval'));
   assert.equal(state.execution_mode, 'isolated-subagents');
+  assert.equal(state.profile, null, 'No fabricated route assessment');
+  assert.deepEqual(state.route_history, []);
+  assert.equal(json('templates/work/review.json').profile, null);
+  assert.equal(json('templates/work/approval.json').profile, null);
   assert.deepEqual(state.active_runs, []);
   assert.deepEqual(state.run_history, []);
   assert.deepEqual(json('templates/work/review.json').execution, []);
 });
 
 test('stage catalog resolves roles, prompts, skills and every required template', () => {
-  assert.deepEqual(stages.map(stage => stage.id), ids);
+  assert.deepEqual(stages.map(stage => stage.id), [...ids, 'scope', 'diagnose']);
   assert.deepEqual(stages.filter(stage => stage.product_write).map(stage => stage.id), ['implement']);
   for (const stage of stages) {
     assert.ok(existsSync(path.join(root, `agents/${stage.agent}.md`)));
     assert.ok(existsSync(path.join(root, stage.prompt)));
-    assert.ok(existsSync(path.join(root, `skills/aidlc-${stage.id}/SKILL.md`)));
+    assert.ok(existsSync(path.join(root, stage.skill ?? `skills/aidlc-${stage.id}/SKILL.md`)));
     assert.ok(stage.outputs.length > 0);
     for (const output of stage.outputs) {
       assert.equal(path.basename(output), output);
-      assert.ok(existsSync(path.join(root, `templates/${stage.id}/${output}`)), `Missing ${stage.id}/${output}`);
+      assert.ok(existsSync(path.join(root, stage.template_directory ?? `templates/${stage.id}`, output)), `Missing ${stage.id}/${output}`);
     }
   }
 });
 
+test('compact profiles resolve to two human document types with no mandatory legacy packs', () => {
+  for (const name of ['enhance', 'fix']) {
+    const profile = profiles[name];
+    const outputs = profile.stages.flatMap(id => {
+      const stage = stages.find(s => s.id === id);
+      return profile.output_overrides[id] ?? stage.outputs.map(name => ({name, template: `${stage.template_directory ?? `templates/${id}`}/${name}`}));
+    });
+    assert.deepEqual([...new Set(outputs.map(o => o.name))].sort(), ['change.md', 'verification.md']);
+    assert.equal(outputs.length, 3, 'Only one human-facing output per stage');
+    for (const output of outputs) {
+      assert.equal(path.basename(output.name), output.name);
+      assert.ok(existsSync(path.join(root, output.template)));
+      assert.ok(!path.isAbsolute(output.template) && !output.template.split('/').includes('..'));
+    }
+    assert.equal(profile.terminal_stage, 'verify');
+    assert.equal(profile.artifact_mode, 'compact');
+  }
+  assert.deepEqual(profiles.standard.output_overrides, {}, 'Preserve full-flow artifact compatibility');
+});
+
 test('all JSON artifacts parse, templates start without fabricated approvals or PASS results', () => {
   for (const file of all.filter(file => file.endsWith('.json'))) JSON.parse(readFileSync(file, 'utf8'));
-  assert.equal(json('templates/work/state.json').current_stage, 'intake');
+  assert.equal(json('templates/work/state.json').current_stage, null, 'First stage must be resolved from selected profile');
   assert.equal(json('templates/work/state.json').status, 'ready');
   assert.equal(json('templates/work/approval.json').decision, null);
   assert.equal(json('templates/work/approval.json').review_digest, null);
@@ -122,9 +158,9 @@ test('all JSON artifacts parse, templates start without fabricated approvals or 
   assert.equal(Object.hasOwn(json('templates/work/review.json'), 'digest'), false, 'No self-referential manifest hash');
 });
 
-test('fourteen unique skills have valid discovery metadata', () => {
+test('sixteen unique skills have valid discovery metadata', () => {
   const skillFiles = all.filter(file => path.basename(file) === 'SKILL.md');
-  assert.equal(skillFiles.length, 14);
+  assert.equal(skillFiles.length, 16);
   const names = new Set();
   for (const file of skillFiles) {
     const text = readFileSync(file, 'utf8');

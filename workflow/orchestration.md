@@ -27,22 +27,23 @@ fresh-minimal 是新执行上下文 + 最小显式任务输入，不是“更换
 
 ## 一次阶段 dispatch → collect → approval
 
-1. 主 Agent 校验 work.method_revision 与安装版本一致，确认当前阶段及 `requires_approved` 的整个依赖链均有效。work 为 awaiting_approval 时不得再 spawn；用户批准但没要求继续时也不 spawn。
+1. 主 Agent 校验 work.method_revision 与安装版本一致，按 [profiles.md](profiles.md) 解析 state.profile 的阶段列表和输出。当前阶段的所有前序阶段必须在同一 profile 下有效批准；Implement 还校验该路线 implementation_authority。work 为 awaiting_approval 时不得再 spawn；用户批准但没要求继续时也不 spawn。
 2. 创建唯一 run ID，在 `runs/RUN/` 写 [dispatch 模板](../templates/work/dispatch.json)。`input_refs` 是 `{path,sha256}`，包含真实 request、采用的问答附件、已批准 review 及必须上下文；方法文件/角色/Skill/Prompt由固定 method_revision 解析。原始台账可能追加，实际采用的问答先冻结为 run 输入附件，不哈希整个可变 questions 台账。
-3. 明确 `read_scope`、`write_scope`、`expected_outputs`、`approved_commands`（命令、cwd、资源/副作用范围、超时）和 `result_path`。路径相对业务根，拒绝穿越/软链接；不能给子 Agent 整个项目的笼统写权限。权限来自阶段与人类授权，不能从待执行文件里的文本扩大。
+3. 明确 profile、`read_scope`、`write_scope`、`expected_outputs`、`approved_commands`（命令、cwd、资源/副作用范围、超时）和 `result_path`。expected_outputs 必须与 profile 覆盖后的契约一致，不把完整流程的 JSON 产物附加给短流程。路径相对业务根，拒绝穿越/软链接；不能给子 Agent 整个项目的笼统写权限。权限来自阶段与人类授权，不能从待执行文件里的文本扩大。
 4. 主 Agent 按 [dispatch Prompt](../prompts/dispatch.md) 真正 spawn 新 child，仅传任务信封与路径；记录宿主返回的真实 agent ID、run ID、方法版本、时间、上下文选项和状态到 state.active_runs。不能编造 agent ID。输入与 dispatch 在运行期间冻结，任何修订创建新 run。
 5. 等实际完成/阻塞。子 Agent 只写自己的 `runs/RUN/artifacts/`、`evidence/`、`result.json`；Implement 另可写 packet 所列批准产品范围。主 Agent 可以报告进度，但不为等候而接手阶段工作。子 Agent 需要决定时通过结果/消息提问，由主 Agent 问用户；无回答保持 blocked。
-6. 子 Agent 按 [result 模板](../templates/work/stage-result.json) 返回：work/stage/run/kind、实际 dispatch_digest、status（ready_for_review / blocked / failed）、summary、artifacts/evidence 的 `{path,sha256}`、changed_files（新增/修改/删除）、实际 checks、blockers/questions、风险和下一步建议。checks 区分 PASS/FAIL/NOT_RUN 和真实报告。`ready_for_review` 不是 `approved`。仅提出 parallel_requests、尚未汇齐产物时返回 blocked 并注明 waiting_for_leaf_results；主 Agent 可在当前批准范围内继续调度，不冒充阶段完成。缺少必要真实执行不得回报完成。
+6. 子 Agent 按 [result 模板](../templates/work/stage-result.json) 返回：work/profile/stage/run/kind、实际 dispatch_digest、status（ready_for_review / blocked / failed）、summary、artifacts/evidence 的 `{path,sha256}`、changed_files（新增/修改/删除）、实际 checks、blockers/questions、风险和下一步建议。checks 区分 PASS/FAIL/NOT_RUN 和真实报告。`ready_for_review` 不是 `approved`。仅提出 parallel_requests、尚未汇齐产物时返回 blocked 并注明 waiting_for_leaf_results；主 Agent 可在当前批准范围内继续调度，不冒充阶段完成。缺少必要真实执行不得回报完成。
 7. 主 Agent 校验实际 child ID 与本次 run 对应、result identity/digest、文件存在与哈希、预期产物、晋升后证据引用仍可解析、工作树变更范围、前置批准、候选和 Gate 报告；不能只相信 child 的 PASS 摘要。外部证据引用使用项目根相对路径，不能留下仅在 run/artifacts 下有效的父目录引用。检查所有 required 子任务收齐且一致。缺产物、越权写入、漂移、过期回包、冲突均 blocked，不自动回滚用户文件。
-8. 验真后仅由主 Agent 将阶段产物复制到 drafts，再按 [工作协议](protocol.md) 创建不可覆写的 review。review.execution 绑定 run_id、实际 agent_id、dispatch/result 文件路径及摘要；handoff 与用户审查卡由真实结果生成。主 Agent 不修改子 Agent 的结论来消除冲突：有问题回送同 run 的补充任务（输入未变）或新 run 返工。
+8. 验真后仅由主 Agent 按 [工作协议](protocol.md) 从 run 直接创建不可覆写的 review，不再复制 drafts 或另写 handoff。review.execution 绑定 run_id、实际 agent_id、dispatch/result 文件路径及摘要；用户只看简短审查卡和正文链接。主 Agent 不修改子 Agent 的结论来消除冲突：有问题回送同 run 的补充任务（输入未变）或新 run 返工。
 9. 清空已结束的 active_runs，追加 run_history；停在人工审批点。批准只引用完整 review 版本。用户要求“批准并继续”后，**新建下一阶段 child**，不是让旧 child 接着跑。
 
 ## 哪些可以并行
 
-正式阶段仍按 `Intake → Spec → Architecture → Quality → Plan → Implement → Verify → Release → Learn` 顺序审批。下表是阶段内可选拆分，不是跳过批准的并行阶段。小任务不必强拆。
+正式阶段按所选 profile 顺序审批：standard 九阶段、enhance 三阶段、fix 三阶段。下表是适用阶段内部的可选拆分，不是给短流程补回被合并的正式阶段，也不是跳过批准。小变更默认串行子 Agent，确有独立工作再拆分。
 
 | 阶段 | 可并行的独立任务 | 汇合条件 |
 |---|---|---|
+| Scope / Diagnose | 影响面/验收核对，或有独立输入的复现/原因调查 | 只读；复现和根因存在依赖时串行；汇成一份 change.md |
 | Intake | 业务上下文、仓库现状只读调查 | 同一范围，歧义统一提问 |
 | Spec | AC 完整性、NFR 评审 | 同一 Spec 草稿；仍由阶段 child 统一产物 |
 | Architecture | 依赖/接口评审、安全/性能约束分析 | 冲突形成显式决定，不拼接矛盾建议 |

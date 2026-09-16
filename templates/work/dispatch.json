@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "work_id": null,
+  "profile": null,
   "stage": null,
   "run_id": null,
   "kind": "stage",

@@ -45,10 +45,10 @@
 ## 3. 安装最小项目级内容
 
 1. 将 `manifest.json` 以及 payload_directories 的内容复制到 `.aidlc/system/`。不复制源仓库 `.git`、测试夹具、维护者 CI、下载缓存或历史工作记录。不使用指向临时下载目录的软链接。
-2. 根据 `templates/setup/config.json` 建立 schema 2 config。所有可确认字段填真实值，`tool` 是当前实际工具；不知道用户名时 owner 可 null，注明待首次批准时确认，不用 Git 用户名伪造签署人。`installed_at` 使用实际时间。`execution.mode=isolated-subagents`、`context_policy=fresh-minimal`，默认最多两个并行 worker；只有探针实际验证过的能力才填 true，其余保留 null 或填 false 并阻塞。不要把 solo 人类 owner 模式误解为同上下文执行。
+2. 根据 `templates/setup/config.json` 建立 schema 2 config。新安装 profile=auto（支持 standard/enhance/fix），实际工作按 profiles.md 选定具体路线。其他字段填真实值，未知 owner 可 null，不伪造签署人；installed_at 使用实际时间。execution 保持 isolated-subagents/fresh-minimal，最多两个 worker，探针真实通过才填 capability=true。solo 是人类角色模式，不是同上下文执行。
 3. 为每个受管文件记录 `{path,sha256,upstream_sha256}`，path 相对目标项目根；首次原样复制时两个摘要相同。`sha256` 是实际安装结果，`upstream_sha256` 是原始包基线；后续保留用户定制时不能将定制结果冒充上游基线。摘要真实计算；排除 config 自身、setup-report 和动态工作记录，避免自引用。bridge 另记录 `managed_block: {start_marker,end_marker,sha256,upstream_sha256}`，其 hash 覆盖含 marker 的精确块字节；整个文件 sha256 只是安装时快照，不是上游 adapter 基线。以后仅块外增加用户内容不算本包冲突，不允许通过恢复整个旧文件覆盖用户内容。
 4. 只配置当前工具的 bridge；未知工具使用明确读取 canonical router 的 fallback，并在报告中说明没有验证自动加载。不改全局目录、不自动配置其他工具、不安装插件或 MCP。
-5. 可选原生 Skill 仅复制 `skills/aidlc/` 到当前工具的项目 Skill 目录。router 使用项目根相对路径，因此不需要硬编码本机路径。阶段与复用 Skills 保持 canonical，由 router 按需读；不要复制十四份不同版本。
+5. 可选原生 Skill 仅复制 `skills/aidlc/` 到当前工具的项目 Skill 目录。router 使用项目根相对路径，因此不需要硬编码本机路径。阶段与复用 Skills 保持 canonical，由 router 按需读；不要复制多份不同版本。
 
 根据实际宿主操作文件；不是在这里生成一个新的安装脚本来替代 Python 安装器。
 

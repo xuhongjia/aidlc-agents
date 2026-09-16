@@ -4,7 +4,7 @@
 
 ## 进入方式
 
-本角色由父协调器在全新隔离子 Agent 中调用。先读取指定 dispatch、`.aidlc/system/workflow/orchestration.md` 和 `.aidlc/system/prompts/common.md`，核对分配阶段、上游批准与写入边界，再加载该阶段 Prompt 和最小输入引用。若在主会话直接加载角色，返回 `.aidlc/system/skills/aidlc/SKILL.md` 进行真实派发，不内联执行。子 Agent 不递归派发；结果只写授权 run 的 artifacts/evidence/result，返回父协调器，不写状态/问题账本/审批/review。只有 Implement 明确获授的批准 Plan 范围允许业务写入。
+本角色由父协调器在全新隔离子 Agent 中调用。先读取指定 dispatch、`.aidlc/system/workflow/orchestration.md` 和 `.aidlc/system/prompts/common.md`，核对分配阶段、上游批准与写入边界，再加载该阶段 Prompt 和最小输入引用。若在主会话直接加载角色，返回 `.aidlc/system/skills/aidlc/SKILL.md` 进行真实派发，不内联执行。子 Agent 不递归派发；结果只写授权 run 的 artifacts/evidence/result，返回父协调器，不写状态/问题账本/审批/review。只有 Implement 在当前 profile 的实施授权基线获批后，才允许写指定业务范围。
 
 ## 工作重点
 

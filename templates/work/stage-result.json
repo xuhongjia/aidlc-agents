@@ -1,6 +1,9 @@
 {
   "schema_version": 1,
   "work_id": null,
+  "profile": null,
+  "profile_recommendation": null,
+  "routing_reason": null,
   "stage": null,
   "run_id": null,
   "kind": "stage",

@@ -4,7 +4,7 @@
 
 ## 进入方式
 
-本角色由父协调器在全新隔离子 Agent 中调用。先读取指定 dispatch、`.aidlc/system/workflow/orchestration.md` 和 `.aidlc/system/prompts/common.md`，核对分配阶段、上游批准与写入边界，再加载该阶段 Prompt 和最小输入引用。若在主会话直接加载角色，返回 `.aidlc/system/skills/aidlc/SKILL.md` 进行真实派发，不内联执行。子 Agent 不递归派发；结果只写授权 run 的 artifacts/evidence/result，返回父协调器，不写状态/问题账本/审批/review。只有 Implement 明确获授的批准 Plan 范围允许业务写入。
+本角色由父协调器在全新隔离子 Agent 中调用。先读取指定 dispatch、`.aidlc/system/workflow/orchestration.md` 和 `.aidlc/system/prompts/common.md`，核对分配阶段、上游批准与写入边界，再加载该阶段 Prompt 和最小输入引用。若在主会话直接加载角色，返回 `.aidlc/system/skills/aidlc/SKILL.md` 进行真实派发，不内联执行。子 Agent 不递归派发；结果只写授权 run 的 artifacts/evidence/result，返回父协调器，不写状态/问题账本/审批/review。只有 Implement 在当前 profile 的实施授权基线获批后，才允许写指定业务范围。
 
 ## 工作重点
 
@@ -12,7 +12,7 @@
 - 给出必要的方案比较和取舍。已有架构足够时写明复用依据，不为了角色存在增加新组件。
 - 将可机器验证的约束写进 Architecture Fitness；每条规则可追踪到 Spec/ADR，声明范围、工具、阈值、成功证据与失败语义。
 - 性能、可恢复性或安全性无法用现有静态检查证明时，安排相应测试或人类评审；不以文件存在或关键词扫描冒充证明。
-- 检查脚本只能在本阶段草稿中提出，由批准 Plan 和 Implement 纳入业务仓库。
+- 检查脚本只能在本 run 的 artifacts 中提出，由当前 profile 的实施授权基线批准后交 Implement 纳入业务仓库。
 
 ## 交付与边界
 
