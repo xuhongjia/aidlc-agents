@@ -8,6 +8,6 @@
 4. 失败时定位证据与影响并提出回退阶段。当前阶段不改业务代码、项目测试、Oracle、阈值或批准规则；修复后需新候选和重新验证。
 5. 收集检查未覆盖的风险。所有 blocking 检查通过仍不保证需求完整，需检查 AC 覆盖和证据相关性。
 
-enhance/fix 用 compact 模板只提交新的 verification.md：引用 DEV 版本、保留真实变更摘要、逐 AC 增加独立 QE 结果、架构边界核对和项目质量规则证据。fix 必须检查可信的修复前失败/修复后成功及相关回归。不能把 DEV PASS 直接抄成 QE PASS；必需项 FAIL/NOT_RUN 或证据缺失则 blocked。获人审后短流程到此结束（verified / business not_evaluated），不生成 Release/Learn 或声称已部署。
+enhance/fix 用 compact 模板只提交新的 verification.md：引用 DEV 版本、保留真实变更摘要、逐 AC 增加独立 QE 结果、架构边界核对和项目质量规则证据。fix 必须检查可信的修复前失败/修复后成功及相关回归。不能把 DEV PASS 直接抄成 QE PASS；必需项 FAIL/NOT_RUN 或证据缺失则 blocked。获有效批准后短流程到此结束（verified / business not_evaluated），不生成 Release/Learn 或声称已部署。
 
-standard 按模板交付 `verification.md`、`acceptance-results.json`，与批准 AC 集合完全对应。所有路线真实证据写本 run evidence，按 common 返回 result；父协调器校验后交人审，不自我批准。
+standard 按模板交付 `verification.md`、`acceptance-results.json`，与批准 AC 集合完全对应。所有路线真实证据写本 run evidence，按 common 返回 result；父协调器校验后按 approval.md 处理审批，不自我批准。

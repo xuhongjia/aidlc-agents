@@ -40,7 +40,7 @@ bridge 比较单位是受管 marker 块，不是整个 `AGENTS.md` / `CLAUDE.md`
 
 ## 4. 暂存、探针、备份和切换
 
-0.3 → 0.4：config schema 仍为 2，但新增 profile 选择和 schema 3 的**新工作模板**。保留已有 config.profile（包括 standard），不静默改成 auto；在更新计划中让用户选择是否为今后新需求启用 auto。旧 work/profile/批准不迁移；新工作不再生成重复 drafts/handoff，历史文件全部保留。所有未完成工作仍必须先按旧版本结束，不能靠更换 profile 绕过升级阻塞。
+0.3 → 0.4：config schema 仍为 2，但新增 profile 选择和 schema 3 的**新工作模板**。保留已有 config.profile（包括 standard），不静默改成 auto；在更新计划中让用户选择是否为今后新需求启用 auto。新增自动批准能力默认关闭；保留历史审批来源，不回填为自动批准，不能把启用 auto 路由当委托审批。旧 work/profile/批准不迁移；新工作不再生成重复 drafts/handoff，历史文件全部保留。所有未完成工作仍必须先按旧版本结束，不能靠更换 profile 绕过升级阻塞。
 
 此处是 AI 使用宿主文件工具执行的操作协议，不得额外生成安装脚本或声称它是防篡改/原子事务系统。
 

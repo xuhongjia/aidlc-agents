@@ -142,6 +142,36 @@ test('compact profiles resolve to two human document types with no mandatory leg
   assert.deepEqual(profiles.standard.output_overrides, {}, 'Preserve full-flow artifact compatibility');
 });
 
+test('automatic approval is opt-in, work-scoped, attributable and limited to compact routes', () => {
+  const state = json('templates/work/state.json');
+  const approval = json('templates/work/approval.json');
+  const options = catalog.approval;
+  const policy = json(options.auto_low_risk.policy_template);
+  assert.equal(options.default_mode, 'manual');
+  assert.equal(state.approval_mode, 'manual');
+  assert.equal(state.approval_policy_ref, null);
+  assert.deepEqual(state.approval_policy_history, []);
+  assert.equal(approval.approval_mode, 'manual');
+  assert.equal(approval.policy_ref, null);
+  assert.deepEqual(approval.decision_checks, []);
+  assert.equal(approval.user_statement, null);
+  assert.equal(approval.next_stage_authorized, false);
+  assert.deepEqual(options.auto_low_risk.profiles.sort(), ['enhance', 'fix']);
+  const actualStages = new Set(options.auto_low_risk.profiles.flatMap(name => profiles[name].stages));
+  assert.deepEqual(new Set(options.auto_low_risk.stages), actualStages);
+  assert.ok(!options.auto_low_risk.stages.includes('release'));
+  assert.ok(!options.auto_low_risk.stages.includes('learn'));
+  for (const key of ['policy_id', 'work_id', 'profile', 'method_revision', 'request_sha256']) {
+    assert.equal(policy[key], null, `No pre-authorized ${key}`);
+  }
+  assert.equal(policy.mode, 'auto_low_risk');
+  assert.equal(policy.auto_continue, false);
+  assert.deepEqual(policy.allowed_write_paths, []);
+  assert.deepEqual(policy.allowed_commands, []);
+  assert.deepEqual(policy.additional_stop_conditions, []);
+  assert.deepEqual(policy.authorization, {by: null, at: null, source: null, user_statement: null, card_ref: null});
+});
+
 test('all JSON artifacts parse, templates start without fabricated approvals or PASS results', () => {
   for (const file of all.filter(file => file.endsWith('.json'))) JSON.parse(readFileSync(file, 'utf8'));
   assert.equal(json('templates/work/state.json').current_stage, null, 'First stage must be resolved from selected profile');

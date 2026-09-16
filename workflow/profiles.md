@@ -8,7 +8,7 @@
 | enhance | 现有边界内的小增强，可独立验收/回滚 | scope → implement → verify | 获批的范围、AC、最小计划与检查 | change.md + verification.md |
 | standard | 新能力或高风险变化 | intake → spec → architecture → quality → plan → implement → verify → release → learn | 获批 Plan | 按实际阶段输出，简写并引用已有基线 |
 
-每个箭头仍有人工批准；Implement 提交后也需批准候选才能进入独立 Verify。两条短流程各 3 阶段/3 次审查，不额外生成 Intake、Spec、ADR、测试策略、Plan、Release、复盘等独立文档。角色责任融入 change/verification，并未免除验收。
+每个箭头仍有批准；默认人工，可按 [审批策略](approval.md) 显式委托低风险自动批准。Implement 提交后也需批准候选才能进入独立 Verify。两条短流程各 3 阶段/3 次审查，不额外生成 Intake、Spec、ADR、测试策略、Plan、Release、复盘等独立文档。角色责任融入 change/verification，并未免除验收。
 
 ## 路由与升级
 
@@ -22,7 +22,7 @@
 
 `stages.json.profiles[state.profile]` 决定阶段顺序。每阶段依赖该列表中所有前序阶段的有效批准；Implement 的业务写入还必须具有 implementation_authority 指定阶段的明确范围。stage 定义提供角色/Prompt；输出先取 profile.output_overrides[stage]，无覆盖才取 stage.outputs 与 template_directory（默认 templates/STAGE）。不能让短流程错误地要求不存在的 Plan/Spec 批准，也不能只靠 dispatch 自称获准。
 
-state、dispatch、result、review、approval 的 profile 必须一致；auto/null 不能进入正式执行。首阶段的路线初选尚未人审只允许只读分析，不允许实现。引用上游时核对 profile、review digest 和方法版本；不能拿旧路线同名 Implement 的批准跨路线放行。
+state、dispatch、result、review、approval 的 profile 必须一致；auto/null 不能进入正式执行。首阶段尚未获得有效批准时只允许只读分析，不允许实现。引用上游时核对 profile、review digest 和方法版本；不能拿旧路线同名 Implement 的批准跨路线放行。
 
 ## 精简正文，不降低证据
 
@@ -38,4 +38,4 @@ state、dispatch、result、review、approval 的 profile 必须一致；auto/nu
 
 fix 必須有可信复现与根因证据，并在同一回归测试/Oracle 下证明修复前失败、修复后成功，外加相关回归。旧版本失败可用冻结的旧候选或可信历史证据证明，不能改工作树回滚用户修改。无法证明则 blocked，不改名为 enhance 绕过缺陷验证。
 
-enhance/fix 的 Verify 人审通过后，state.status=completed、delivery_status=verified、business_outcome=not_evaluated。在报告中保留回滚/部署注意事项，不再强制 Release/Learn；部署和实际业务接受仍是单独授权/事实。standard 保留原 Release/Learn 完成边界。
+enhance/fix 的 Verify 获有效批准后，state.status=completed、delivery_status=verified、business_outcome=not_evaluated。在报告中保留回滚/部署注意事项，不再强制 Release/Learn；部署和实际业务接受仍是单独授权/事实。standard 保留原 Release/Learn 完成边界。

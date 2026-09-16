@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "policy_id": null,
+  "work_id": null,
+  "profile": null,
+  "method_revision": null,
+  "request_sha256": null,
+  "mode": "auto_low_risk",
+  "auto_continue": false,
+  "allowed_write_paths": [],
+  "allowed_commands": [],
+  "additional_stop_conditions": [],
+  "authorization": {
+    "by": null,
+    "at": null,
+    "source": null,
+    "user_statement": null,
+    "card_ref": null
+  }
+}

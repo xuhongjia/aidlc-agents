@@ -1,6 +1,14 @@
 {
   "schema_version": 3,
   "default_profile": "auto",
+  "approval": {
+    "default_mode": "manual",
+    "auto_low_risk": {
+      "profiles": ["enhance", "fix"],
+      "stages": ["scope", "diagnose", "implement", "verify"],
+      "policy_template": "templates/work/approval-policy.json"
+    }
+  },
   "profiles": {
     "standard": {
       "stages": ["intake", "spec", "architecture", "quality", "plan", "implement", "verify", "release", "learn"],

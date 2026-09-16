@@ -6,7 +6,7 @@
 
 从实际项目根解释所有 `.aidlc/` 路径。主 Agent 只加载 config、当前工作 state、批准元数据和调度规则；阶段角色、Prompt 与必要原始输入由独立子 Agent 按 dispatch 加载，不把全部阶段推理放在主聊天。
 
-正式入口：`skills/aidlc/SKILL.md`；阶段顺序与输出以 [stages.json](stages.json) 为准。每个正式阶段必须启动新的独立上下文子 Agent，主 Agent 只调度、验真、汇报和记录用户审批。不能在主会话切换角色代跑，也不预跑未批准的后续阶段。宿主能力不满足则 blocked；依赖、并行汇合、上下文、返回格式和中断规则见 [调度协议](orchestration.md)。不要求额外运行器或常驻服务。
+正式入口：`skills/aidlc/SKILL.md`；阶段顺序与输出以 [stages.json](stages.json) 为准。每个正式阶段必须启动新的独立上下文子 Agent，主 Agent 只调度、验真、汇报和处理审批。不能在主会话切换角色代跑，也不预跑未批准的后续阶段。宿主能力不满足则 blocked；依赖、并行汇合、上下文、返回格式和中断规则见 [调度协议](orchestration.md)。不要求额外运行器或常驻服务。
 
 先按 [分级与精简规则](profiles.md) 选择 standard / enhance / fix。实际阶段顺序取 catalog.profiles[state.profile]，不再要求每项需求都跑九阶段。config 的 auto 只用于初选，不能作为正式工作 profile。只生成该路线实际阶段和适用输出；默认简述新增决定，不复制已有背景。
 
@@ -27,7 +27,8 @@
   reviews/STAGE/r1/
     artifacts/                    该版产物的完整副本
     review.json                   文件/上游/候选/证据摘要清单
-  approvals/STAGE-r1.json          人类实际决定，引用 review_digest
+  approvals/STAGE-r1.json          人类或委托自动决定，引用 review_digest
+  policies/POLICY.json             仅启用自动批准时保存的不可变授权记录
   evidence/                       命令、观察、原始报告和复现证据
 ```
 
@@ -40,7 +41,7 @@ ID 使用简短字母、数字、下划线或连字符，不含路径。每个�
 ## 接收、执行、停下
 
 1. 新需求保存 request，按 profiles.md 初选路线并记录 profile/routing_reason，进入该路线首阶段。独立 child 核实适用性；关键未知先澄清，高风险不得走短流程。第一张审查卡同时确认路线和实施前范围，不额外增加 Triage 阶段。
-2. 恢复已有工作时读取 state、批准记录和被引用文件，重新计算摘要。发现差异先 blocked，不能沿用旧结论。只把原始用户陈述当实际批准来源，Agent 总结不是批准本身。
+2. 恢复已有工作时读取 state、批准记录和被引用文件，重新计算摘要。发现差异先 blocked，不能沿用旧结论。人审核对原始用户陈述；自动批准核对 approval.md 规定的原始委托。Agent 总结不是授权。
 3. 主 Agent 只 dispatch 当前路线的当前阶段。子 Agent 写自己 run 的产物、证据和 result，不写 state/questions/review/approval/config。非 implement 不能修改业务源码、测试、构建或依赖配置；implement 必须已有当前 profile 的 implementation_authority 批准（standard=plan，enhance=scope，fix=diagnose），且只写明确分配的范围。
 4. 关键输入不足时子 Agent 返回 blocked/questions，由主 Agent 更新 state，向用户列少量具体问题并停止。questions 有真实问题时才建立；实际采用的回答放进当期正文，不另写澄清报告。输入版本变化则新建 run；答案改变已批准范围按返工处理。
 5. 主 Agent 核验实际子 Agent 返回的 profile/identity、摘要、文件范围和证据。输出齐全、没有 AIDLC_DRAFT、没有未解决 blocking issue、引用均真实且完成适用检查，才从 run 直接建立审查快照。子 Agent 的 `ready_for_review` 不等于人类批准。
@@ -63,7 +64,9 @@ ID 使用简短字母、数字、下划线或连字符，不含路径。每个�
 
 写完 review.json 后，计算它**原始文件字节**的 SHA-256（不再格式化）。它不保存自己的 digest；digest 写在 state 与批准记录中，避免自引用。审核前重新核验上游、产物、候选、证据。文件变动必须形成新 revision；摘要不会自动执行这些检查，是 Agent 需要实际执行的协议。
 
-## 人类批准与下一阶段
+## 批准与下一阶段
+
+默认 manual，以下人类批准规则适用。用户明确委托的 auto_low_risk 按 [审批策略](approval.md) 核验、记录和继续；不是省略审批。两种模式均使用不可变 review 和 approval。恢复时人审核对真实用户陈述，自动批准另核对原始委托和 policy 摘要，不能把 Agent 总结当任一种授权。
 
 每次只展示简短审查卡：work ID、profile/stage/rN、摘要与风险、正文/证据链接、需批准的决定及下一阶段。review_digest 和完整 Gate 命令保存在可访问的 review/正文中，需执行新命令或用户要细节时展开。不能靠隐藏关键副作用缩短说明。
 
@@ -71,7 +74,7 @@ ID 使用简短字母、数字、下划线或连字符，不含路径。每个�
 
 收到批准后先重新校验上述摘要，再记录 `approvals/STAGE-rN.json`：真实用户署名或其确认的标识、实际时间、原陈述、review_digest、范围。不能从 Git 姓名或配置 owner 推断用户已签署。个人可一人多角色，记录 mode=solo，不声称职责分离。
 
-批准只使当前阶段 approved、下一阶段 ready；只有用户还要求“批准后继续”，才为下一阶段新建独立子 Agent 执行一次，收回结果后再次停下。仅批准而未授权继续时记录后停止。阶段代理不得审批自己的结果；编排助手只是记录用户决定。
+manual 批准只使当前阶段 approved、下一阶段 ready；只有用户还要求“批准后继续”，才为下一阶段新建独立子 Agent 执行一次，收回结果后再次停下。仅批准而未授权继续时记录后停止。auto_low_risk 的继续权来自有效策略的 auto_continue；阶段代理在任何模式下都不得审批自己的结果。
 
 ## 返工
 

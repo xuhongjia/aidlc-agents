@@ -1,8 +1,8 @@
 # aidlc-agents
 
-**让 AI 按需求大小选流程，每阶段独立子 Agent 执行，结果交给你批准。**
+**让 AI 按需求大小选流程，每阶段独立子 Agent 执行，默认交给你批准，也支持有限自动批准。**
 
-AI-assisted、Spec-driven、Human-approved。没有 Python 安装器、额外 Agent CLI 或常驻服务。当前包版本 **0.4.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents)
+AI-assisted、Spec-driven、Human-governed。没有 Python 安装器、额外 Agent CLI 或常驻服务。当前包版本 **0.4.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents)
 
 ## 一句话接入
 
@@ -59,17 +59,29 @@ AI 固定来源版本，配置项目 `.aidlc/` 和当前工具的最小入口，
 批准并继续 → 下一阶段新子 Agent
 ```
 
-每阶段结束都等批准；短流程为 3 阶段/3 次审查，未批准实施前说明不能改业务代码。使用：
+默认每阶段结束都等人类批准；短流程为 3 阶段/3 次审查，未批准实施前说明不能改业务代码。使用：
 
 ```text
 批准 REQ-001 的 scope r1，并继续下一阶段。
 ```
 
-只批准、不说继续，AI 就记录后停止。新会话可说“继续 aidlc 的 REQ-001，先核对状态和批准”。缺陷流程必须有修复前失败、修复后通过及相关回归证据；不能用“看起来修好了”结束。
+人工模式只批准、不说继续，AI 就记录后停止。新会话可说“继续 aidlc 的 REQ-001，先核对状态和批准”。缺陷流程必须有修复前失败、修复后通过及相关回归证据；不能用“看起来修好了”结束。
 
 主聊天只处理调度、澄清和审批，不执行阶段业务任务。默认最多 2 个 live 子 Agent；只有独立的调查、批准任务或同一冻结候选上的双 Gate 可以并行。文件、数据库或缓存存在冲突就串行子 Agent；不并行预跑尚未批准阶段。见 [调度协议](workflow/orchestration.md)。
 
 短流程最终批准表示 **delivery verified / business not evaluated**，不是部署或业务收益验证。标准流程的 Release/Learn、审批与返工详见 [工作协议](workflow/protocol.md)。
+
+## 可选：自动批准与继续
+
+默认关闭，仅支持低风险 `fix/enhance`。发送：
+
+```text
+为 REQ-001 开启 auto approval 并自动继续到 Verify 结束；先给我本次授权卡，列明可修改路径、可执行命令和停止条件，确认后执行。不授权 push、部署或额外依赖安装。
+```
+
+确认一次授权卡后，每阶段仍独立执行、核验、留存自动批准记录；不会冒充你的逐项签字。只需自动批准、不想自动推进，就说“自动批准，但每阶段后停下”。随时可说“REQ-001 改回人工”。
+
+失败、当前阶段必需证据缺失、范围变化、高风险或待决定问题都会停下转人工；`standard` 仍逐阶段人审。路由 `auto` 不等于自动批准，setup/update 不会开启它。详见 [审批策略](workflow/approval.md)。
 
 ## 已安装过：一句话更新
 

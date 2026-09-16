@@ -1,6 +1,6 @@
 # Implement · 按批准计划交付候选
 
-先执行 `.aidlc/system/prompts/common.md`。按 profile 校验前置批准与实施授权基线：standard 的 Plan/Spec/Oracle/Fitness；enhance 的 scope change.md；fix 的 diagnose change.md 及复现/根因证据。不能要求短流程补造 Plan，也不能省掉对应 change 的人审。
+先执行 `.aidlc/system/prompts/common.md`。按 profile 校验前置批准与实施授权基线：standard 的 Plan/Spec/Oracle/Fitness；enhance 的 scope change.md；fix 的 diagnose change.md 及复现/根因证据。不能要求短流程补造 Plan，也不能省掉对应 change 的有效批准（人审或 approval.md 定义的用户委托自动批准）。
 
 1. 检查未提交修改与任务边界；保留用户工作。只修改当前路线批准的实施范围且 dispatch 明确授权的文件。需要扩大范围或出现高风险时停止，按 profiles.md 回退/升级，不自行认领其它 worker 的文件。
 2. 按批准 Oracle 实现并测试。选择与风险相称的最小完整实现，不把未请求重构混入需求。

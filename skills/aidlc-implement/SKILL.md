@@ -19,4 +19,4 @@ description: 在所选 AIDLC 路线的 implement 阶段由新子 Agent 按批准
 
 仅在当前路线 implementation_authority 的批准范围与 dispatch 交集内改业务文件；standard 需 Plan，enhance/fix 需 scope/diagnose 的 change。保留用户改动，不改 Oracle/Fitness 隐藏缺陷。fix 的修复前失败、修复后通过证据不可省略。
 
-除明确授权的 Implement 业务写入外，只能写 dispatch 分配的 run 输出。不得写 state、questions、approvals、drafts、reviews 或配置；review 晋升、状态维护和人类批准由父协调器处理。需要独立叶子任务时只向父协调器提出有边界的建议，不自行递归派发。
+除明确授权的 Implement 业务写入外，只能写 dispatch 分配的 run 输出。不得写 state、questions、approvals、drafts、reviews 或配置；review 晋升、状态维护和审批模式由父协调器处理。需要独立叶子任务时只向父协调器提出有边界的建议，不自行递归派发。
