@@ -38,7 +38,7 @@
 
 ID 使用简短字母、数字、下划线或连字符，不含路径。每个新需求独立目录，不把 demo 当真实状态。已有多个活动需求且用户没给 ID 时询问，不按最近修改时间猜。一个工作树同时只有一条实施流；并行需求使用用户已有的独立 checkout/worktree，不自行创建分支或复制生产数据。
 
-工作级 `status`：`ready | working | blocked | awaiting_approval | completed`。阶段级另可 `approved | superseded`。state 的 `stages[stage]` 记录 revision、review_path、review_digest、approval_path、输入版本和状态；未知字段不得猜填。active_runs / run_history 记录真实 worker ID、run ID、方法版本、时间、隔离选项与状态；只有主 Agent 写中央状态。工作绑定 `method_revision`（完整来源 commit 或 local-unreleased 摘要清单）；跨会话先核对，没有自动升级。未结束工作或活动 worker 存在时延后应用方法更新，不重写旧 method_revision。
+工作级 `status`：`ready | working | blocked | awaiting_approval | completed | closing | closed`。closing/closed 按 [直接终结](closure.md) 处理，不参与阶段推进。阶段级另可 `approved | superseded`。state 的 `stages[stage]` 记录 revision、review_path、review_digest、approval_path、输入版本和状态；未知字段不得猜填。active_runs / run_history 记录真实 worker ID、run ID、方法版本、时间、隔离选项与状态；只有主 Agent 写中央状态。工作绑定 `method_revision`（完整来源 commit 或 local-unreleased 摘要清单）；跨会话先核对，没有自动升级。未结束工作或活动 worker 存在时延后应用方法更新，不重写旧 method_revision。
 
 ## 接收、执行、停下
 
@@ -60,6 +60,7 @@ ID 使用简短字母、数字、下划线或连字符，不含路径。每个�
 - `inputs`：request 与已批准上游 review.json 的项目相对路径及 SHA-256。questions 是持续追加的问答台账，不把整个可变台账绑定为历史审查输入；将本阶段实际采用的问答、原话归属与时间写入本次正文的澄清小节并纳入 files 摘要，不要求单独附件，后续追加问题不使过去无关的批准失效。若新答案改变了已批准的决定，则按返工处理，不能以此规避失效链。
 - `candidate`：从 implement 开始，记录被交付/验证的源码、测试、配置、锁文件及必需资源的完整路径/摘要集合。scope 明确包含哪些目录及排除哪些真实生成物；提交、批准和 Gate 前后重新枚举，新增/删除文件也算变化。不要只哈希改动文件、只写 HEAD 或把未提交改动忽略。`.aidlc/` 控制记录不纳入产品候选；交付源码不能放在该目录。
 - `gate_evidence`：verify 起至少有 architecture 与 quality 两项 {kind,path,sha256}，对应真实 Gate 报告/原始日志；按 gates.md 核验非空执行与 PASS，来源、规则版本和同一冻结候选必须匹配。
+- `external_evidence`：Release/Learn 的 source-index.json 路径与实际摘要，连同 CI/Jira 来源快照按 [主动取证协议](external-evidence.md) 核验候选关联、时间与完整性；不把来源链接存在当内容已读取。
 - `execution`：每个关联 run 的真实 run_id、agent_id、dispatch/result 项目相对路径与 SHA-256，包括阶段、并行 leaf 及汇总运行。不是仅记录一个“Agent 已执行”的布尔值。
 
 使用宿主文件工具或本机 `shasum -a 256` / `sha256sum` / PowerShell `Get-FileHash -Algorithm SHA256` 计算。选实际可用的一种，不安装专用 runtime，不编造摘要；没有计算能力就 blocked。
@@ -96,8 +97,10 @@ manual 批准只使当前阶段 approved、下一阶段 ready；只有用户还�
 
 ## 完成边界
 
+审批人可在任意未结束阶段依 [直接终结](closure.md) 确认结束工作，不需补齐剩余阶段/证据。停止所有 worker 后标 closed，保留真实交付/业务结果；该控制操作与下面的正常 completed 条件分开。
+
 enhance/fix 在 Verify 有效批准后结束交付流程：status=completed、delivery_status=verified、business_outcome=not_evaluated；不强制生成 Release/Learn 产物，不声称生产已部署或业务已接受。回滚/部署注意事项合并在验证报告。
 
-standard 的 Release 仅 `ready_for_release`，不执行部署。Learn 需要 outcome.json、实际观察时间、来源文件、结论 accepted/rejected/inconclusive；无真实来源或 inconclusive 保持 blocked。accepted/rejected 经人审后工作流可 completed，但 rejected 表示业务未接受，不能称需求成功。
+standard 的 Release/Learn 默认按 external-evidence.md 自行从 Git/CI/Jira 读取证据。Release 仅 `ready_for_release`，不执行部署。Learn 正常完成需要 outcome.json、实际观察时间、来源文件、结论 accepted/rejected/inconclusive；无真实来源或 inconclusive 保持 blocked。accepted/rejected 经人审后工作流可 completed，但 rejected 表示业务未接受，不能称需求成功。
 
 最终同时报告 `delivery_status` 与 `business_outcome`。流程完成、业务接受、实际部署、效果达标是不同事实。不把模板、静态检查、AI 自评或模拟演示写成真实验收。

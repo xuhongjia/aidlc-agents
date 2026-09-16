@@ -1,6 +1,23 @@
 {
   "schema_version": 3,
   "default_profile": "auto",
+  "closure": {
+    "protocol": "workflow/closure.md",
+    "template": "templates/work/closure.json",
+    "confirmation": "explicit-approver",
+    "pending_status": "closing",
+    "terminal_status": "closed",
+    "requires_remaining_stage_approval": false,
+    "requires_stopped_workers": true
+  },
+  "external_evidence": {
+    "stages": ["release", "learn"],
+    "access": "read-only",
+    "protocol": "workflow/external-evidence.md",
+    "required_evidence": [
+      {"name": "source-index.json", "template": "templates/work/source-index.json"}
+    ]
+  },
   "approver_resolution": {
     "precedence": ["jira_assignee", "git_config", "system_login"],
     "template": "templates/work/approver.json",

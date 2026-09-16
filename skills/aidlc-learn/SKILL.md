@@ -1,6 +1,6 @@
 ---
 name: aidlc-learn
-description: 在 AIDLC learn 阶段通过全新隔离子 Agent 以真实使用或运行证据比较预期与结果，将结果返回父协调器。
+description: 在 AIDLC learn 阶段用新子 Agent 主动读取 Git/CI 实际交付与 Jira 反馈，按候选和目标归因并交回真实结果。
 ---
 
 # learn 阶段
@@ -17,6 +17,6 @@ description: 在 AIDLC learn 阶段通过全新隔离子 Agent 以真实使用�
 
 按阶段契约在本 run 授权的 artifacts 目录交付 outcome.md、outcome.json；证据写本 run 的 evidence。根据 `.aidlc/system/templates/work/stage-result.json` 写 `result.json`，状态仅 ready_for_review、blocked 或 failed，向父协调器返回路径与结论，然后停止。
 
-缺少业务结果证据则返回 blocked 并指出缺失输入；不推断上线/收益，不改批准历史或系统 Skills。
+先按 `.aidlc/system/workflow/external-evidence.md` 检索 Git/CI/Jira，记录反馈作者/原文/时间/版本和 source-index；kind=leaf 只交分配片段。真实证据仍不足才 blocked/inconclusive，指出具体缺口。审批人可按 closure.md 直接终结，由父协调器执行；不推断上线/收益，不改批准历史或系统 Skills。
 
 除明确授权的 Implement 业务写入外，只能写 dispatch 分配的 run 输出。不得写 state、questions、approvals、drafts、reviews 或配置；review 晋升、状态维护和人类批准由父协调器处理。需要独立叶子任务时只向父协调器提出有边界的建议，不自行递归派发。

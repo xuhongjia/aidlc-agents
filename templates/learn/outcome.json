@@ -2,6 +2,11 @@
   "schema_version": 1,
   "result": "inconclusive",
   "observed_at": null,
+  "candidate": null,
+  "environment": null,
+  "observation_window": {"from": null, "to": null},
+  "source_index_ref": null,
+  "feedback": [],
   "summary": null,
   "evidence": []
 }

@@ -27,6 +27,8 @@ fresh-minimal 是新执行上下文 + 最小显式任务输入，不是“更换
 
 ## 一次阶段 dispatch → collect → approval
 
+终结请求优先依 [closure.md](closure.md) 由父协调器处理，不派发新阶段；closing 只继续停任务/收结果，closed/completed 不再调度。Release/Learn 完整阶段按 [external-evidence.md](external-evidence.md) 增加 source-index 证据契约与 external_reads 范围；取证 leaf 只交其来源片段，由同阶段 child 汇总。
+
 catalog.gates 的 Verify required_evidence 是全路线追加要求，不参与正文 output_overrides。父 Agent 在完整 Verify 的 stage dispatch 写入两类证据契约；单 Gate leaf 只写分配种类的契约并仅由其指定角色执行。阶段汇总 child 收齐两份报告后，父 Agent 核验双报告/原始输出及同一冻结候选。Scope/Diagnose 缺 Gate 时按 gates.md 派发指定 Architect/QE gate-design leaf；leaf 使用当前阶段固定草案作为只读设计输入，不把它当实施授权。
 
 1. 主 Agent 校验 work.method_revision 与安装版本一致，按 [profiles.md](profiles.md) 解析 state.profile 的阶段列表和输出。当前阶段的所有前序阶段必须在同一 profile 下有效批准；Implement 还校验该路线 implementation_authority。work 为 awaiting_approval 时不得再 spawn；未获继续授权时也不 spawn；自动继续只能来自 approval.md 中有效委托的 auto_continue。
@@ -53,8 +55,8 @@ catalog.gates 的 Verify required_evidence 是全路线追加要求，不参与�
 | Plan | 开发任务评估、验证任务评估 | 汇成一个无环依赖图与写入所有权 |
 | Implement | 批准 DAG 中依赖已完成且写入范围不重叠的任务 | 接口、共享配置、锁文件不得竞争；最后统一集成检查 |
 | Verify | Architecture Gate、Quality Gate | 同一冻结 candidate/rule 版本，报告分目录，全部完成后统一 AC 结果 |
-| Release | 回滚准备评审、可观测性准备评审 | 都是准备材料，不并行部署 |
-| Learn | 业务观察分析、交付复盘 | 真实来源、同一观测窗口；不能用复盘替代业务接受 |
+| Release | Git/CI 构建与镜像证据、Jira 验收/阻塞反馈、回滚准备 | 同一候选、各自只读来源与独立输出，汇成 readiness |
+| Learn | Git/CI 部署事实、Jira 反馈/缺陷分析 | 同一候选和观察窗口，收齐来源后统一结果 |
 
 **父 Agent 是唯一 spawn 者。** 阶段 child 通过 `parallel_requests` 提议 `{task_id,task,depends_on,read_scope,write_scope,expected_outputs,resource_locks}`；主 Agent 校验后生成 `kind=leaf`、`parent_run_id=阶段 run` 的独立 packet，不把请求当成授权。所有 live child（含等候中的阶段 child）计入默认 `max_parallel_workers=2`，以更低的宿主限额为准。需要两个 leaf 同时跑时，可先让阶段 child 返回拆分方案并结束释放槽位，主 Agent 并行执行 leaf 后，用新鲜的同阶段汇总 child 读取固定输入及 leaf 结果完成汇合；它有新 run ID，不更换方法版本。若宿主计入空闲 child，应按能力关闭已结束 child 后再调度。
 
@@ -66,9 +68,9 @@ Verify 期间冻结候选：不允许 Implement worker 同时改代码。Gate �
 
 ## 中断、恢复、超时
 
-用户撤销自动模式或要求停止时，父协调器先撤销继续/自动批准权，停止新派发，再向全部活动阶段/leaf 发送停止要求并调用宿主实际中断接口，记录 stop_requested。只对能确认属于这些 run 的子进程/任务请求停止，不终止无关进程、不回滚用户文件。逐一确认 worker 和其写入子进程已停止或完成；仅中断聊天不证明后台命令已停。无法确认则保持 blocked 和真实 active_runs，不标 stopped、不启动重叠替代任务。收回已写文件/晚到结果作为历史证据，重新检查写入范围与候选，不能沿用撤销的策略自动批准；需要继续时由用户明确决定并重新核验。停止不撤销过去真实完成的事实，也不把未完成阶段标 completed。
+用户撤销自动模式或要求停止时，父协调器先撤销继续/自动批准权，停止新派发，再向全部活动阶段/leaf 发送停止要求并调用宿主实际中断接口，记录 stop_requested。只对能确认属于这些 run 的子进程/任务请求停止，不终止无关进程、不回滚用户文件。逐一确认 worker 和其写入子进程已停止或完成；仅中断聊天不证明后台命令已停。无法确认则保持 blocked（已确认终结的工作保持 closing）和真实 active_runs，不标 stopped、不启动重叠替代任务。收回已写文件/晚到结果作为历史证据，重新检查写入范围与候选，不能沿用撤销的策略自动批准；需要继续时由用户明确决定并重新核验。停止不撤销过去真实完成的事实，也不把未完成阶段标 completed。
 
-主 Agent 给每个 run 记录超时/执行预算，不无限重试。工具失联或超时先查实际 worker 状态；确认停止或完成前不得启动会写同一范围的替代 worker。不能确认时保持 blocked，不能仅把记录改成 stopped。当旧 worker 稍后返回，先核对 run/input/candidate；已 superseded 的回包只存历史，不推进状态。
+主 Agent 给每个 run 记录超时/执行预算，不无限重试。工具失联或超时先查实际 worker 状态；确认停止或完成前不得启动会写同一范围的替代 worker。不能确认时保持 blocked（终结中保持 closing），不能仅把记录改成 stopped。当旧 worker 稍后返回，先核对 run/input/candidate；已 superseded 的回包只存历史，不推进状态。
 
 新会话从 state、runs 和 review 恢复。可访问现存 worker 就收回结果；宿主不能跨会话找到它时，先证明不会继续写入再重跑。主 Agent 不用聊天总结伪造审批、恢复 worker 身份或计算结果。
 

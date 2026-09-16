@@ -28,6 +28,8 @@
 
 自动模式不批准修改策略/权限、安装依赖、读取生产数据、网络写入、付费、push/merge/deploy 或业务接受；这些须单独授权，仍遵守宿主工具审批。Setup/update 从不激活自动批准，也不能用它自动结束旧工作以绕过升级阻塞。
 
+自动策略不授予直接终结权；关闭当前工作必须有审批人本次明确确认，按 [closure.md](closure.md) 执行。终结会撤销自动策略，并保留历史决定与真实结果。
+
 ## 记录与继续
 
 使用同一 approval 模板和精确 review_digest；人审写 `approval_mode=manual`，按 identity.md 预填真实署名 by 与 approver 快照，保存实际 user_statement/decision_source、必要的 delegation_ref，policy_ref=null。自动批准写 `approval_mode=auto_low_risk`、by=parent-coordinator、user_statement=null、decision_source 为实际父协调器运行来源，approver 保留责任人快照，policy_ref 指向完整委托文件及摘要，decision_checks 逐项记录 {condition, result, evidence} 的实际依据/证据引用，时间为实际执行时间。decision=approved 只表示该批准来源下的通过；不能署用户名或伪造“用户同意此版本”。子 Agent 引用自动上游批准时，须验证其策略与委托范围，不要求再补同一阶段人审。

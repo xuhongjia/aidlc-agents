@@ -2,7 +2,7 @@
 
 **让 AI 按需求大小选流程，每阶段独立子 Agent 执行，默认交给你批准，也支持有限自动批准。**
 
-AI-assisted、Spec-driven、Human-governed。没有 Python 安装器、额外 Agent CLI 或常驻服务。当前包版本 **0.5.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents)
+AI-assisted、Spec-driven、Human-governed。没有 Python 安装器、额外 Agent CLI 或常驻服务。当前包版本 **0.6.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents)
 
 ## 一句话接入
 
@@ -72,6 +72,12 @@ AI 固定来源版本，配置项目 `.aidlc/` 和当前工具的最小入口，
 主聊天只处理调度、澄清和审批，不执行阶段业务任务。默认最多 2 个 live 子 Agent；只有独立的调查、批准任务或同一冻结候选上的双 Gate 可以并行。文件、数据库或缓存存在冲突就串行子 Agent；不并行预跑尚未批准阶段。见 [调度协议](workflow/orchestration.md)。
 
 短流程最终批准表示 **delivery verified / business not evaluated**，不是部署或业务收益验证。标准流程的 Release/Learn、审批与返工详见 [工作协议](workflow/protocol.md)。
+
+## Release / Learn 自动取证与直接终结
+
+Release 自动从业务 Git 仓库和 CI 获取候选提交、PR/MR、流水线结果及 image digest，并读取 Jira 的验收/阻塞反馈；Learn 自动收集 Jira 评论、验收意见和缺陷，对照实际版本与观察窗口。结果附原始来源，不需要你逐份整理日志。见 [取证规则](workflow/external-evidence.md)。
+
+任何阶段都可由审批人发送：`终结 REQ-001 当前工作。` 确认后直接停止后续流程，收回运行中的子 Agent，再标记 closed。保留已有代码、证据和未完成项，交付/业务结果如实保留；无需补跑 Release/Learn。见 [直接终结](workflow/closure.md)。
 
 ## 可选：自动批准与继续
 

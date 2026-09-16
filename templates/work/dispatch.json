@@ -13,6 +13,7 @@
   "stage_prompt_path": null,
   "input_refs": [],
   "read_scope": [],
+  "external_reads": [],
   "write_scope": [],
   "expected_outputs": [],
   "required_evidence": [],

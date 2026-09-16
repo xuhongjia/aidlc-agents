@@ -11,6 +11,8 @@
 1. 确认业务仓库根和 `.aidlc/config.json` 的 package。未知安装、缺失 config、非本包 `.aidlc`、软链接或路径越出项目根：停止，不当作首次安装覆盖。先读取现有宿主规则与本地改动。
 2. 按 [setup](setup.md) 的来源规则，取得一个固定目标 commit 的完整 payload；重新读取该版本的 update/manifest/schema。记录旧来源、目标来源和版本，不能将变化中的 main 混用。local-unreleased 必须记录完整文件集合及实际 SHA-256。
 3. 从所有 `.aidlc/work/*/state.json`、handoff/worker 记录和宿主任务状态检查未完成工作及活 worker。只有依据旧版本协议确实终结的工作才算结束；阶段等待批准、blocked、暂停、失败待修复、取消中都不是已完成。完成标记与 worker 状态冲突、状态缺失或无法确认也阻塞。逐项列出工作 ID、阶段、状态、方法版本和活 worker ID/状态，不能默认为空。
+对于已安装支持 closure 的版本，有真实终结记录且所有 worker/子进程均已停止的 closed 可视为已终结；closing、仅改 status 或无停止证据仍阻塞。旧版不支持的关闭记录不可回填；更新过程自身不能替审批人关闭工作。
+
 4. **存在任一未完成工作或活 worker，就不应用更新**：给出确切阻塞清单，保留旧 `.aidlc/system/`、config、bridge 和工作数据原样可用。可以只读准备 diff；先由用户按旧协议结束工作、停止并确认 worker，再重新检查。不能自动批准/取消工作，不修改 `method_revision`，不以另开工作绕过。本版没有 side-by-side 方法解析器。
 
 ## 2. 三方比较，先给计划
@@ -43,6 +45,8 @@ bridge 比较单位是受管 marker 块，不是整个 `AGENTS.md` / `CLAUDE.md`
 0.3 → 0.4：config schema 仍为 2，但新增 profile 选择和 schema 3 的**新工作模板**。保留已有 config.profile（包括 standard），不静默改成 auto；在更新计划中让用户选择是否为今后新需求启用 auto。新增自动批准能力默认关闭；保留历史审批来源，不回填为自动批准，不能把启用 auto 路由当委托审批。旧 work/profile/批准不迁移；新工作不再生成重复 drafts/handoff，历史文件全部保留。所有未完成工作仍必须先按旧版本结束，不能靠更换 profile 绕过升级阻塞。
 
 0.4 → 0.5：只为新工作加入审批人解析（Jira 经办人 > Git > 系统登录人）与所有路线必需的双 Gate 报告；历史 approval 不回填姓名/邮箱、不补造 Gate 证据。仍须先结束旧版工作再更新。短流程缺 Gate 要补建，不再接受人工核对作为替代；展示这一行为差异并保留用户原设置。
+
+0.5 → 0.6：新工作支持 Release/Learn 主动只读取证（业务 Git/CI/Jira）和审批人明确确认的直接终结。新增 external_reads/source-index/closure 记录，首次字段为空，不回填历史证据或终结状态；现有绑定、审批人与用户设置保留，来源歧义在新工作中核实。
 
 此处是 AI 使用宿主文件工具执行的操作协议，不得额外生成安装脚本或声称它是防篡改/原子事务系统。
 
