@@ -1,5 +1,9 @@
 # Verify · 对冻结候选执行验收
 
+组合工作（dispatch.workflow_ref 非空）先遵守 `.aidlc/system/prompts/composed-stage.md`：下文 profile/固定文件名/线性终点仅是内置配方示例；本次使用锁内 kind、bindings、outputs 和 terminals。原有职责、事实证据、AC/Oracle 与双 Gate 保证不变，不因模板改名省略。
+
+完整阶段还须读取 `.aidlc/system/workflow/knowledge.md`：核对原始 FR/NFR→AC（或明确批准排除）→测试/Oracle→证据，漏源需求阻塞；在审批前冻结可发布知识技术附件及目标。standard 保留获批架构/ADR、质量设计正文，验证结论单列；compact 只提取标明派生的条目。反模式六要素必须有实证，没有发现不生成。知识附件不能代替双 Gate，也不是第三类正文；child 不发布，父协调器批准后另派 Hook。
+
 先执行 `.aidlc/system/prompts/common.md`。核对本 profile 的批准 Implement 候选与验收基线：standard 读 Spec/AC/Oracle/Fitness；enhance/fix 读批准 change.md 的 AC/Oracle/检查及 Implement verification.md。输出按 profile 覆盖解析，短流程不补造 Spec/Plan/Fitness JSON。
 
 workflow/gates.md 的双 Gate 及 catalog.gates.required_evidence 对全部 profile 的完整 Verify 生效：实际执行两类并收齐结果。kind=leaf 时仅执行 dispatch 指定 Gate、角色与证据契约，写自己的报告；不运行另一类或生成整阶段文件。阶段汇总 child 可引用已验真的 leaf 原始报告，将两类汇总报告写到自己的 evidence，保留原执行 lineage，不能冒称汇总 child 重新执行了命令。缺任一规则或实现时 blocked 并回退对应阶段补建；不能临时只做人工检查、N/A、写一个 PASS 或省略架构 Gate。

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "project_id": null,
+  "work_id": null,
+  "snapshot_refs": [],
+  "targets": [],
+  "operations": [],
+  "content_scope": "approved-project-knowledge-only",
+  "authorization": {"by": null, "at": null, "source": null, "user_statement": null, "card_ref": null}
+}

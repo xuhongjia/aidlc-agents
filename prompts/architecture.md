@@ -1,5 +1,7 @@
 # Architecture · 决策与 Fitness 设计
 
+组合工作（dispatch.workflow_ref 非空）先遵守 `.aidlc/system/prompts/composed-stage.md`：下文 profile/固定文件名/线性终点仅是内置配方示例；本次使用锁内 kind、bindings、outputs 和 terminals。原有职责、事实证据、AC/Oracle 与双 Gate 保证不变，不因模板改名省略。
+
 先执行 `.aidlc/system/prompts/common.md`。输入是批准 Spec、Intake 画像及相关现有 ADR。
 
 1. 判断现有架构是否足够；说明最小必要变化、组件职责、依赖方向、接口、数据生命周期和信任边界。

@@ -1,0 +1,84 @@
+{
+  "contract_version": 1,
+  "id": "design-team",
+  "version": "1.0.0",
+  "core_contract": 1,
+  "stages": [
+    {
+      "id": "team.brief",
+      "kind": "analysis",
+      "role": "Discovery analyst",
+      "prompt": "team:prompts/brief.md",
+      "inputs": ["request", "project"],
+      "optional_inputs": ["knowledge"],
+      "outputs": [{"name": "decision-brief.md", "contract": "analysis", "template": "team:templates/decision-brief.md"}],
+      "capabilities": ["knowledge.read"],
+      "tool_binding_ids": [],
+      "auto_eligible": false,
+      "routing_facts": {}
+    },
+    {
+      "id": "team.options",
+      "kind": "analysis",
+      "role": "Architecture options analyst",
+      "prompt": "team:prompts/options.md",
+      "inputs": ["analysis", "project"],
+      "optional_inputs": [],
+      "outputs": [{"name": "options-study.md", "contract": "analysis", "template": "team:templates/options-study.md"}],
+      "capabilities": [],
+      "tool_binding_ids": [],
+      "auto_eligible": false,
+      "routing_facts": {}
+    },
+    {
+      "id": "team.security",
+      "kind": "analysis",
+      "role": "Security design analyst",
+      "prompt": "team:prompts/security.md",
+      "inputs": ["analysis", "project"],
+      "optional_inputs": [],
+      "outputs": [{"name": "security-study.md", "contract": "analysis", "template": "team:templates/security-study.md"}],
+      "capabilities": [],
+      "tool_binding_ids": [],
+      "auto_eligible": false,
+      "routing_facts": {}
+    },
+    {
+      "id": "team.synthesis",
+      "kind": "design",
+      "role": "Design synthesizer",
+      "prompt": "team:prompts/synthesis.md",
+      "inputs": ["analysis", "project"],
+      "optional_inputs": [],
+      "outputs": [{"name": "proposed-design.md", "contract": "architecture", "template": "team:templates/proposed-design.md"}],
+      "capabilities": [],
+      "tool_binding_ids": [],
+      "auto_eligible": false,
+      "routing_facts": {}
+    }
+  ],
+  "workflows": [
+    {
+      "id": "team.design-analysis",
+      "intent": "analysis",
+      "risk_ceiling": "any",
+      "entry": "brief",
+      "nodes": [
+        {"step_id": "brief", "stage_id": "team.brief", "bindings": {"request": ["$request"], "project": ["$project"], "knowledge": ["$knowledge"]}},
+        {"step_id": "options", "stage_id": "team.options", "bindings": {"analysis": ["brief"], "project": ["$project"]}},
+        {"step_id": "security", "stage_id": "team.security", "bindings": {"analysis": ["brief"], "project": ["$project"]}},
+        {"step_id": "synthesis", "stage_id": "team.synthesis", "bindings": {"analysis": ["brief", "options", "security"], "project": ["$project"]}}
+      ],
+      "edges": [
+        {"from": "brief", "to": "options"},
+        {"from": "brief", "to": "security"},
+        {"from": "options", "to": "synthesis"},
+        {"from": "security", "to": "synthesis"}
+      ],
+      "switches": [],
+      "terminals": [{"step_id": "synthesis", "outcome": "analysis_complete"}]
+    }
+  ],
+  "overrides": [],
+  "tool_bindings": []
+}

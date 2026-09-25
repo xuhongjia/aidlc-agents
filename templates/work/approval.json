@@ -1,10 +1,14 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "work_id": null,
   "approver": null,
   "decision_source": null,
   "delegation_ref": null,
   "profile": null,
+  "workflow_ref": null,
+  "step_id": null,
+  "stage_id": null,
+  "authorized_steps": [],
   "stage": null,
   "revision": null,
   "decision": null,
@@ -16,5 +20,6 @@
   "user_statement": null,
   "review_digest": null,
   "scope": [],
+  "knowledge_publish": null,
   "next_stage_authorized": false
 }

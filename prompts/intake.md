@@ -1,5 +1,9 @@
 # Intake · 需求与项目入口
 
+组合工作（dispatch.workflow_ref 非空）先遵守 `.aidlc/system/prompts/composed-stage.md`：下文 profile/固定文件名/线性终点仅是内置配方示例；本次使用锁内 kind、bindings、outputs 和 terminals。原有职责、事实证据、AC/Oracle 与双 Gate 保证不变，不因模板改名省略。
+
+按 `.aidlc/system/workflow/knowledge.md` 按需读已批准的项目知识，核实适用性/失效条件与当前代码；把采用或拒用依据简记在 project-context，不把历史经验当当前事实。
+
 先执行 `.aidlc/system/prompts/common.md`。只处理当前 work 的 Intake；接入工具包不等于批准需求。
 
 1. 保留 `request.md` 原意。确认问题、使用者、预期结果、范围外、约束、风险和成功观察方式。区分用户明确要求与 AI 建议。

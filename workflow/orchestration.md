@@ -1,5 +1,9 @@
 # 独立子 Agent 调度协议
 
+schema 4 新工作以 [DAG 调度](dag.md) 的逐节点依赖/状态/授权与 [composed-stage](../prompts/composed-stage.md) 为准，不执行下文仅适用于内置线性配方/旧工作的一次下一阶段规则。并发上限、真实 fresh-context、父协调器唯一 spawn、leaf 收回、候选和停止协议仍适用。stage 身份由 workflow_ref/step_id 锁定，别按当前目录的团队文件临时换 Prompt。
+
+[knowledge-sync Hook](knowledge.md) 是非阶段 child，使用独立 Hook dispatch/receipt，不套阶段产物或 stage-result 状态。父协调器登记 `.aidlc/knowledge/runs.json` 的真实 active_runs、统一并发预算和每目标单 writer；阶段 child 不能递归启动 Hook。交付完成不代表 Hook 已停，update/closure 必须检查其真实活跃状态。
+
 `0.3.0` 起正式阶段必须在**新建、独立上下文的宿主子 Agent**执行。当前聊天只作主调度、用户澄清、结果验真和审批入口，不在当前上下文撰写阶段产物或执行开发任务。本文件是宿主 Agent 遵守的协议，不是自带调度程序或安全沙箱。
 
 ## 分工和上下文

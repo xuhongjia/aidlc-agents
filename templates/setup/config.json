@@ -11,6 +11,9 @@
   },
   "tool": null,
   "profile": "auto",
+  "workflow": "auto",
+  "team": {"manifest": null, "source": null, "authorization": null},
+  "project_overrides": null,
   "owner": null,
   "mode": "solo",
   "update_policy": {
@@ -29,6 +32,7 @@
     },
     "probe": null
   },
+  "knowledge": {"targets": []},
   "installed_at": null,
   "managed_files": []
 }

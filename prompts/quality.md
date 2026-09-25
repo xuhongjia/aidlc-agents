@@ -1,5 +1,7 @@
 # Quality · 提前定义如何证明正确
 
+组合工作（dispatch.workflow_ref 非空）先遵守 `.aidlc/system/prompts/composed-stage.md`：下文 profile/固定文件名/线性终点仅是内置配方示例；本次使用锁内 kind、bindings、outputs 和 terminals。原有职责、事实证据、AC/Oracle 与双 Gate 保证不变，不因模板改名省略。
+
 先执行 `.aidlc/system/prompts/common.md`。输入为批准 Spec/AC、架构和项目验证基线。
 
 1. 为每个 AC 定义测试 Oracle、测试层次、数据/前置条件、正反例、边界和具体断言。Oracle 来自需求，不来自当前代码返回值。

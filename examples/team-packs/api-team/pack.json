@@ -1,0 +1,89 @@
+{
+  "contract_version": 1,
+  "id": "api-team",
+  "version": "1.0.0",
+  "core_contract": 1,
+  "stages": [
+    {
+      "id": "team.scope",
+      "kind": "analysis",
+      "role": "API maintainer",
+      "prompt": "team:prompts/scope.md",
+      "inputs": ["request", "project"],
+      "optional_inputs": ["knowledge"],
+      "outputs": [{"name": "api-change-brief.md", "contract": "change", "template": "team:templates/api-change-brief.md"}],
+      "capabilities": ["knowledge.read"],
+      "tool_binding_ids": [],
+      "auto_eligible": true,
+      "routing_facts": {"needs_review": "boolean"}
+    },
+    {
+      "id": "team.compatibility",
+      "kind": "analysis",
+      "role": "API compatibility reviewer",
+      "prompt": "team:prompts/compatibility.md",
+      "inputs": ["change", "project"],
+      "optional_inputs": [],
+      "outputs": [{"name": "consumer-compatibility.md", "contract": "analysis", "template": "team:templates/consumer-compatibility.md"}],
+      "capabilities": [],
+      "tool_binding_ids": [],
+      "auto_eligible": true,
+      "routing_facts": {}
+    },
+    {
+      "id": "team.tests-review",
+      "kind": "analysis",
+      "role": "API test reviewer",
+      "prompt": "team:prompts/tests-review.md",
+      "inputs": ["change", "project"],
+      "optional_inputs": [],
+      "outputs": [{"name": "test-coverage-review.md", "contract": "analysis", "template": "team:templates/test-coverage-review.md"}],
+      "capabilities": [],
+      "tool_binding_ids": [],
+      "auto_eligible": true,
+      "routing_facts": {}
+    },
+    {
+      "id": "team.implement",
+      "kind": "implementation",
+      "role": "API developer",
+      "prompt": "team:prompts/implement.md",
+      "inputs": ["change", "project"],
+      "optional_inputs": ["analysis"],
+      "outputs": [{"name": "api-delivery-note.md", "contract": "implementation", "template": "team:templates/api-delivery-note.md"}],
+      "capabilities": ["product.write"],
+      "tool_binding_ids": [],
+      "auto_eligible": true,
+      "routing_facts": {}
+    }
+  ],
+  "workflows": [
+    {
+      "id": "team.api-enhancement",
+      "intent": "delivery",
+      "risk_ceiling": "low",
+      "entry": "scope",
+      "nodes": [
+        {"step_id": "scope", "stage_id": "team.scope", "bindings": {"request": ["$request"], "project": ["$project"], "knowledge": ["$knowledge"]}},
+        {"step_id": "compatibility", "stage_id": "team.compatibility", "bindings": {"change": ["scope"], "project": ["$project"]}},
+        {"step_id": "tests-review", "stage_id": "team.tests-review", "bindings": {"change": ["scope"], "project": ["$project"]}},
+        {"step_id": "implement", "stage_id": "team.implement", "authority": "scope", "bindings": {"change": ["scope"], "project": ["$project"], "analysis": ["compatibility", "tests-review"]}},
+        {"step_id": "verify", "stage_id": "core.verify", "bindings": {"change": ["scope"], "implementation": ["implement"]}, "outputs": [{"name": "api-delivery-note.md", "contract": "verification", "template": "team:templates/api-delivery-note.md"}]}
+      ],
+      "edges": [
+        {"from": "scope", "to": "compatibility", "when": {"switch": "review-depth", "case": "review"}},
+        {"from": "scope", "to": "tests-review", "when": {"switch": "review-depth", "case": "review"}},
+        {"from": "scope", "to": "implement", "when": {"switch": "review-depth", "case": "direct"}},
+        {"from": "compatibility", "to": "implement"},
+        {"from": "tests-review", "to": "implement"},
+        {"from": "implement", "to": "verify"}
+      ],
+      "switches": [
+        {"id": "review-depth", "after": "scope", "fact": "needs_review", "cases": [{"id": "review", "op": "eq", "value": true}, {"id": "direct", "op": "eq", "value": false}]}
+      ],
+      "terminals": [{"step_id": "verify", "outcome": "verified"}]
+    }
+  ],
+  "overrides": [],
+  "tool_bindings": []
+}

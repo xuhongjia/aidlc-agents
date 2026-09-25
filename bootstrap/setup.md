@@ -1,5 +1,9 @@
 # AI-native setup
 
+0.9 新安装 config.workflow=auto、team.manifest/source/authorization=null、project_overrides=null；不自动启用示例或团队包。新 work 使用 schema 4 的锁定工作流，内置配方同样解析。实际团队接入另按 [team.md](team.md) 的明确配置请求处理；读取样例不授权企业连接。
+
+0.8 新安装 config.knowledge.targets=[]，不授予知识库写权限，不创建空知识条目。`.aidlc/knowledge/` 是项目数据，只在实际获批知识出现时建立；不纳入 managed_files。目标配置与授权见 [knowledge.md](../workflow/knowledge.md)。
+
 这是给**正在用户本地仓库中工作的 AI 工具**的安装指令。完成配置即停下，不自动接需求、实现功能或批准阶段。不运行专用安装器，不要求 Python、Node、Codex CLI、API key 或常驻服务。
 
 ## 0. 确认能力和授权边界

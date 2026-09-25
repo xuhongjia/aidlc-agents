@@ -1,8 +1,12 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "work_id": null,
   "approver": null,
   "profile": null,
+  "workflow_ref": null,
+  "step_id": null,
+  "stage_id": null,
+  "routing_facts": {},
   "stage": null,
   "revision": null,
   "files": [],
@@ -13,5 +17,6 @@
   },
   "gate_evidence": [],
   "external_evidence": [],
-  "execution": []
+  "execution": [],
+  "knowledge_refs": []
 }

@@ -1,5 +1,7 @@
 # Plan · 将批准契约变为实施任务
 
+组合工作（dispatch.workflow_ref 非空）先遵守 `.aidlc/system/prompts/composed-stage.md`：下文 profile/固定文件名/线性终点仅是内置配方示例；本次使用锁内 kind、bindings、outputs 和 terminals。原有职责、事实证据、AC/Oracle 与双 Gate 保证不变，不因模板改名省略。
+
 先执行 `.aidlc/system/prompts/common.md`。阅读批准的 Spec、Architecture 和 Quality 全部相关产物。
 
 1. 按可交付的小变更划分任务，每项关联 AC、架构/质量规则、涉及文件或模块、依赖、验证入口及完成证据。

@@ -1,6 +1,26 @@
 {
   "schema_version": 3,
   "default_profile": "auto",
+  "composition": {
+    "contract_version": 1,
+    "protocol": "workflow/extensions.md",
+    "scheduler": "workflow/dag.md",
+    "stage_contracts": "workflow/stage-contracts.json",
+    "skill": "skills/aidlc-workflow/SKILL.md",
+    "dispatch_prompt": "prompts/composed-stage.md",
+    "lock_template": "templates/work/workflow-lock.json"
+  },
+  "knowledge": {
+    "contract_version": 1,
+    "protocol": "workflow/knowledge.md",
+    "read_stages": ["intake", "scope", "diagnose"],
+    "prepare_stages": ["verify", "learn"],
+    "hook_skill": "skills/aidlc-knowledge-sync/SKILL.md",
+    "dispatch_template": "templates/knowledge/dispatch.json",
+    "types": ["architecture", "quality", "anti_pattern", "lesson"],
+    "providers": ["confluence_cloud"],
+    "default_publish_authorization": null
+  },
   "closure": {
     "protocol": "workflow/closure.md",
     "template": "templates/work/closure.json",

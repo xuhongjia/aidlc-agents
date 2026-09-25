@@ -1,5 +1,9 @@
 # 运行前检查版本
 
+0.9 新图解析之前仍先完成本协议。检查核心和 `.aidlc/team-updates/` 未结束切换 journal；任何 applying/recovery-required 阻塞执行。团队来源默认 pinned，不随核心查新自动更新；核心目标与现有团队契约不兼容也不能自动应用。所有 DAG 活动节点/leaf/Hook 纳入盘点；旧 workflow_ref 不从新配置重算。
+
+知识同步状态另按 [knowledge.md](knowledge.md) 检查：所有 work（含 completed）的活动 Hook、孤儿 dispatch/attempt 与宿主 worker 都要盘点；未证实停止不更新。单纯 pending/failed/unknown 投递且无活 worker 不阻止升级。明确重试是控制操作，不启动交付/更改旧 method_revision；当前适配器须兼容原快照和原授权。
+
 由父协调器执行，不是交付阶段，不增加业务审批或正文。默认来源为 `https://github.com/xuhongjia/aidlc-agents` 的 `refs/heads/main`；“最新”指本次从 GitHub 解析的完整 commit，不是最大 semver、缓存分支或 latest release。
 
 ## 入口与频率

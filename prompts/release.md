@@ -1,5 +1,7 @@
 # Release · 发布就绪，不是自动部署
 
+组合工作（dispatch.workflow_ref 非空）先遵守 `.aidlc/system/prompts/composed-stage.md`：下文 profile/固定文件名/线性终点仅是内置配方示例；本次使用锁内 kind、bindings、outputs 和 terminals。原有职责、事实证据、AC/Oracle 与双 Gate 保证不变，不因模板改名省略。
+
 先执行 `.aidlc/system/prompts/common.md`。输入为批准的冻结候选及当前有效的验证证据。
 
 执行 `.aidlc/system/workflow/external-evidence.md`：主动从 dispatch.external_reads 指定的业务 Git 仓库/CI/Jira 收集候选 commit、PR/MR、必需 pipeline/job、构建物及验收/阻塞反馈。容器交付提取完整 image repository@digest 和对应 job/commit；将它与批准候选核对。只读查询已有部署记录，区分 CI-reported digest、registry 核实和实际部署。先检索可用来源，缺口再返回，不默认让用户粘贴 CI 日志。

@@ -176,7 +176,7 @@ test('approver resolution preserves precedence, unknown identity and separate ac
   assert.equal(json('templates/work/state.json').jira_issue, null, 'No guessed Jira issue');
 });
 
-test('every route requires both executable Gates independently of compact document overrides', () => {
+test('every built-in delivery route requires both executable Gates independently of compact document overrides', () => {
   const gates = catalog.gates;
   assert.deepEqual([...gates.required_profiles].sort(), Object.keys(profiles).sort());
   assert.equal(gates.required_stage, 'verify');
@@ -203,7 +203,7 @@ test('every route requires both executable Gates independently of compact docume
   assert.deepEqual(json('templates/work/dispatch.json').required_evidence, []);
 });
 
-test('automatic approval is opt-in, work-scoped, attributable and limited to compact routes', () => {
+test('built-in automatic approval is opt-in, work-scoped, attributable and limited to compact routes', () => {
   const state = json('templates/work/state.json');
   const approval = json('templates/work/approval.json');
   const options = catalog.approval;
@@ -249,9 +249,9 @@ test('all JSON artifacts parse, templates start without fabricated approvals or 
   assert.equal(Object.hasOwn(json('templates/work/review.json'), 'digest'), false, 'No self-referential manifest hash');
 });
 
-test('sixteen unique skills have valid discovery metadata', () => {
+test('eighteen unique skills have valid discovery metadata', () => {
   const skillFiles = all.filter(file => path.basename(file) === 'SKILL.md');
-  assert.equal(skillFiles.length, 16);
+  assert.equal(skillFiles.length, 18);
   const names = new Set();
   for (const file of skillFiles) {
     const text = readFileSync(file, 'utf8');
@@ -311,4 +311,74 @@ test('maintainer CI uses read-only permissions and pinned action identities', ()
   assert.match(workflow, /contents:\s*read/);
   assert.match(workflow, /persist-credentials:\s*false/);
   assert.doesNotMatch(workflow, /pull_request_target|write-all|secrets\./);
+});
+
+test('knowledge hooks are discoverable without adding a stage, implicit grant or managed project storage', () => {
+  const knowledge=catalog.knowledge;
+  for (const field of ['protocol','hook_skill','dispatch_template']) assert.ok(existsSync(path.join(root,knowledge[field])));
+  assert.deepEqual(knowledge.read_stages,['intake','scope','diagnose']);
+  assert.deepEqual(knowledge.prepare_stages,['verify','learn']);
+  assert.deepEqual(json('templates/setup/config.json').knowledge,{targets:[]});
+  for (const file of ['approval','approval-policy']) assert.equal(json(`templates/work/${file}.json`).knowledge_publish,null);
+  assert.deepEqual(json('templates/work/review.json').knowledge_refs,[]);
+  const dispatch=json('templates/knowledge/dispatch.json');
+  assert.equal(dispatch.kind,'hook'); assert.equal(dispatch.max_write_attempts_per_target,1);
+  assert.equal(dispatch.authorization_ledger_path,'.aidlc/knowledge/authorizations');
+  assert.deepEqual(dispatch.targets,[]); assert.equal(dispatch.authorization_ref,null);
+  assert.deepEqual(json('templates/knowledge/publish-scope.json').snapshot_refs,[]);
+  assert.equal(json('templates/knowledge/receipt.json').status,'pending');
+  assert.equal(knowledge.default_publish_authorization,null);
+  assert.ok(!manifest.payload_directories.includes('rehearsal'));
+  for (const id of [...knowledge.read_stages,...knowledge.prepare_stages]) assert.ok(read(`prompts/${id}.md`).includes('workflow/knowledge.md'));
+  assert.ok(read(manifest.entrypoint).includes('workflow/knowledge.md'));
+});
+
+test('composable workflow entrypoints and blank templates preserve locked identities and default-deny grants', () => {
+  const composition=catalog.composition, config=json('templates/setup/config.json');
+  for (const key of ['protocol','scheduler','stage_contracts','skill','dispatch_prompt','lock_template']) {
+    assert.ok(existsSync(path.join(root,composition[key])));
+  }
+  assert.equal(composition.contract_version,1);
+  assert.equal(config.workflow,'auto');
+  assert.deepEqual(config.team,{manifest:null,source:null,authorization:null});
+  assert.equal(config.project_overrides,null);
+  const state=json('templates/work/state.json');
+  assert.equal(state.schema_version,4); assert.deepEqual(state.nodes,{}); assert.deepEqual(state.branch_decisions,[]);
+  for (const file of ['state','dispatch','stage-result','review','approval','approval-policy']) {
+    assert.equal(json(`templates/work/${file}.json`).workflow_ref,null);
+  }
+  for (const file of ['dispatch','stage-result','review','approval']) {
+    assert.equal(json(`templates/work/${file}.json`).step_id,null);
+  }
+  assert.deepEqual(json('templates/work/approval.json').authorized_steps,[]);
+  assert.deepEqual(json('templates/work/approval-policy.json').allowed_steps,[]);
+  assert.deepEqual(json('templates/work/approval-policy.json').allowed_tool_bindings,[]);
+  const lock=json(composition.lock_template);
+  assert.equal(lock.workflow,null); assert.deepEqual(lock.assets,[]); assert.ok(!Object.hasOwn(lock,'digest'));
+  assert.equal(json('templates/extensions/stage.json').auto_eligible,false);
+  assert.equal(json('templates/extensions/tool-binding.json').authorization_ref,null);
+  assert.ok(manifest.payload_directories.includes('examples'));
+  assert.ok(!manifest.payload_directories.includes('tests'));
+});
+
+test('builtin semantic metadata and example resource references resolve without escaping their pack', () => {
+  const metadata=json(catalog.composition.stage_contracts);
+  assert.deepEqual(Object.keys(metadata.stages).sort(),stages.map(s=>s.id).sort());
+  for (const stage of stages) {
+    assert.deepEqual(Object.keys(metadata.stages[stage.id].contracts).sort(),[...stage.outputs].sort());
+  }
+  for (const name of ['api-team','design-team']) {
+    const packRoot=path.join(root,'examples/team-packs',name), pack=json(`examples/team-packs/${name}/pack.json`);
+    const definitions=[...pack.stages,...pack.workflows.flatMap(w=>w.nodes.filter(n=>n.outputs))];
+    for (const definition of definitions) {
+      const refs=[definition.prompt,...(definition.outputs??[]).map(o=>o.template)].filter(Boolean);
+      for (const ref of refs) {
+        const [namespace,relative]=ref.split(':');
+        assert.ok(['core','team'].includes(namespace));
+        assert.ok(relative && !path.isAbsolute(relative) && !relative.split('/').includes('..'));
+        const base=namespace==='core'?root:packRoot;
+        assert.ok(existsSync(path.join(base,relative)),ref);
+      }
+    }
+  }
 });

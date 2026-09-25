@@ -1,5 +1,7 @@
 # 每条路线都必须有双 Gate
 
+0.9 定制交付图按 [extensions](extensions.md) 检查每条活动完成路径，由 kind=implementation 安装获批规则、kind=verification 独立执行。下文阶段名是内置职责示例，不是改名即可免检的名单；缺规则回实际批准规则的生产者，缺实现回实际 writer。analysis intent 禁止产品写入且不标已验证交付，可没有产品双 Gate。
+
 standard、enhance、fix 的 Verify 都必须执行 **Architecture Gate（Architect Gate）** 和 **Quality Gate**。每类至少一项与本变更相关、可执行、非空范围的 blocking 检查；项目已有必需规则全部保留。N/A、空 Pack、只有人工看过、普通编译成功或一条不相关测试都不能替代任一 Gate。人工审查可补充机器不能证明的事项，不替代双 Gate。
 
 ## 缺少就补建，不跳过

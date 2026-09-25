@@ -1,0 +1,20 @@
+{
+  "contract_version": 1,
+  "kind": "hook",
+  "hook": "knowledge-sync",
+  "run_id": null,
+  "work_id": null,
+  "context_policy": "fresh-minimal",
+  "original_method_revision": null,
+  "adapter_ref": null,
+  "snapshot_refs": [],
+  "approval_refs": [],
+  "authorization_ref": null,
+  "revocation_refs": [],
+  "authorization_ledger_path": ".aidlc/knowledge/authorizations",
+  "targets": [],
+  "prior_receipt_refs": [],
+  "write_scope": [],
+  "result_path": null,
+  "max_write_attempts_per_target": 1
+}

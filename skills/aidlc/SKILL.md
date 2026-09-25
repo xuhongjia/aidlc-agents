@@ -5,11 +5,19 @@ description: 在已接入 aidlc-agents 的业务仓库协调需求、状态与�
 
 # AIDLC · 父协调器入口
 
+## 0.9 新工作：统一组合入口
+
+团队接入/修改流程不是交付请求：转 `.aidlc/system/skills/aidlc-workflow/SKILL.md` 与 `.aidlc/system/bootstrap/team.md`，完成配置即停，不自动创建 work。新需求先按 `.aidlc/system/workflow/preflight.md` 检查/更新；然后读取 `.aidlc/system/workflow/extensions.md` 规范化内置配方或解析团队定义，冻结工作流与资源，创建 schema 4 work。已有 schema 4 工作只读 workflow_ref 固定版本，不重新选择配置中的流程。
+
+schema 4 统一按 `.aidlc/system/workflow/dag.md` 执行：先只读 entry，首卡确认整图与范围，随后仅派发已满足依赖且获继续授权的 ready step。每个实例用独立 child 与 `.aidlc/system/prompts/composed-stage.md`，不将旧阶段 Skill 的固定文件名/profile 判断混入定制工作。解析/审核/批准/停止是父协调器职责，不能代跑阶段。
+
+workflow_ref/step_id 而非 stage 名识别批准；知识和取证按 kind/capability 触发。completed/closed 不重新派发交付，明确知识重试继续按原协议处理。活动节点/leaf/Hook 全部纳入状态、并发及更新阻断。以下线性路由说明仅供无 workflow_ref 的旧工作按其原固定版本解释，不能用它覆盖 schema 4 的图、节点权限或继续范围。
+
 当前会话只协调，不内联扮演 BA、PO、Architect、QE、PM 或 Engineer 来完成正式阶段。每次阶段运行使用实际的新子 Agent、新上下文；不复用上一阶段 Agent，不复制父会话聊天历史。原生工具无法提供隔离子 Agent 时明确阻塞，不把角色切换、普通函数调用或提示词标题称为隔离。
 
 ## 读取与派发
 
-先识别终结控制意图：明确终结、status=closing 或 closed 按 `.aidlc/system/workflow/closure.md` 处理，不进入阶段派发/能力探针；关闭无需补跑阶段。status=completed 同样只报告既有结果。只有需实际阶段执行时才走下面的派发步骤。
+先识别控制意图：明确知识同步/重试按 `.aidlc/system/workflow/knowledge.md` 核验原快照及授权，不重启交付阶段；status=closed 的旧授权不可用于重试。明确终结、status=closing 或 closed 按 `.aidlc/system/workflow/closure.md` 处理，不进入阶段派发/能力探针；关闭无需补跑阶段。status=completed 默认只报告既有结果，显式知识重试除外。只有需实际阶段执行时才走下面的派发步骤。
 
 1. 确认业务仓库根目录与新需求/已有 work，读取 `.aidlc/config.json`，先按 `.aidlc/system/workflow/preflight.md` 检查 GitHub 最新 commit；新需求有更新先完成 update，已有需求保持锁定版本。检查未放行前不创建 work/run、不启动阶段。更新后重读安装后的 router、`.aidlc/system/workflow/protocol.md`、`.aidlc/system/workflow/orchestration.md`、`.aidlc/system/workflow/stages.json` 再派发；本次调用不递归查新。缺失安装或编排能力时停止，不自行安装运行器或另起 AI CLI。
 2. 确认 work ID；存在歧义时询问。新工作先读 `.aidlc/system/workflow/profiles.md`，结合用户路线意图和 config.profile 初选 standard/enhance/fix，记录 state.profile/routing_reason，从该路线首阶段启动；auto/null 不进入实际执行。首 child 核实风险，首张审查卡确认路线和范围，不额外增加 Intake/Triage。恢复工作以 state.profile 为准，不按当前偏好换轨。
@@ -34,6 +42,8 @@ Release/Learn 派发前按 `.aidlc/system/workflow/external-evidence.md` 从业�
 - 自动批准/自动继续/撤销：按 `.aidlc/system/workflow/approval.md` 处理当前需求的明确委托，默认关闭。不把 profile=auto、setup、静默或笼统交付任务当授权；撤销/失败/返工/升级时清除活动策略并停下。
 
 ## 并行与权限
+
+新版本工作按 `.aidlc/system/workflow/knowledge.md` 执行知识 Hook：Intake/Scope/Diagnose 派发加入相关获批知识；完整 Verify/Learn 派发要求冻结知识技术附件、目标和脱敏，纳入 review。批准后父协调器只负责原样晋升本地快照和派发全新 knowledge-sync child；它不是下一交付阶段，next_stage_authorized=false 不阻止已授权的发布 Hook。不得在父会话代写发布结论。状态单列投递结果；活 Hook 计入 worker 上限并阻止更新，pending 不长期锁住升级。阶段发布授权与撤销按 knowledge.md 追溯。
 
 正式阶段依批准顺序串行；不预跑未来阶段。阶段内部独立叶子任务由当前阶段子 Agent 提议，由父协调器统一分配不重叠所有权并实际派发。遵守 orchestration 的容量、结果合并与候选冻结规则；默认 `max_parallel_workers = 2` 计入所有存活子 Agent，等待中的阶段子 Agent 也占槽。子 Agent 不递归派发；无可用容量则串行，不死锁等待。
 

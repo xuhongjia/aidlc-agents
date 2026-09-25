@@ -13,6 +13,8 @@ description: 在 AIDLC verify 阶段通过全新隔离子 Agent 在冻结候选�
 
 ## 产物与返回
 
+完整阶段读取 `.aidlc/system/workflow/knowledge.md`，核对源 FR/NFR 映射并准备四类中有真实内容的知识技术附件；标准设计正文与实现验证分开，短流程标明派生。不新增正文类型，也不在审批前发布；父协调器核验批准后另派知识同步 Hook。
+
 若 dispatch 的 kind=leaf，只完成其局部任务和 expected_outputs，不生成整阶段产物；以下完整交付要求适用于 kind=stage。
 
 按 profile 输出正文：standard 为 verification.md 与 acceptance-results.json；enhance/fix 仅为 compact verification.md，逐 AC/检查结果在正文表格中记录。所有路线还须依 workflow/gates.md 在 evidence 提交 architecture-gate.json 与 quality-gate.json 和原始报告，缺一阻塞；Gate 证据不属于被省掉的 AC/设计 JSON。kind=leaf 只执行分配的 Gate，完整 Verify 汇总必须收齐两类。不得给短流程追加 AC JSON 或 Release/Learn。按 result 模板返回 profile、真实摘要和状态，交父协调器按 approval.md 处理审批。

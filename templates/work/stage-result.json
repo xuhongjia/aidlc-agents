@@ -1,7 +1,11 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "work_id": null,
   "profile": null,
+  "workflow_ref": null,
+  "step_id": null,
+  "stage_id": null,
+  "routing_facts": {},
   "profile_recommendation": null,
   "routing_reason": null,
   "stage": null,

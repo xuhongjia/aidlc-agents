@@ -13,6 +13,8 @@ description: 在 AIDLC learn 阶段用新子 Agent 主动读取 Git/CI 实际交
 
 ## 产物与返回
 
+完整阶段读取 `.aidlc/system/workflow/knowledge.md`，根据实际反馈形成架构/质量/反模式/经验的新版本，保留来源/原批准，不静默覆盖设计或修改企业规范、Oracle、Gate、Skills。发布内容在审查前冻结；只返回附件，获批后由独立 Hook 发布。
+
 若 dispatch 的 kind=leaf，只完成其局部任务和 expected_outputs，不生成整阶段产物；以下完整交付要求适用于 kind=stage。
 
 按阶段契约在本 run 授权的 artifacts 目录交付 outcome.md、outcome.json；证据写本 run 的 evidence。根据 `.aidlc/system/templates/work/stage-result.json` 写 `result.json`，状态仅 ready_for_review、blocked 或 failed，向父协调器返回路径与结论，然后停止。

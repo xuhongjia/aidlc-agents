@@ -1,5 +1,7 @@
 # Release / Learn 主动取证
 
+0.9 自定义工作流按 kind=release_readiness/learning 及 evidence.read 能力触发本契约，不依赖 Release/Learn 名字；sources/index 与实际候选仍必须固定在本 step 的 review。其它阶段的 evidence.read 只授予明确 dispatch 中的只读来源，不产生外部写权限。
+
 进入获准的 Release 或 Learn 后，阶段子 Agent 主动读取本需求绑定的 Git 仓库、CI 和 Jira。优先使用已连接的只读工具/API，其次是已安装且已登录的 Git/平台 CLI；先检索，再报告缺口。用户无需逐份粘贴已有的流水线结果或反馈。此能力不添加正式阶段，fix/enhance 仍在 Verify 结束。
 
 ## 确定来源与读取范围

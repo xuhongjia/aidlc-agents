@@ -1,5 +1,7 @@
 # 按风险选流程，按需要写产物
 
+0.9 中本页三条路线是内置配方及风险基线，不是扩展白名单。新工作（含内置）按 [extensions](extensions.md) 规范化、按 [dag](dag.md) 调度；state.workflow_ref/step_id 取代对 profile 名的权限和顺序判断。下列高风险条件与 fix 复现/回归要求仍适用于定制流程；分析任务可按 analysis intent 正常结束但不标 verified。
+
 ## 三条路线
 
 | Profile | 适用 | 顺序 | 实施授权来源 | 正文 |

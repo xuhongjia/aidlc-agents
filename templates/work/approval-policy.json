@@ -1,9 +1,12 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "policy_id": null,
   "work_id": null,
   "approver": null,
   "profile": null,
+  "workflow_ref": null,
+  "allowed_steps": [],
+  "allowed_tool_bindings": [],
   "method_revision": null,
   "request_sha256": null,
   "mode": "auto_low_risk",
@@ -11,6 +14,7 @@
   "allowed_write_paths": [],
   "allowed_commands": [],
   "additional_stop_conditions": [],
+  "knowledge_publish": null,
   "authorization": {
     "by": null,
     "at": null,

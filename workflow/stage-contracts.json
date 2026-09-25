@@ -1,0 +1,16 @@
+{
+  "contract_version": 1,
+  "stages": {
+    "intake": {"kind":"analysis","inputs":["request"],"optional_inputs":["project","knowledge"],"contracts":{"intake.md":"intake","project-context.md":"project"},"capabilities":["knowledge.read"],"auto_eligible":false},
+    "spec": {"kind":"specification","inputs":["intake"],"optional_inputs":["project"],"contracts":{"spec.md":"spec","acceptance.json":"spec"},"capabilities":[],"auto_eligible":false},
+    "architecture": {"kind":"design","inputs":["spec"],"optional_inputs":["project"],"contracts":{"architecture.md":"architecture","architecture-fitness.json":"architecture"},"capabilities":[],"auto_eligible":false},
+    "quality": {"kind":"quality_design","inputs":["spec","architecture"],"optional_inputs":[],"contracts":{"quality-design.md":"quality","quality-fitness.json":"quality","coverage.json":"quality"},"capabilities":[],"auto_eligible":false},
+    "plan": {"kind":"planning","inputs":["spec","architecture","quality"],"optional_inputs":[],"contracts":{"plan.md":"plan"},"capabilities":[],"auto_eligible":false},
+    "implement": {"kind":"implementation","inputs":[],"optional_inputs":["plan","change"],"contracts":{"implementation.md":"implementation"},"capabilities":["product.write"],"auto_eligible":true},
+    "verify": {"kind":"verification","inputs":["implementation"],"optional_inputs":["change","spec","architecture","quality"],"contracts":{"verification.md":"verification","acceptance-results.json":"verification"},"capabilities":["knowledge.prepare"],"auto_eligible":true},
+    "release": {"kind":"release_readiness","inputs":["verification"],"optional_inputs":["spec","implementation"],"contracts":{"release-readiness.md":"release"},"capabilities":["evidence.read"],"auto_eligible":false},
+    "learn": {"kind":"learning","inputs":["release"],"optional_inputs":["spec","verification"],"contracts":{"outcome.md":"outcome","outcome.json":"outcome"},"capabilities":["knowledge.prepare","evidence.read"],"auto_eligible":false},
+    "scope": {"kind":"analysis","inputs":["request"],"optional_inputs":["project","knowledge"],"contracts":{"change.md":"change"},"capabilities":["knowledge.read"],"auto_eligible":true},
+    "diagnose": {"kind":"analysis","inputs":["request"],"optional_inputs":["project","knowledge"],"contracts":{"change.md":"change"},"capabilities":["knowledge.read"],"auto_eligible":true}
+  }
+}

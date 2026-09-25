@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "project_id": null,
+  "id": null,
+  "version": null,
+  "type": null,
+  "origin": null,
+  "supersedes": null,
+  "source": {"work_id": null, "stage": null, "method_revision": null, "workflow_ref": null, "step_id": null, "review_refs": [], "design_refs": [], "evidence_refs": []},
+  "applicability": [],
+  "invalid_when": [],
+  "content": {"title": null, "body": null, "design_body": null, "implementation_verification": null, "anti_pattern": null},
+  "claim_status": null,
+  "redactions": [],
+  "destinations": []
+}

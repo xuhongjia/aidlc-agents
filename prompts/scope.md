@@ -1,5 +1,9 @@
 # Scope · 小增强的实施前说明
 
+组合工作（dispatch.workflow_ref 非空）先遵守 `.aidlc/system/prompts/composed-stage.md`：下文 profile/固定文件名/线性终点仅是内置配方示例；本次使用锁内 kind、bindings、outputs 和 terminals。原有职责、事实证据、AC/Oracle 与双 Gate 保证不变，不因模板改名省略。
+
+按 `.aidlc/system/workflow/knowledge.md` 检索相关获批知识并核实现状；在 change 的现有 AC 表记录来源 FR/NFR 映射与明确排除理由，不新增追踪报告。
+
 执行 common，核对 profile=enhance，按 workflow/profiles.md 验证路线是否适合。不要改业务文件。
 
 读取请求与相关现状，用 `templates/compact/change.md` 交付一页左右说明：目标/非目标、最小影响、稳定 AC 和 Oracle、具体检查、待改路径、最小步骤、回滚。复用已有项目规范，不另建 Spec/Plan/Fitness 报告。

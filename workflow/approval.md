@@ -1,5 +1,7 @@
 # 审批模式：manual / auto_low_risk
 
+0.9 schema 4 工作的 auto 资格、逐节点批准与继续权按 [dag](dag.md)；下文 fix/enhance/阶段名字的白名单只描述原配方，不禁止满足同等保证的低风险定制图。新 policy 须绑定 workflow_ref、allowed_steps、allowed_tool_bindings，实际风险与全图能力都满足才可委托。standard/高风险/纯研究不自动批准。图或职责改变必须新授权，旧 policy 不自动扩展；原始确认卡、命令范围、证据、撤销和不自动返工规则继续有效。
+
 默认 manual，每阶段等人类批准。auto_low_risk 是用户对**一个具体需求**的有限委托，由父协调器核验后记录自动批准；不是阶段 child 自批，也不是人类逐项验收。路由 profile=auto 与自动批准无关。
 
 ## 开启、范围和撤销
@@ -26,7 +28,7 @@
 4. 本阶段全部必需检查有真实通过证据。Implement 的 DEV 自测必须已执行并通过；独立 QE 的未来项目可以 NOT_RUN，但明确留给 Verify。Verify 必须按 gates.md 取得 architecture/quality 两份真实报告，所有必需 AC/Gate 通过且证据独立，fix 还需修复前失败、修复后通过及回归；不能把 DEV PASS 抄成 QE PASS。人工 AC/架构观察需要真实授权观察者的证据，自动批准不会自动补出人工结论。
 5. 无自动重试或自动返工。遇到 FAIL、当前必需项 NOT_RUN/UNKNOWN、缺证据、升级、范围变化或任何策略失效，撤销本轮自动模式、追加原因，转人工处理。执行/验收未满足仍为 blocked，不能通过一次人工点击将失败变 PASS；仅缺新的授权且产物有效则 awaiting_approval。
 
-自动模式不批准修改策略/权限、安装依赖、读取生产数据、网络写入、付费、push/merge/deploy 或业务接受；这些须单独授权，仍遵守宿主工具审批。Setup/update 从不激活自动批准，也不能用它自动结束旧工作以绕过升级阻塞。
+自动模式不批准修改策略/权限、安装依赖、读取生产数据、付费、push/merge/deploy 或业务接受；网络写入仅允许 [knowledge.md](knowledge.md) 中已明确授权的 knowledge_publish 例外，其余仍须单独授权并遵守宿主工具审批。首次工作授权卡可同时列精确目标、类型、创建/更新 owned page 的范围；授权有效时知识自动批准后直接发布，不逐条询问。旧授权的缺省 null 不产生发布权。Setup/update 从不激活自动批准，也不能用它自动结束旧工作以绕过升级阻塞。
 
 自动策略不授予直接终结权；关闭当前工作必须有审批人本次明确确认，按 [closure.md](closure.md) 执行。终结会撤销自动策略，并保留历史决定与真实结果。
 

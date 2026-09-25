@@ -1,5 +1,9 @@
 # AI-native update
 
+0.8 → 0.9：只为新工作启用 [extensions](../workflow/extensions.md)/DAG 和 schema 4；旧 work/批准不迁移。config 仅补缺失的 workflow=auto、空 team 与 project_overrides=null，保留 profile 和用户扩展字段。更新前核验已配置 team/project 与目标 core_contract 兼容；不兼容先阻塞，不改团队定义。`.aidlc/team/`、overrides、团队更新账本、工作锁定资源副本及 knowledge 均不纳入核心受管清单。未完成 work/活 worker（含并行节点和 Hook）阻止核心/团队应用更新；团队更新另走 [team.md](team.md)。
+
+0.7 → 0.8：只为新工作启用知识/来源映射契约。config 缺 knowledge 时仅补 `{targets:[]}`，保留已有配置及未知字段；同名不兼容字段先报告冲突。不迁移旧 work/approval，不为旧 policy 补授权；`.aidlc/knowledge/` 及发布凭据、撤销和回执永不受管/覆盖。盘点 knowledge/runs.json、sync dispatch/receipt 与真实宿主任务，活动 Hook 阻止更新（即使 work 已 completed）；无活任务的待投递记录不阻止更新。新适配器只可按 [knowledge.md](../workflow/knowledge.md) 重试兼容的原快照/原授权。
+
 此指引面向已经安装 `aidlc-agents` 的业务仓库。父会话负责更新，不运行交付阶段；不需要 Python 或专用安装器。用户在该仓库的 AI 工具里发送：
 
 > 请读取 https://raw.githubusercontent.com/xuhongjia/aidlc-agents/main/bootstrap/update.md，检查当前仓库已安装的 aidlc-agents，固定目标版本并给我升级差异和迁移计划；保留现有规则、需求、审批与证据，存在未完成工作或活跃子 agent 时先阻塞，等我确认后再更新。

@@ -1,5 +1,9 @@
 # AIDLC · 隔离子 Agent 执行契约
 
+若 dispatch.workflow_ref 非空，这是 0.9 组合工作流：遵守 `.aidlc/system/prompts/composed-stage.md`（已经载入则不重复/递归加载），不继续本文件的旧 profile/阶段名/固定输出检查。正文任务指导仍来自锁定 Prompt；通用安全、真实证据和不自批要求不因组合而取消。
+
+阶段的知识技术附件遵守 `.aidlc/system/workflow/knowledge.md`，仅在本 run evidence 准备并返回。knowledge-sync 使用独立 Hook Skill/dispatch，而非本阶段契约：它只有批准后的固定发布权限，不获得 Implement 产品权限，也不能晋升本地知识或写审批。
+
 你只在父协调器创建的全新隔离子 Agent 中执行派发任务。若当前只是主会话加载了本文件，返回 `.aidlc/system/skills/aidlc/SKILL.md` 由父协调器实际派发，不在主会话内联执行正式阶段。若已是有有效派发包的子 Agent，执行本次任务，不递归启动自己或其他 Agent。
 
 ## 开始之前
