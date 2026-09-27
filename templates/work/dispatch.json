@@ -1,9 +1,10 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "work_id": null,
   "profile": null,
   "workflow_ref": null,
   "step_id": null,
+  "revision": null,
   "stage_id": null,
   "stage_kind": null,
   "input_bindings": {},
@@ -25,6 +26,7 @@
   "required_evidence": [],
   "approved_commands": [],
   "candidate": {"scope": [], "files": []},
+  "implementation_feedback": {"policy_ref": null, "max_correction_rounds": 0, "round": 0, "attempt_refs": []},
   "result_path": null,
   "parallel_budget": 2
 }

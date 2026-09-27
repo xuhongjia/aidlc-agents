@@ -120,6 +120,36 @@ test('run and review templates preserve identity, constrained writes and non-app
   assert.deepEqual(json('templates/work/review.json').execution, []);
 });
 
+test('checkpoint and correction templates add no default delegation or correction authority', () => {
+  const options = catalog.approval;
+  assert.equal(options.default_mode, 'manual');
+  const checkpoint = options.checkpoint_low_risk;
+  assert.deepEqual(checkpoint.workflows, ['core.fix', 'core.enhance']);
+  assert.deepEqual(checkpoint.stages, ['implement']);
+  assert.equal(checkpoint.requires_unmodified_builtin, true);
+  assert.equal(checkpoint.requires_manual_entry_and_terminal, true);
+  const feedback = options.implementation_feedback;
+  assert.equal(feedback.default_max_correction_rounds, 0);
+  assert.equal(feedback.maximum_correction_rounds, 2);
+  for (const file of [checkpoint.policy_template, feedback.protocol, feedback.attempt_template, 'workflow/legacy.md']) {
+    assert.ok(existsSync(path.join(root, file)));
+  }
+  const policy = json(checkpoint.policy_template);
+  assert.equal(policy.schema_version, 3);
+  assert.equal(policy.entry_approval_ref, null);
+  assert.equal(policy.entry_review_ref, null);
+  assert.deepEqual(policy.implementation_feedback, {step_id: null, revision: null, max_correction_rounds: 0});
+  assert.equal(policy.authorization.user_statement, null);
+  const dispatch = json('templates/work/dispatch.json'), result = json('templates/work/stage-result.json');
+  assert.equal(dispatch.schema_version, 3); assert.equal(dispatch.revision, null);
+  assert.deepEqual(dispatch.implementation_feedback, {policy_ref: null, max_correction_rounds: 0, round: 0, attempt_refs: []});
+  assert.equal(result.schema_version, 3); assert.equal(result.feedback_request, null);
+  const attempt = json(feedback.attempt_template);
+  for (const field of ['work_id', 'workflow_ref', 'method_revision', 'step_id', 'revision', 'round', 'policy_ref',
+    'failure_result_ref', 'input_candidate', 'run_id', 'reserved_at']) assert.equal(attempt[field], null);
+  assert.deepEqual(attempt.failure_refs, []);
+});
+
 test('stage catalog resolves roles, prompts, skills and every required template', () => {
   assert.deepEqual(stages.map(stage => stage.id), [...ids, 'scope', 'diagnose']);
   assert.deepEqual(stages.filter(stage => stage.product_write).map(stage => stage.id), ['implement']);

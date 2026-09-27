@@ -1,6 +1,6 @@
 # 团队扩展 Interface · contract 1
 
-0.9 新工作统一按本协议解析，再按 [DAG](dag.md) 执行。仍是 instruction-package/runtime=none：宿主 AI 负责实际读取、计算摘要、核验和派发；维护者参考模型不是安装器、状态机运行器或权限系统。旧 work 无 workflow_ref 时只按其固定旧方法处理，绝不补造新锁或迁移批准。
+0.10 新工作统一按本协议解析，再按 [DAG](dag.md) 执行；沿用 0.9 的 contract_version=1。仍是 instruction-package/runtime=none：宿主 AI 负责实际读取、计算摘要、核验和派发；维护者参考模型不是安装器、状态机运行器或权限系统。旧 work 按 [原方法](legacy.md) 处理，绝不补造新锁、迁移批准或授予新预算。
 
 ## 三层定义，不修改核心
 

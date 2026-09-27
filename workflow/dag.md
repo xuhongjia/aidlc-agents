@@ -22,13 +22,13 @@ state.nodes[step_id] 保存 stage_id、revision、status、review/approval/input
 
 同工作树的多个产品 writer 必须在图中显式可比较（一个是另一个祖先），否则解析拒绝。产品写阶段与读取同候选的正式阶段互斥；无写阶段时独立只读阶段可并行。即使文件不重叠，共享端口/数据库/缓存/外部目标仍需冲突检查，无法证明隔离就排队。同一 Implement 内独占路径的 leaf 并行继续适用，不变为多个无序产品 writer。
 
-每个 writer 必须从批准的当前候选与 authority 开始，产生新的完整候选 lineage；依赖该候选的审批和验证保留真实输入。verification 为独立新 child，只读冻结最终候选；两 Gate 可分 leaf 执行但报告必须绑定同一候选。任何后续产品修改都需要新的实施批准和下游重新验证，不能把旧 Gate digest 改成新候选。
+首次 writer 使用已核实的产品基线与批准 authority，后续 writer 使用已批准的当前候选，保存完整候选 lineage。唯一窄例外是首次候选 review 前的授权内部纠错：按 feedback 预约记录使用失败候选与原 authority，不另造批准。verification 为独立新 child，只读冻结最终候选；两 Gate 可分 leaf，但报告必须同候选。首次候选 review 后或超出内部纠错范围的产品修改需新实施批准和下游重新验证，不能把旧 Gate digest 改成新候选。
 
 ## 审批与自动继续
 
-默认人工。自动模式仅限 risk_ceiling=low 且实际风险符合原 fix/enhance 条件、每个可激活 stage 都 auto_eligible 的图；analysis 纯研究、standard/高风险、release/learn 不自动获得阶段批准。资格为必要条件不是委托；必须有原 approval.md 的真实工作卡，额外冻结 workflow_ref、允许的 step_ids/工具操作及分支范围。在卡内的可选分支不需要逐条重问，但不能扩大路径/命令/副作用；需要新增权利就停止重新授权。
+审批统一读 [approval](approval.md)：manual 默认逐节点人审；checkpoint_low_risk 仅原样内置 fix/enhance 的 Implement 候选可委托批准，首阶段与最终 Verify 人审；auto_low_risk 继续仅适用实际低风险且所有可激活阶段 auto_eligible 的交付图。三者不改变依赖、候选或双 Gate。策略绑定精确工作图/步骤/范围，资格不是授权，图或权限变化需新确认。
 
-implementation 必须实际 DEV 自测通过；verification 必須独立双 Gate/AC 通过。自定义 stage 的完成检查来自其契约并须有真实证据；不能通过改名或加 auto_eligible=true 把人工观察变成 AI 自证。发现高风险、含糊 Oracle、FAIL、必需 NOT_RUN/UNKNOWN、漂移或权限变化，立即停止新派发、撤销自动模式并按 orchestration 收回活动任务，保留证据后转人工。不自动重试/返工。
+implementation 必须最终 DEV 自测通过；verification 必須独立双 Gate/AC 通过。只有在首次候选 review 前、有显式预算的实施内部意外 FAIL 才可按 [implementation-feedback](implementation-feedback.md) 继续同节点，不沿 DAG 回边、不获得阶段批准。其它意外/不合格失败、必需 NOT_RUN/UNKNOWN、高风险、含糊 Oracle、漂移或权限变化立即停止、撤销委托并收回任务后转人工。获批且符合预期的负向证据不属于工作失败，原始 FAIL 照实保留。正式 Verify 失败不自动返工；不能通过 stage 改名或自动资格把人工观察变成 AI 自证。
 
 approval.authorized_steps 保存这次明确获准继续的实例；next_stage_authorized 只为旧协议兼容，不用于 DAG 派发。每次批准精确绑定 step/revision/workflow_ref/review_digest，不能按同名 stage 找旧批准。状态及审批只由父协调器维护。
 

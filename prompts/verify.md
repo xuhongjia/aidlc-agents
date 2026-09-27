@@ -1,10 +1,10 @@
 # Verify · 对冻结候选执行验收
 
-组合工作（dispatch.workflow_ref 非空）先遵守 `.aidlc/system/prompts/composed-stage.md`：下文 profile/固定文件名/线性终点仅是内置配方示例；本次使用锁内 kind、bindings、outputs 和 terminals。原有职责、事实证据、AC/Oracle 与双 Gate 保证不变，不因模板改名省略。
+本节点按锁内 `.aidlc/system/prompts/composed-stage.md` 执行。下述内置配方的正文名是示例，实际输入/产物/终点取 dispatch 的 kind、bindings、outputs、terminals；不因改名省略证据或双 Gate。
 
 完整阶段还须读取 `.aidlc/system/workflow/knowledge.md`：核对原始 FR/NFR→AC（或明确批准排除）→测试/Oracle→证据，漏源需求阻塞；在审批前冻结可发布知识技术附件及目标。standard 保留获批架构/ADR、质量设计正文，验证结论单列；compact 只提取标明派生的条目。反模式六要素必须有实证，没有发现不生成。知识附件不能代替双 Gate，也不是第三类正文；child 不发布，父协调器批准后另派 Hook。
 
-先执行 `.aidlc/system/prompts/common.md`。核对本 profile 的批准 Implement 候选与验收基线：standard 读 Spec/AC/Oracle/Fitness；enhance/fix 读批准 change.md 的 AC/Oracle/检查及 Implement verification.md。输出按 profile 覆盖解析，短流程不补造 Spec/Plan/Fitness JSON。
+按锁定 bindings 核对批准 Implement 候选与验收基线。内置 standard 读 Spec/AC/Oracle/Fitness；enhance/fix 读批准 change.md 的 AC/Oracle/检查及 Implement verification.md。输出取 dispatch 的契约与模板，短流程不补造 Spec/Plan/Fitness JSON。
 
 workflow/gates.md 的双 Gate 及 catalog.gates.required_evidence 对全部 profile 的完整 Verify 生效：实际执行两类并收齐结果。kind=leaf 时仅执行 dispatch 指定 Gate、角色与证据契约，写自己的报告；不运行另一类或生成整阶段文件。阶段汇总 child 可引用已验真的 leaf 原始报告，将两类汇总报告写到自己的 evidence，保留原执行 lineage，不能冒称汇总 child 重新执行了命令。缺任一规则或实现时 blocked 并回退对应阶段补建；不能临时只做人工检查、N/A、写一个 PASS 或省略架构 Gate。
 
@@ -16,4 +16,4 @@ workflow/gates.md 的双 Gate 及 catalog.gates.required_evidence 对全部 prof
 
 enhance/fix 用 compact 模板只提交新的 verification.md：引用 DEV 版本、保留真实变更摘要、逐 AC 增加独立 QE 结果、架构边界核对和项目质量规则证据。fix 必须检查可信的修复前失败/修复后成功及相关回归。不能把 DEV PASS 直接抄成 QE PASS；必需项 FAIL/NOT_RUN 或证据缺失则 blocked。获有效批准后短流程到此结束（verified / business not_evaluated），不生成 Release/Learn 或声称已部署。
 
-standard 按模板交付 `verification.md`、`acceptance-results.json`，与批准 AC 集合完全对应。所有路线真实证据写本 run evidence，按 common 返回 result；父协调器校验后按 approval.md 处理审批，不自我批准。
+standard 按模板交付 `verification.md`、`acceptance-results.json`，与批准 AC 集合完全对应。所有路线真实证据写本 run evidence，按 composed-stage 返回 result；父协调器校验后按 approval.md 处理审批，不自我批准。

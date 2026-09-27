@@ -46,7 +46,7 @@ anti_pattern 的 content.anti_pattern 必须包含 condition、bad_practice、co
 
 ## 授权边界
 
-`approval-policy.knowledge_publish` 默认 null；启用自动模式的首次真实授权卡可按 [授权模板](../templates/knowledge/publish-scope.json) 同时批准目标 site/space/parent、types、create/update_owned、当前 work 和项目经验范围。只对已获有效阶段批准且在范围内的固定快照执行，无须逐条询问。manual 时 approval.knowledge_publish 保存本次明确授权引用。config.targets 仅路由，不是授权；旧 policy/旧安装不隐式获得网络写权限。
+`approval-policy.knowledge_publish` 默认 null；启用自动模式的首次真实授权卡可按 [授权模板](../templates/knowledge/publish-scope.json) 同时批准目标 site/space/parent、types、create/update_owned、当前 work 和项目经验范围。只对已获有效阶段批准且在范围内的固定快照执行，无须逐条询问。manual 时 approval.knowledge_publish 保存本次明确授权引用。checkpoint 的候选委托批准不是知识发布点：等待最终 Verify 的人工批准，发布还须有效的专项授权。config.targets 仅路由，不是授权；旧 policy/旧安装不隐式获得网络写权限。
 
 发布授权是网络写入禁令的唯一窄例外，不授予 push/部署/权限变更。不得修改企业强制规范、批准 Oracle、Gate 阈值、Skills；此类建议只能作为明确标注的经验/提案。敏感信息未解决、目标/范围变化、人工编辑冲突、撤销、身份冲突立即停止相关投递；不自动授权、返工、安装连接器或存凭据。
 

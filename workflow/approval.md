@@ -1,41 +1,48 @@
-# 审批模式：manual / auto_low_risk
+# 工作级审批：manual / checkpoint_low_risk / auto_low_risk
 
-0.9 schema 4 工作的 auto 资格、逐节点批准与继续权按 [dag](dag.md)；下文 fix/enhance/阶段名字的白名单只描述原配方，不禁止满足同等保证的低风险定制图。新 policy 须绑定 workflow_ref、allowed_steps、allowed_tool_bindings，实际风险与全图能力都满足才可委托。standard/高风险/纯研究不自动批准。图或职责改变必须新授权，旧 policy 不自动扩展；原始确认卡、命令范围、证据、撤销和不自动返工规则继续有效。
+依赖/继续权由 [dag](dag.md) 决定；本页是唯一的决策规则。新工作默认 manual；workflow=auto、setup、包配置、身份解析和子 Agent 返回都不是授权。旧工作/旧 policy 按 [原版本](legacy.md) 执行，不获得新模式或纠错预算。
 
-默认 manual，每阶段等人类批准。auto_low_risk 是用户对**一个具体需求**的有限委托，由父协调器核验后记录自动批准；不是阶段 child 自批，也不是人类逐项验收。路由 profile=auto 与自动批准无关。
+| 模式 | 范围 | 实施前 | Implement 候选 | 最终 Verify |
+|---|---|---|---|---|
+| manual | 任一合法图 | 人审 | 人审 | 人审 |
+| checkpoint_low_risk | 未覆盖的内置 core.fix/core.enhance，实际低风险 | 人审且确认精确委托 | 协调器验真后委托批准 | 必须人审 |
+| auto_low_risk | 原低风险短流程及全部可激活阶段具备自动资格的等价团队交付图 | 有初始工作委托后可自动 | 验真后自动 | 双 Gate/AC 通过后可自动 |
 
-## 开启、范围和撤销
+standard、高风险、纯分析、Release/Learn 不因此获得自动阶段批准。checkpoint 不接受只改 ID 的团队图：解析图、stage 定义、Prompt/模板及其它执行资产必须与该固定核心版本的内置配方一致，团队/项目覆盖后改动了这些内容就不适用。允许引用项目真实规则与知识，不把它当改核心定义。
 
-先按 [身份解析](identity.md) 自动读取审批人并展示来源，冻结策略 approver 快照；authorization.by 必须是实际授权者，不能因取到了 Jira 经办人/Git 用户就认为取得委托。责任人变更或身份待确认时暂停并撤销活动自动策略，先澄清后重新授权。
+## 一张授权卡，三个独立记录
 
-用户可说“为 REQ-001 开启自动批准并继续”。父协调器先给一张授权卡：需求/路线、允许改动路径、允许执行的具体命令及 cwd/副作用、是否自动继续、停止条件。取得针对该卡的确认后，按 [策略模板](../templates/work/approval-policy.json) 写 `policies/POLICY.json`，冻结真实授权原话、来源、时间、需求摘要和方法版本；计算文件 SHA-256，写入 state.approval_policy_ref，设置 approval_mode=auto_low_risk，并在 approval_policy_history 追加 {event, at, policy_ref, source, reason} 激活事件。不反复确认每个阶段。
+首只读 Scope/Diagnose 的产物就绪后，可推荐 checkpoint；一张卡列 work/图/entry review、风险依据、实施文件与命令/cwd/入口摘要/资源/副作用/超时、候选转 Verify 的范围、最终仍人审，以及可选纠错额度和停止条件。明确“批准此范围并按卡继续”可以同时：
+1. 保存 entry 的真实人工批准；
+2. 保存绑定该 entry review 与完整卡的不可变 policy；
+3. 授权 Implement，及其合格候选后独立 Verify 的继续权。
 
-授权卡展示前保存为不可覆盖的 `policies/POLICY-card.md`，记录完整授权条款和卡 ID；确认必须明确绑定该卡。policy.authorization.card_ref 保存它的项目相对路径及 SHA-256，不能只存“确认”或不可读取的会话链接。policy 字段必须与确认卡一致；额外停止条件写 additional_stop_conditions，只能收紧本协议，不能取消必需门禁。allowed_commands 每项记录 {command, cwd, entrypoint_refs, resources, side_effects, timeout_seconds}，入口引用为 {path, sha256}。卡、策略和原始确认缺一或不一致都不能自动批准；完整原始请求直接授权时也冻结原文作为卡，不能补造用户没确认的条款。
+policy 与 entry approval 独立引用卡/review，不互相哈希；卡不得写未来候选摘要。父协调器不得把首卡许可填成尚未存在的候选人类签字。只批准产物、未确认委托时维持 manual；有策略但 auto_continue=false 则仍在每个获批点停下，不能默认执行下一步。checkpoint 首卡的 entry approval.authorized_steps 只列 implement；后续 Verify 的继续权来自该卡明确确认的条件委托。
 
-已有请求已明确以上全部边界时可直接记录该原始授权，不重复确认；笼统的“自动批准”但缺路径/命令范围，只能准备卡，不能自己补授权。默认 auto_continue=false；只有用户明确“自动继续/跑到验证结束”才设 true。仅希望记录自动批准而不继续时，每次批准后停在 ready，下一阶段等用户说继续。
+使用 [policy 模板](../templates/work/approval-policy.json)：mode、work/request/method/workflow_ref、allowed_steps、命令/路径/工具范围、实际授权者/原话/时间/来源、card_ref。卡先保存 policies/POLICY-card.md 并计算实际 SHA-256，确认必须精确绑定；笼统“自动批准”只够准备卡。策略写 policies/POLICY.json，hash 后写 state 引用及真实激活事件，不覆盖历史。checkpoint.allowed_steps 只能含 implement，entry_approval_ref 必須指向有效人工首阶段批准；人工首卡可批准图但不自动批准 Verify。
 
-策略仅对当前 work、已选定的一个 fix/enhance profile、固定 request/method 生效。路径必须是项目相对的具体文件或受限子目录；不得用项目根、通配整个仓库、父目录、软链接或 `.aidlc` 控制目录授予产品写权限。命令包含 cwd、入口脚本/配置版本、资源与副作用边界，不能只允许任意 shell 或因为命令名未变就接受其脚本副作用变更。授权路径内按批准 change 修改的业务源码/测试可作为新候选；执行入口、配置或副作用变更则重新授权。授权卡可在首阶段只读调查后提出；这不会跳过首阶段审批。
+authorization/by 与责任人分开，按 [identity](identity.md) 在卡及决定前刷新。身份变化/无法确认、撤销或授权内容不一致立即停并清除活动委托。路径不得是整个仓库、通配根、父目录、软链接或控制目录。命令绑定实际入口/配置/资源及副作用，不因名字没变就允许脚本行为变化；批准待安装的检查草案按 [gates](gates.md) 核验安装摘要。
 
-用户说“停止自动批准/改回人工”：主 Agent 立即设置 manual，清空 active policy 引用，追加 approval_policy_history 的真实事件，保留旧策略/批准。停止后续派发；活动 worker 按 orchestration 的停止/收回协议处理，不自动回滚已有代码。新会话必须先收到用户继续指示、核验策略/授权来源与全部状态，不能因磁盘写着 auto 就自启动。
+## 每次委托决策均验真
 
-## 每次自动批准的必要条件
+父协调器在真实 review 建立后核对：
+- 有效未撤销的真实授权，卡/策略字段一致，work/request/method/图/step/入口基线匹配，路径和命令都是授权子集。
+- 实际低风险，范围、AC、Oracle、规则与人工证据无未解决问题。Fix 根因和复现可信；不得凭 child 自评低风险放行。
+- 真实 worker/dispatch/result、全部产物、候选和历史相符，无越权、漂移、未收齐子任务或占位证据。
+- Implement 最终 DEV 自测和双 Gate 自测实际通过；以前纠错的 FAIL 仍保留，仅有 [feedback](implementation-feedback.md) 完整合规链且最终同规则通过才算解决。未来独立 QE 项可明确 NOT_RUN，不能当已验收。
+- Verify 必须新独立 child、同候选双 Gate 与全部 AC 证据，不能抄 DEV PASS。checkpoint 在此始终 awaiting_approval，不能沿用候选策略自动完成。
+- 策略不准跨阶段返工。只有明确 budget 的合格实施内部失败可先进入 feedback 检查；其他 FAIL、必需 NOT_RUN/UNKNOWN、范围/风险/权限变化立即撤销委托、停 worker、交人处理。
 
-父协调器在正式 review 已建立后逐项检查，不以 child 的 ready_for_review/PASS 摘要替代核验：
+## 决定、继续与撤销
 
-1. 有有效、未撤销的用户授权；work/profile/request/method/policy 摘要匹配。仅限该路线的 scope 或 diagnose、implement、verify；standard 永不自动批准。
-2. profiles.md 中所有高风险升级条件均未出现；没有待决定问题、验收歧义、未确认假设或范围/Oracle/规则变化。当前检查所需命令及实施路径是委托范围的子集。首次 Scope/Diagnose 还必须有可核对的低风险依据、稳定 AC、明确计划；Fix 必须有可信复现和已确认根因。
-3. 按 protocol/orchestration 重新核对上游批准、真实 worker/dispatch/result、完整产物、证据、候选和文件范围，无漂移、越权、未收齐子任务或占位内容。产品变更仍只有 Implement 可写。
-4. 本阶段全部必需检查有真实通过证据。Implement 的 DEV 自测必须已执行并通过；独立 QE 的未来项目可以 NOT_RUN，但明确留给 Verify。Verify 必须按 gates.md 取得 architecture/quality 两份真实报告，所有必需 AC/Gate 通过且证据独立，fix 还需修复前失败、修复后通过及回归；不能把 DEV PASS 抄成 QE PASS。人工 AC/架构观察需要真实授权观察者的证据，自动批准不会自动补出人工结论。
-5. 无自动重试或自动返工。遇到 FAIL、当前必需项 NOT_RUN/UNKNOWN、缺证据、升级、范围变化或任何策略失效，撤销本轮自动模式、追加原因，转人工处理。执行/验收未满足仍为 blocked，不能通过一次人工点击将失败变 PASS；仅缺新的授权且产物有效则 awaiting_approval。
+人审 approval_mode=manual，by 为实际回应者，保存真实 user_statement/decision_source/代批依据，policy_ref=null。checkpoint 的候选批准 approval_mode=checkpoint_low_risk，auto 的批准为 auto_low_risk；两者 by=parent-coordinator、user_statement=null、policy_ref 指原委托，decision_checks 给每项检查的实际证据，绑定精确 review_digest。批准来源不同，不伪造用户逐项签字。
 
-自动模式不批准修改策略/权限、安装依赖、读取生产数据、付费、push/merge/deploy 或业务接受；网络写入仅允许 [knowledge.md](knowledge.md) 中已明确授权的 knowledge_publish 例外，其余仍须单独授权并遵守宿主工具审批。首次工作授权卡可同时列精确目标、类型、创建/更新 owned page 的范围；授权有效时知识自动批准后直接发布，不逐条询问。旧授权的缺省 null 不产生发布权。Setup/update 从不激活自动批准，也不能用它自动结束旧工作以绕过升级阻塞。
+state.approval_mode 表示活动策略；approval.approval_mode 表示该次实际决定。checkpoint 首尾两次记录始终 manual，即使最终审批前 state 仍是 checkpoint。approved 不等于 deployed/业务接受。policy.allowed_steps 限制的是“委托批准哪些节点”，不是派发白名单；实际继续另看 auto_continue、首卡明确范围、固定图依赖及 approval.authorized_steps。
 
-自动策略不授予直接终结权；关闭当前工作必须有审批人本次明确确认，按 [closure.md](closure.md) 执行。终结会撤销自动策略，并保留历史决定与真实结果。
+checkpoint 的 allowed_steps=[implement]，Implement 合格且 auto_continue=true 时，其候选 approval.authorized_steps=[verify]；父协调器据此派发独立 Verify，但不能自动批准 Verify。auto_continue=false 则 authorized_steps=[]，等待用户继续。最终人审不批准任何返回 Implement 的自动继续权。其它人工/自动模式仍只继续卡及策略明确允许的下一批。
 
-## 记录与继续
+manual 可保存仅授权 [实施反馈](implementation-feedback.md) 的 policy；它不自动批准任何阶段。所有模式的 feedback 缺省为零，不能因持有 checkpoint/auto 策略推定两轮额度。
 
-使用同一 approval 模板和精确 review_digest；人审写 `approval_mode=manual`，按 identity.md 预填真实署名 by 与 approver 快照，保存实际 user_statement/decision_source、必要的 delegation_ref，policy_ref=null。自动批准写 `approval_mode=auto_low_risk`、by=parent-coordinator、user_statement=null、decision_source 为实际父协调器运行来源，approver 保留责任人快照，policy_ref 指向完整委托文件及摘要，decision_checks 逐项记录 {condition, result, evidence} 的实际依据/证据引用，时间为实际执行时间。decision=approved 只表示该批准来源下的通过；不能署用户名或伪造“用户同意此版本”。子 Agent 引用自动上游批准时，须验证其策略与委托范围，不要求再补同一阶段人审。
+“改回人工/停止”撤销整个当前委托（含纠错与知识发布），保留历史并按 orchestration 实际收回 worker。不合格失败、额度耗尽仍失败、升级、图/职责改变、正式返工、完成或撤销均清空活动策略；只有按 feedback 核验合格、仍有预算的内部失败保留原策略供预约继续。资格未核实前停止派发；预先批准且符合预期的负向证据不是工作失败。新会话还须用户继续并核验真实状态，不能凭旧 auto 标记自启动。重新授权不抹掉同一实施 revision 已用额度。
 
-每次展示一行“自动批准 work/profile/stage/rN”及正文/审计链接，完整控制 JSON 不刷屏。auto_continue=true 且授权仍有效时，记录 next_stage_authorized=true，派发**下一阶段的新 child**；否则 next_stage_authorized=false，记录后停止。Verify 为终点，永不派发下一阶段且 next_stage_authorized=false。
-
-进入人工处理、返工、换轨、需求/方法变化、完成或撤销时，设置 manual 并清空 active policy 引用，保留策略与历史事件；不得自动恢复，继续自动需新确认、新策略 ID。旧批准按其当时策略追溯，单纯撤销不篡改历史，但输入/候选变化仍使相关批准失效。短流程完成只表示 verified / business not_evaluated，标明采用自动审批，不写“人类已验收”。这些仍是 Agent 协议，不是可绕过宿主权限的执行器。
+knowledge_publish 始终独立显式授权，默认 null；checkpoint 最终人审可同卡批准固定知识和精确目标。候选放行不授予发布权，自动沉淀不等于企业规范修改权。发布/撤销按 [knowledge](knowledge.md) 原协议。任何模式不自动授权 push/merge/deploy、依赖安装、生产数据、付费、权限变更或业务接受，也不授予直接终结权。

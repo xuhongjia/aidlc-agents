@@ -1,6 +1,6 @@
 # AI-native setup
 
-0.9 新安装 config.workflow=auto、team.manifest/source/authorization=null、project_overrides=null；不自动启用示例或团队包。新 work 使用 schema 4 的锁定工作流，内置配方同样解析。实际团队接入另按 [team.md](team.md) 的明确配置请求处理；读取样例不授权企业连接。
+0.10 新安装 config.workflow=auto、team.manifest/source/authorization=null、project_overrides=null；不自动启用示例或团队包。新 work 使用 schema 4 的锁定工作流，内置配方同样解析。实际团队接入另按 [team.md](team.md) 的明确配置请求处理；读取样例不授权企业连接。审批默认 manual、纠错预算为 0，不创建工作级 policy；两次人审与自纠错只能在实际工作中另行明确授权。
 
 0.8 新安装 config.knowledge.targets=[]，不授予知识库写权限，不创建空知识条目。`.aidlc/knowledge/` 是项目数据，只在实际获批知识出现时建立；不纳入 managed_files。目标配置与授权见 [knowledge.md](../workflow/knowledge.md)。
 

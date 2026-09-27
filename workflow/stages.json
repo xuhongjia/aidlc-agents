@@ -58,6 +58,19 @@
   },
   "approval": {
     "default_mode": "manual",
+    "checkpoint_low_risk": {
+      "workflows": ["core.fix", "core.enhance"],
+      "stages": ["implement"],
+      "requires_unmodified_builtin": true,
+      "requires_manual_entry_and_terminal": true,
+      "policy_template": "templates/work/approval-policy.json"
+    },
+    "implementation_feedback": {
+      "protocol": "workflow/implementation-feedback.md",
+      "default_max_correction_rounds": 0,
+      "maximum_correction_rounds": 2,
+      "attempt_template": "templates/work/feedback-attempt.json"
+    },
     "auto_low_risk": {
       "profiles": ["enhance", "fix"],
       "stages": ["scope", "diagnose", "implement", "verify"],

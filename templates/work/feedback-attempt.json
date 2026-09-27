@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "work_id": null,
+  "workflow_ref": null,
+  "method_revision": null,
+  "step_id": null,
+  "revision": null,
+  "round": null,
+  "policy_ref": null,
+  "failure_result_ref": null,
+  "failure_refs": [],
+  "input_candidate": null,
+  "run_id": null,
+  "reserved_at": null
+}

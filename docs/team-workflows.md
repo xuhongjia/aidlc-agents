@@ -74,7 +74,7 @@
 
 实际锁还必须包含完整 sources/workflow/stages/tool_bindings、校验记录、Prompt/角色/核心协议及它们所需传递引用的资产映射。dispatch 的 input_refs 包含本次使用的固定资源摘要；模板内部引用 `core:prompts/common.md` 时解析到同图的 core 副本，不读取后来变更的安装目录。缺任一所需映射就停止，不能把上面两个片段当完整运行输入。
 
-阶段独立审批；多个明确对象可以一张卡确认，记录仍逐项绑定。低风险、满足原 fix/enhance 保证的定制交付图可以明确授权 auto；standard、高风险和纯研究保持人审。工具权限和知识发布仍需其专项授权。
+阶段独立审批；多个明确对象可以一张卡确认，记录仍逐项绑定。低风险、满足原 fix/enhance 保证的定制交付图可以明确授权 auto；standard、高风险和纯研究保持人审。`checkpoint_low_risk` 仅接受未改写的内置 fix/enhance，不适用于团队覆盖的图、阶段、Prompt 或模板。低风险非 standard 实施可单独申请有界内部反馈，默认零轮，不得借此改图或自动正式返工。工具权限和知识发布仍需其专项授权。
 
 更新团队：让 AI 按 bootstrap/team.md 检查固定目标版本、给三方差异，再确认切换。核心升级不会覆盖 team/overrides；不兼容时暂停，不自动改团队定义。待更新时若有未结束 work/活动 Hook，继续旧版完成后再升级。
 

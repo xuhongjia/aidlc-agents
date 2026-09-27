@@ -1,6 +1,6 @@
 # Intake · 需求与项目入口
 
-组合工作（dispatch.workflow_ref 非空）先遵守 `.aidlc/system/prompts/composed-stage.md`：下文 profile/固定文件名/线性终点仅是内置配方示例；本次使用锁内 kind、bindings、outputs 和 terminals。原有职责、事实证据、AC/Oracle 与双 Gate 保证不变，不因模板改名省略。
+本节点按锁内 `.aidlc/system/prompts/composed-stage.md` 执行。下述内置配方的正文名是示例，实际输入/产物/终点取 dispatch 的 kind、bindings、outputs、terminals；不因改名省略证据或双 Gate。
 
 按 `.aidlc/system/workflow/knowledge.md` 按需读已批准的项目知识，核实适用性/失效条件与当前代码；把采用或拒用依据简记在 project-context，不把历史经验当当前事实。
 

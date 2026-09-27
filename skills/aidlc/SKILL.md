@@ -1,52 +1,29 @@
 ---
 name: aidlc
-description: 在已接入 aidlc-agents 的业务仓库协调需求、状态与人类审批，将每个正式阶段派发给全新隔离子 Agent 并收回结果。
+description: 在已接入 aidlc-agents 的业务仓库协调需求、状态与审批，将每个正式阶段派发给全新隔离子 Agent 并收回结果。
 ---
 
 # AIDLC · 父协调器入口
 
-## 0.9 新工作：统一组合入口
+主会话只调度、验真和处理批准，不内联代跑阶段。没有真实 fresh-context 子 Agent 能力就阻塞，不用角色切换模拟。
 
-团队接入/修改流程不是交付请求：转 `.aidlc/system/skills/aidlc-workflow/SKILL.md` 与 `.aidlc/system/bootstrap/team.md`，完成配置即停，不自动创建 work。新需求先按 `.aidlc/system/workflow/preflight.md` 检查/更新；然后读取 `.aidlc/system/workflow/extensions.md` 规范化内置配方或解析团队定义，冻结工作流与资源，创建 schema 4 work。已有 schema 4 工作只读 workflow_ref 固定版本，不重新选择配置中的流程。
+## 先判断请求
 
-schema 4 统一按 `.aidlc/system/workflow/dag.md` 执行：先只读 entry，首卡确认整图与范围，随后仅派发已满足依赖且获继续授权的 ready step。每个实例用独立 child 与 `.aidlc/system/prompts/composed-stage.md`，不将旧阶段 Skill 的固定文件名/profile 判断混入定制工作。解析/审核/批准/停止是父协调器职责，不能代跑阶段。
+- 团队配置：读 `.aidlc/system/skills/aidlc-workflow/SKILL.md` 与 `.aidlc/system/bootstrap/team.md`，完成授权配置即停，不创建需求。
+- 状态查询：只报告已有状态和证据，不启动 worker。
+- 终结/closing/closed：按 `.aidlc/system/workflow/closure.md`；未停 worker 不标 closed。
+- 知识重试：按 `.aidlc/system/workflow/knowledge.md` 核验原快照与有效授权，不重启交付。
+- 新需求/继续：先按 `.aidlc/system/workflow/preflight.md` 查新。新需求先完成必要更新；旧需求保持原方法、图和授权。低于 0.10 的工作走 `.aidlc/system/workflow/legacy.md` 的原版本恢复，不套新版规则。
 
-workflow_ref/step_id 而非 stage 名识别批准；知识和取证按 kind/capability 触发。completed/closed 不重新派发交付，明确知识重试继续按原协议处理。活动节点/leaf/Hook 全部纳入状态、并发及更新阻断。以下线性路由说明仅供无 workflow_ref 的旧工作按其原固定版本解释，不能用它覆盖 schema 4 的图、节点权限或继续范围。
+## 当前版本的唯一执行链
 
-当前会话只协调，不内联扮演 BA、PO、Architect、QE、PM 或 Engineer 来完成正式阶段。每次阶段运行使用实际的新子 Agent、新上下文；不复用上一阶段 Agent，不复制父会话聊天历史。原生工具无法提供隔离子 Agent 时明确阻塞，不把角色切换、普通函数调用或提示词标题称为隔离。
+1. 读 config/state 和 `.aidlc/system/workflow/protocol.md`。新需求按 `.aidlc/system/workflow/profiles.md` 的风险基线、`.aidlc/system/workflow/extensions.md` 的已注册定义解析并固定图；已有需求直接核验 workflow_ref。不要重新加载所有阶段 Skill。
+2. 按 `.aidlc/system/workflow/dag.md` 计算 ready 节点；实际 spawn/collect、候选和停止见 `.aidlc/system/workflow/orchestration.md`。每个 run 使用 `.aidlc/system/prompts/composed-stage.md`，给固定职责、必要输入及明确范围，父聊天不作为输入。
+3. 首个只读节点核实风险；首卡确认图、范围与产物。低风险内置 fix/enhance 可推荐“两次人审”，但必须按 `.aidlc/system/workflow/approval.md` 同卡取得精确工作委托，未确认仍 manual。不得把 workflow=auto 当批准。
+4. 核验真实 worker、文件、输入、候选、必需检查与摘要；按 protocol 建立不可覆盖 review。不代写业务结论，子 Agent 返回不等于批准。
+5. 按 approval 处理 manual/checkpoint_low_risk/auto_low_risk。审查卡只给新增决定、风险、阻塞和正文/证据链接。checkpoint 的最终 Verify 必须人审，只有 Implement 候选可在核验后委托批准并进入独立 Verify。
+6. Implement 返回 feedback_request 时，只有 `.aidlc/system/workflow/implementation-feedback.md` 的有效预算可允许同一节点的内部继续；协调器先记账再派发。其余失败停止、撤销委托并交人决定。
 
-## 读取与派发
+按需加载：Verify 的双 Gate 用 `.aidlc/system/workflow/gates.md`；身份刷新用 `.aidlc/system/workflow/identity.md`；知识 read/prepare/publish 用 knowledge；Release/Learn 用 `.aidlc/system/workflow/external-evidence.md`。活动 stage/leaf/Hook 一并计入容量和更新阻断。
 
-先识别控制意图：明确知识同步/重试按 `.aidlc/system/workflow/knowledge.md` 核验原快照及授权，不重启交付阶段；status=closed 的旧授权不可用于重试。明确终结、status=closing 或 closed 按 `.aidlc/system/workflow/closure.md` 处理，不进入阶段派发/能力探针；关闭无需补跑阶段。status=completed 默认只报告既有结果，显式知识重试除外。只有需实际阶段执行时才走下面的派发步骤。
-
-1. 确认业务仓库根目录与新需求/已有 work，读取 `.aidlc/config.json`，先按 `.aidlc/system/workflow/preflight.md` 检查 GitHub 最新 commit；新需求有更新先完成 update，已有需求保持锁定版本。检查未放行前不创建 work/run、不启动阶段。更新后重读安装后的 router、`.aidlc/system/workflow/protocol.md`、`.aidlc/system/workflow/orchestration.md`、`.aidlc/system/workflow/stages.json` 再派发；本次调用不递归查新。缺失安装或编排能力时停止，不自行安装运行器或另起 AI CLI。
-2. 确认 work ID；存在歧义时询问。新工作先读 `.aidlc/system/workflow/profiles.md`，结合用户路线意图和 config.profile 初选 standard/enhance/fix，记录 state.profile/routing_reason，从该路线首阶段启动；auto/null 不进入实际执行。首 child 核实风险，首张审查卡确认路线和范围，不额外增加 Intake/Triage。恢复工作以 state.profile 为准，不按当前偏好换轨。
-3. 按协议维护请求和必要澄清记录，验证当前路线的当前阶段及所有前序批准。根据 `.aidlc/system/templates/work/dispatch.json` 建立 run：记录 profile 和按 profile 解析的 outputs、实施授权基线、最小输入/摘要及写入范围。短流程不补跑九阶段，也不漏掉自身批准。
-4. 使用 `.aidlc/system/prompts/dispatch.md` 和宿主真实子 Agent 能力启动全新上下文。子 Agent 根据派发包加载自己的阶段 Skill、角色与 Prompt；父协调器保存真实执行标识并等待结果。
-5. 读取该 run 的 `result.json`，核对 profile/派发关系、输入/候选、适用产物/真实摘要/证据/写入边界。高风险升级建议先 blocked 等用户确认，再按 profiles.md 处理旧 run 和审批失效。验真后从 run 直接建立 review，不复制 drafts/另写 handoff，不替子 Agent 补写业务产物。
-6. 对人类只呈现 work / profile / stage / revision、简短摘要、正文/证据链接、风险和待决定项；详细摘要清单留在 review。默认停止等人工批准；用户启用自动批准时，先读取 `.aidlc/system/workflow/approval.md`，核验策略与每项条件后记录自动批准；只在有效 auto_continue 授权下派发下一阶段，不打印整套控制 JSON。enhance/fix 的 Verify 批准后按短流程结束，不自动创建 Release/Learn。
-
-Release/Learn 派发前按 `.aidlc/system/workflow/external-evidence.md` 从业务仓库/已绑定 Jira 解析 state.evidence_sources，填 dispatch.external_reads；完整阶段追加 catalog.external_evidence.required_evidence，取证 leaf 只分配其来源片段。子 Agent 自行检索并返回源快照，父协调器验证后将 source-index 的路径/摘要纳入 review.external_evidence。
-
-## 路由与停止点
-
-创建工作、呈交批准/自动委托及写审批前，按 `.aidlc/system/workflow/identity.md` 解析/刷新 Jira 经办人、Git name/email、系统登录人。卡中直接展示来源；身份不是批准，自动决策仍署 parent-coordinator。所有路线的 Verify 按 `.aidlc/system/workflow/gates.md` 核验双 Gate 报告；完整 Verify 派发时将 catalog.gates.required_evidence 复制为 dispatch.required_evidence；单 Gate leaf 仅取分配种类，最终汇总须齐全，不能被 compact 正文覆盖。缺规则时处理当前阶段提出的 Architect/QE gate-design leaf，不由主会话代写规则。
-
-- 明确终结当前 work：按 closure.md 记录审批人确认，撤销自动模式，停止/收回 worker 后标 closed；不要求剩余阶段批准。closing 只继续终结清理，closed 不再派发。
-- 新需求/继续：只派发当前获准阶段，不能因为用户提到“测试/发布”跳过依赖。
-- 只问状态：报告最后有效批准、当前执行/阻塞与下一步，不启动子 Agent 或推进状态。
-- awaiting_approval：展示已存在的精确 review，不重复执行；只有取得本次明确人审或新确认的有效自动委托并完成核验，才能批准。不能因旧 auto 标记恢复运行。
-- 澄清答复：记录真实原话、来源与影响；答复不是批准。需重跑时创建新 run、新子 Agent；不得把过期结果晋升。
-- 明确批准具体 review：重新核对文件摘要及依赖后记录人类真实决定。批准只使下一阶段 ready；只有同时要求继续才派发下一阶段。
-- 拒绝/修改：保留历史，按协议建立新 revision，使受影响下游证据/批准失效，不自动回滚业务代码。
-- 自动批准/自动继续/撤销：按 `.aidlc/system/workflow/approval.md` 处理当前需求的明确委托，默认关闭。不把 profile=auto、setup、静默或笼统交付任务当授权；撤销/失败/返工/升级时清除活动策略并停下。
-
-## 并行与权限
-
-新版本工作按 `.aidlc/system/workflow/knowledge.md` 执行知识 Hook：Intake/Scope/Diagnose 派发加入相关获批知识；完整 Verify/Learn 派发要求冻结知识技术附件、目标和脱敏，纳入 review。批准后父协调器只负责原样晋升本地快照和派发全新 knowledge-sync child；它不是下一交付阶段，next_stage_authorized=false 不阻止已授权的发布 Hook。不得在父会话代写发布结论。状态单列投递结果；活 Hook 计入 worker 上限并阻止更新，pending 不长期锁住升级。阶段发布授权与撤销按 knowledge.md 追溯。
-
-正式阶段依批准顺序串行；不预跑未来阶段。阶段内部独立叶子任务由当前阶段子 Agent 提议，由父协调器统一分配不重叠所有权并实际派发。遵守 orchestration 的容量、结果合并与候选冻结规则；默认 `max_parallel_workers = 2` 计入所有存活子 Agent，等待中的阶段子 Agent 也占槽。子 Agent 不递归派发；无可用容量则串行，不死锁等待。
-
-只有 Implement 的明确派发范围允许改业务代码/测试/构建配置，并且必须有当前路线的 implementation_authority 批准，不能跨路线复用旧批准。审批、状态、问题账本、快照晋升与用户沟通归父协调器。无法真实检查、计算摘要或确认能力时阻塞，不伪造 PASS。
-
-这仍是协作协议，不是认证/防篡改系统。独立 AI 上下文不等于独立人类审批；生产硬门禁仍由项目 CI 和权限保护执行。
+只批准而未授权继续就停下；澄清不是批准。图/职责/授权变化保留旧快照，按失效链重新确认。completed 不再派发交付，closed 不复活旧授权。本包是宿主执行的协作协议，不是身份认证或不可绕过的权限系统。

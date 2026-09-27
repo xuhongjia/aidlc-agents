@@ -119,7 +119,19 @@ API 包的 `team.scope.routing_facts` 声明 `needs_review: boolean`。Scope 子
 
 两个审查都返回后，再明确批准各自的 revision，并授权 Implement；Implement 候选也须获批才进入独立 Verify。不要在多个待审节点时只说“批准当前”。批准后不说继续，默认记录后停止。
 
-希望低风险流程自动推进，可要求“先给本工作 auto approval 授权卡”，确认固定图、所有可能激活的步骤、路径/命令/工具范围和停止条件。每个可激活阶段都须满足 `auto_eligible=true`，但这只是资格；没有真实初始委托就不能自动批准。standard、高风险、纯分析工作流仍人审；交付流中的只读分析节点不因此失去自动资格。失败或范围变化停下转人工，不自动返工。详见 [审批规则](../workflow/approval.md)。
+0.10 起，未被覆盖的低风险内置 fix/enhance 可选择“两次人审”：
+
+```text
+为 REQ-001 准备 checkpoint_low_risk 授权卡：首阶段我批准范围和计划，
+合格 Implement 候选由协调器验真后委托批准并继续独立 Verify，最终仍等我确认。
+纠错预算保持 0，不授权知识发布或外部写入。
+```
+
+仍有三个阶段和独立候选批准记录，只减少中间的人类确认；首张卡必须真实获批。此模式不适用于改过图、阶段、Prompt 或模板的团队配方，即使保留 core ID 也不行。
+
+希望低风险流程全自动推进，可要求“先给本工作 auto approval 授权卡”，确认固定图、所有可能激活的步骤、路径/命令/工具范围和停止条件。每个可激活阶段都须满足 `auto_eligible=true`，但这只是资格；没有真实初始委托就不能自动批准。standard、高风险、纯分析工作流仍人审；交付流中的只读分析节点不因此失去自动资格。详见 [审批规则](../workflow/approval.md)。
+
+无论哪种审批模式，都可另外申请“首次 Implement 候选审查前，允许原批准范围内最多两轮局部自纠错，不能改测试/Oracle/Gate”。默认预算为 0；只适用低风险非 standard 实施。每轮先记账再启动同一 step/revision 的新子 Agent，预算跨会话累计，不是新阶段或 DAG 回边。Verify 失败、环境/未知故障、范围变化仍停下转人工，不能自动返工。见 [实施反馈](../workflow/implementation-feedback.md)。
 
 ## 5. 团队怎么改阶段、模板和图
 
