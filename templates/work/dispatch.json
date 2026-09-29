@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "work_id": null,
   "profile": null,
   "workflow_ref": null,
@@ -18,6 +18,7 @@
   "task": null,
   "role_path": null,
   "stage_prompt_path": null,
+  "instruction_refs": [],
   "input_refs": [],
   "read_scope": [],
   "external_reads": [],

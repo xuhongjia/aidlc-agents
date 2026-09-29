@@ -75,3 +75,9 @@ bridge 比较单位是受管 marker 块，不是整个 `AGENTS.md` / `CLAUDE.md`
 回滚也先展示精确范围取得用户确认：只恢复本事务已改且 current 仍等于已记录 after 的受管文件，使用已验证 backup；仅移除本事务新增且仍未改动的精确文件。对于已改 bridge，只用备份的旧块替换当前已知新版块，保留当前块外内容；不得复制整个旧 AGENTS 文件回去。已由用户编辑的项、未知文件和所有 work/审批/证据都保留并阻塞自动回滚。旧 config 最后恢复并重新验证。只有全部恢复到可验证的一致旧版才能标 rolled-back/旧版可用，否则维持 recovery-required，给出未解决清单。备份默认保留，不自动清理。
 
 重跑同一 commit（或相同 local-unreleased 路径+摘要集合）且受管内容一致、没有未结束事务：只报告 up-to-date，不追加 bridge、不重写 config/安装日期、不创建工作。相同 semver 但来源摘要不同仍必须走完整升级计划。已完成更新的报告和备份不重用为新事务证据。
+
+## 0.10 → 0.11
+
+只为新工作使用按需 instruction_refs/worker/知识与 Gate 协议，dispatch 模板升至 schema 4；旧 work、锁、dispatch 和批准全部保留原版本，不回填或替换引用。context.json 及必需/条件资源纳入冻结资产。仍须等待未完成 work/活 stage、leaf、Hook 后应用更新。
+
+保留团队 Prompt/模板/必读 instructions、原 knowledge 目标和未知字段；不自动切旧快照到 TWG、不为旧授权补写权限。Confluence 新接入走知识 setup Skill，安装/登录是明确配置操作，不是 update 的隐含步骤。现有 .codex/config.toml 不登记为方法受管文件，不重写工具预算/模型/插件；可选精简键只在用户明确启用时合并。

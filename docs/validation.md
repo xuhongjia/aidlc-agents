@@ -1,5 +1,24 @@
 # 本版验证记录
 
+## 0.11.0：按需上下文与 TWG 知识接入
+
+验证日期：2026-09-29；对象为本地未发布 0.11.0 指令包。旧方法、工作、审批与授权不迁移；本次未 commit/push。
+
+| 范围 | 结果与边界 |
+|---|---|
+| 内容及既有回归 | 102 项 Node 测试通过，包括既有审批/反馈、DAG、来源/知识模拟、业务夹具；新增上下文选择/真实固定文件摘要/整锁漂移/团队模板、截断 Gate 阻断、知识配置及 trace 计量契约 |
+| 静态加载预算 | fix 145,285 → 42,819 字节（70.53%）；enhance 145,199 → 42,733 字节（70.57%）。共同执行正文 4,909 字节，小于 6 KB |
+| TWG 本地能力发现 | 实际只读 help 核实 twg login、content get、content update 的 snapshotToken/body-file/html 接口；没有读取企业页面、登录或执行远端写入 |
+| Codex 项目配置 | 方法仓库新增 tool_output_token_limit=3000，其它设置未改；用户全局配置不改。当前已打开会话是否重新加载、受信任客户端实际生效尚未验证 |
+| 真实模型 token A/B | NOT_RUN；提供配对运行步骤及原始 usage 解析函数，不用字节/4 捏造 tokens，不把本长期会话累计数称为新版流程成本 |
+| 安装器/登录/真实 Confluence | NOT_RUN；下载只读检查遇 DNS 不可达，本地已有 twg。安装命令来自用户，未执行/审计远端脚本；无测试父页面和发布授权，未创建/更新任何页面 |
+
+静态基线固定到 b726a1e36b06a5f35b6304cf319432b6a7095f07，选定的保守方法正文集合与字节数保存在 tests/fixtures/context-baseline.json。新集合按实际 context.json、kind/capability/输出语义推导并去重，包含明确两轮反馈分支；模板、业务输入、锁/证据和宿主上下文不计入。它不是全库体积、实测 tokens、费用或真实阶段行为证明。
+
+新 dispatch schema 4 的 instruction_refs 不授予权限。维护参考模型不随包安装，不是运行器/身份认证或防篡改系统；真实宿主必须独立核验完整锁、批准、候选和原始证据。团队额外必读资源不能因预算裁掉。Confluence 配置/安装/认证不等于 knowledge_publish 授权，普通 setup/update 和 Hook 不自动安装/登录。
+
+Skill 官方 quick_validate.py 因缺 PyYAML 无法运行；未安装依赖，不能报告该校验器通过。19 个 Skill 的 Node frontmatter/发现元数据与链接检查通过。使用见 [精简说明](context-efficiency.md)、[知识接入与登录](../bootstrap/knowledge.md)；历史记录保持原样。
+
 ## 0.10.0：单一执行链、两次人审与有界实施反馈
 
 验证日期：2026-09-27；对象为本地未发布 0.10.0 指令包。Node v26.8.1；未运行远端 CI，不改写下面各版本的历史结论。

@@ -1,8 +1,8 @@
 # Plan · 将批准契约变为实施任务
 
-本节点按锁内 `.aidlc/system/prompts/composed-stage.md` 执行。下述内置配方的正文名是示例，实际输入/产物/终点取 dispatch 的 kind、bindings、outputs、terminals；不因改名省略证据或双 Gate。
+仅执行 dispatch 的 kind、bindings 和输出模板；已加载信封/worker 契约不重复读取。
 
-先执行 `.aidlc/system/prompts/common.md`。阅读批准的 Spec、Architecture 和 Quality 全部相关产物。
+阅读批准的 Spec、Architecture 和 Quality 全部相关产物。
 
 1. 按可交付的小变更划分任务，每项关联 AC、架构/质量规则、涉及文件或模块、依赖、验证入口及完成证据。
 2. 把前置阶段批准的测试、Fitness 脚本和配置纳入安装任务；记录来源 revision 和目标路径。
@@ -10,4 +10,4 @@
 4. 标明需要额外授权的网络、依赖、权限、外部系统与发布动作；Plan 审批不会替代宿主工具权限，也不自动授权上线。
 5. 对比需求与任务，找出漏项和不必要范围；不能靠扩大任务悄悄修改已批准 Spec。
 
-交付 `plan.md`，清楚展示将修改的边界和自测/正式验证安排。在本 run artifacts 交付并按 common 返回 result；父协调器呈现 review 获得人类批准后才可派发 Implement。
+交付 `plan.md`，清楚展示将修改的边界和自测/正式验证安排。在本 run artifacts 交付并按 worker 契约返回 result；父协调器呈现 review 获得人类批准后才可派发 Implement。

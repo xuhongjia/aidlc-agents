@@ -101,7 +101,7 @@ test('run and review templates preserve identity, constrained writes and non-app
   }
   assert.equal(dispatch.kind, 'stage');
   assert.equal(dispatch.context_policy, 'fresh-minimal');
-  for (const key of ['input_refs', 'read_scope', 'write_scope', 'expected_outputs', 'approved_commands']) {
+  for (const key of ['instruction_refs', 'input_refs', 'read_scope', 'write_scope', 'expected_outputs', 'approved_commands']) {
     assert.deepEqual(dispatch[key], [], `No implicit scope or authority: ${key}`);
   }
   assert.equal(dispatch.result_path, null);
@@ -141,7 +141,7 @@ test('checkpoint and correction templates add no default delegation or correctio
   assert.deepEqual(policy.implementation_feedback, {step_id: null, revision: null, max_correction_rounds: 0});
   assert.equal(policy.authorization.user_statement, null);
   const dispatch = json('templates/work/dispatch.json'), result = json('templates/work/stage-result.json');
-  assert.equal(dispatch.schema_version, 3); assert.equal(dispatch.revision, null);
+  assert.equal(dispatch.schema_version, 4); assert.equal(dispatch.revision, null);
   assert.deepEqual(dispatch.implementation_feedback, {policy_ref: null, max_correction_rounds: 0, round: 0, attempt_refs: []});
   assert.equal(result.schema_version, 3); assert.equal(result.feedback_request, null);
   const attempt = json(feedback.attempt_template);
@@ -279,9 +279,9 @@ test('all JSON artifacts parse, templates start without fabricated approvals or 
   assert.equal(Object.hasOwn(json('templates/work/review.json'), 'digest'), false, 'No self-referential manifest hash');
 });
 
-test('eighteen unique skills have valid discovery metadata', () => {
+test('nineteen unique skills have valid discovery metadata', () => {
   const skillFiles = all.filter(file => path.basename(file) === 'SKILL.md');
-  assert.equal(skillFiles.length, 18);
+  assert.equal(skillFiles.length, 19);
   const names = new Set();
   for (const file of skillFiles) {
     const text = readFileSync(file, 'utf8');
@@ -345,7 +345,7 @@ test('maintainer CI uses read-only permissions and pinned action identities', ()
 
 test('knowledge hooks are discoverable without adding a stage, implicit grant or managed project storage', () => {
   const knowledge=catalog.knowledge;
-  for (const field of ['protocol','hook_skill','dispatch_template']) assert.ok(existsSync(path.join(root,knowledge[field])));
+  for (const field of ['protocol','read_protocol','prepare_protocol','publish_protocol','setup_skill','hook_skill','dispatch_template']) assert.ok(existsSync(path.join(root,knowledge[field])));
   assert.deepEqual(knowledge.read_stages,['intake','scope','diagnose']);
   assert.deepEqual(knowledge.prepare_stages,['verify','learn']);
   assert.deepEqual(json('templates/setup/config.json').knowledge,{targets:[]});
@@ -359,13 +359,14 @@ test('knowledge hooks are discoverable without adding a stage, implicit grant or
   assert.equal(json('templates/knowledge/receipt.json').status,'pending');
   assert.equal(knowledge.default_publish_authorization,null);
   assert.ok(!manifest.payload_directories.includes('rehearsal'));
-  for (const id of [...knowledge.read_stages,...knowledge.prepare_stages]) assert.ok(read(`prompts/${id}.md`).includes('workflow/knowledge.md'));
+  for (const id of knowledge.read_stages) assert.ok(read(`prompts/${id}.md`).includes(knowledge.read_protocol));
+  for (const id of knowledge.prepare_stages) assert.ok(read(`prompts/${id}.md`).includes(knowledge.prepare_protocol));
   assert.ok(read(manifest.entrypoint).includes('workflow/knowledge.md'));
 });
 
 test('composable workflow entrypoints and blank templates preserve locked identities and default-deny grants', () => {
   const composition=catalog.composition, config=json('templates/setup/config.json');
-  for (const key of ['protocol','scheduler','stage_contracts','skill','dispatch_prompt','lock_template']) {
+  for (const key of ['protocol','scheduler','stage_contracts','skill','dispatch_prompt','lock_template','context_contract']) {
     assert.ok(existsSync(path.join(root,composition[key])));
   }
   assert.equal(composition.contract_version,1);

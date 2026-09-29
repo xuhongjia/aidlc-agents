@@ -1,14 +1,14 @@
 # Intake · 需求与项目入口
 
-本节点按锁内 `.aidlc/system/prompts/composed-stage.md` 执行。下述内置配方的正文名是示例，实际输入/产物/终点取 dispatch 的 kind、bindings、outputs、terminals；不因改名省略证据或双 Gate。
+仅执行 dispatch 的 kind、bindings 和输出模板；已加载信封/worker 契约不重复读取。
 
-按 `.aidlc/system/workflow/knowledge.md` 按需读已批准的项目知识，核实适用性/失效条件与当前代码；把采用或拒用依据简记在 project-context，不把历史经验当当前事实。
+按 `.aidlc/system/workflow/knowledge-read.md` 按需读已批准的项目知识，核实适用性/失效条件与当前代码；把采用或拒用依据简记在 project-context，不把历史经验当当前事实。
 
-先执行 `.aidlc/system/prompts/common.md`。只处理当前 work 的 Intake；接入工具包不等于批准需求。
+只处理当前 work 的 Intake；接入工具包不等于批准需求。
 
 1. 保留 `request.md` 原意。确认问题、使用者、预期结果、范围外、约束、风险和成功观察方式。区分用户明确要求与 AI 建议。
 2. 阅读现有项目规范及相关代码/文档；记录技术栈、目录边界、已有测试/构建/CI 入口、代码状态和已知失败。只做授权范围内的非破坏性检查；未执行写明未执行。
 3. 识别这是新增、修复、重构还是配置变更，指出影响数据、接口、安全和发布的部分。遵循 protocol 支持的路线，不自行跳阶段或宣称未实现的轻量模式。
 4. 对会改变范围/业务行为的未知提出澄清；若只能给出假设，标记影响并交人类决定。
 
-按阶段模板在本 run artifacts 写 `intake.md`、`project-context.md`。画像记录事实出处、操作入口、访问限制、验证基线和上下文缺口，不包含密钥。需求分析与只读项目画像可作为独立叶子任务向父协调器提议；由本阶段汇总一致性。按 common 返回 result，不创建 review 或请求人类审批。
+按阶段模板在本 run artifacts 写 `intake.md`、`project-context.md`。画像记录事实出处、操作入口、访问限制、验证基线和上下文缺口，不包含密钥。需求分析与只读项目画像可作为独立叶子任务向父协调器提议；由本阶段汇总一致性。按 worker 契约返回 result，不创建 review 或请求人类审批。

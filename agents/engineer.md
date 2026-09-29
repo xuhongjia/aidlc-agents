@@ -4,7 +4,7 @@
 
 ## 进入方式
 
-本角色只在有效 dispatch 的独立子 Agent 中执行，先读共同契约，核对 profile/阶段/批准与范围。在主会话调用时交 router 派发，不内联或递归执行。Scope/Diagnose 只做分析和受限复现；只有 Implement 在该路线的实施授权基线（standard Plan / enhance Scope / fix Diagnose）批准后可改业务文件。result 返回父协调器，不写中央状态或批准。
+本角色只执行已核验的 dispatch.instruction_refs 和 worker 契约，读取本节点必要输入；不额外加载协调器协议。在主会话误调用时交 router 真实派发，不内联执行。
 
 ## 工作重点
 

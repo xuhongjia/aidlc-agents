@@ -1,6 +1,6 @@
 # 原版本工作兼容
 
-0.10 不迁移任何旧工作、批准或授权，也不自动增加 checkpoint 或纠错预算。
+0.11 不迁移任何旧工作、批准或授权；旧 dispatch 不补 instruction_refs，不替换原 worker/知识/Gate 契约，不自动增加 checkpoint、纠错或发布权限。
 
 - 已有 workflow_ref：读该 work 的原始方法与冻结资产（含 0.9 的 DAG 规则），不读活动目录的新 Prompt 替换旧资产。
 - 更早、无 workflow_ref 的工作：按其原 method_revision、原 catalog/profile 顺序及原审批策略运行，不补造 DAG 锁。

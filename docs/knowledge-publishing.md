@@ -1,6 +1,12 @@
 # 知识发布接入
 
-不需要新安装器。让当前 AI 修改业务仓库 config 的 knowledge 部分，保留其它字段；确认真实 site、space ID 和父页面 ID，不能使用示例值实际投递：
+使用 `.aidlc/system/skills/aidlc-knowledge-setup/SKILL.md` 接入。Confluence 使用 TWG CLI，缺失时仅在明确配置请求中按用户给定安装命令安装，并引导用户执行 twg login；只读确认真实站点、空间及父页面后合并配置。普通方法 setup/update 和发布 Hook 不安装/登录，凭据不进仓库。详细 [安装与认证步骤](../bootstrap/knowledge.md)。
+
+一句话：
+
+> 请用 aidlc-knowledge-setup 配置当前项目的 Confluence 知识库：目标为我指定的站点/空间/父页面，选择四类知识；检查 twg，缺 CLI 时按规定命令安装，引导我登录认证，只读验证后保留其它配置并保存目标。不要发布内容。
+
+site、space ID 和父页面 ID 必须真实，不用示例值投递：
 
 ```json
 {
@@ -8,6 +14,7 @@
     "targets": [{
       "id": "project-wiki",
       "provider": "confluence_cloud",
+      "transport": "twg_cli",
       "site": "https://example.atlassian.net",
       "space_id": "REPLACE_SPACE_ID",
       "parent_page_id": "REPLACE_PARENT_ID",
@@ -16,6 +23,8 @@
   }
 }
 ```
+
+新 Confluence 目标 transport=twg_cli，配置只是传输选择，不授予 shell/网络/知识写入权限。旧 work/快照仍用原 adapter，不回填 transport 或迁移批准。
 
 目标 ID 唯一且定位字段齐全；types 为上述枚举的非空子集。多个目标独立订阅；首版实际 provider 只实现 confluence_cloud，模拟目标仅供维护测试。未知类型、重复 ID、缺定位或不支持 provider 不获得投递权。
 
@@ -35,6 +44,6 @@ Hook result 保存 `{run_id, dispatch_digest, status, receipts, blockers}`，sta
 
 快照 source.review_refs 指向已存在的上游批准，当前 Verify/Learn 的批准通过外置 approvals 凭据关联，避免自引用。design_refs 每项额外记录 approval_ref；implementation_verification 包含 candidate_ref、两份 gate_refs、AC/检查映射与覆盖限制，未执行明确 NOT_RUN，不把设计批准混同验证。Learn 新版本保留 supersedes，新增真实 source evidence，claim_status 不自动升级。
 
-schema 1 的快照字段 origin 取 approved_document/derived/observed_revision；source.stage 为 verify 或 learn；source.method_revision 保留来源方法身份。版本为正整数；applicability、invalid_when 与 evidence_refs 非空。ID 只能使用字母、数字、短横线和下划线，拒绝路径穿越。创建标题/正文冻结身份块；完整正文和脱敏投影区别见 [协议](../workflow/knowledge.md)。
+schema 1 的快照字段 origin 取 approved_document/derived/observed_revision；source.stage 为 verify 或 learn；source.method_revision 保留来源方法身份。版本为正整数；applicability、invalid_when 与 evidence_refs 非空。ID 只能使用字母、数字、短横线和下划线，拒绝路径穿越。创建标题/正文冻结身份块；完整正文和脱敏投影区别见 [准备协议](../workflow/knowledge-prepare.md)。
 
 敏感内容需先脱敏并新审查；权限不足、人工编辑、版本冲突或未知写结果只停止相关目标。不得通过换标题再创建绕过冲突。更新/重试不扩大发布授权，不自动安装插件或写 token。

@@ -80,3 +80,7 @@
 中途失败：报告已创建/未创建的精确文件，保留可恢复现场；不运行递归删除。恢复仅补齐同一版本且确认属于本次安装的未完成文件，有未知改动则再次询问。
 
 卸载仅移除有记录且内容未变的受管文件/marker，必须在用户明确要求时逐项确认范围；保留需求、批准、证据和用户内容，默认不删除 `.aidlc/work/`。
+
+## 可选接入，不是默认安装步骤
+
+默认不修改项目/全局 Codex 配置；用户明确启用时按 [精简设置](../docs/context-efficiency.md) 备份并只合并 tool_output_token_limit。知识 targets 默认空，用户明确配置 Confluence 时交 [知识 setup Skill](../skills/aidlc-knowledge-setup/SKILL.md)，按 [TWG 安装/登录](knowledge.md) 处理；普通 setup 不安装 CLI 或认证、不获得发布权限。

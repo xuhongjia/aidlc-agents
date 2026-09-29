@@ -1,0 +1,2 @@
+# Project-scoped only; no model, plugin, skill or compaction changes.
+tool_output_token_limit = 3000

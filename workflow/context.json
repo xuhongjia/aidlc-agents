@@ -1,0 +1,22 @@
+{
+  "contract_version": 1,
+  "common": ["prompts/composed-stage.md", "workflow/worker.md"],
+  "by_kind": {
+    "design": ["workflow/gate-design.md"],
+    "quality_design": ["workflow/gate-design.md"],
+    "implementation": ["workflow/gate-design.md"],
+    "verification": ["workflow/gate-execution.md", "skills/aidlc-fitness-check/SKILL.md", "templates/work/gate-result.json"],
+    "release_readiness": ["workflow/external-evidence.md"],
+    "learning": ["workflow/external-evidence.md"]
+  },
+  "by_capability": {
+    "knowledge.read": ["workflow/knowledge-read.md"],
+    "knowledge.prepare": ["workflow/knowledge-prepare.md", "templates/knowledge/snapshot.json"]
+  },
+  "by_output_contract": {
+    "change": ["workflow/profiles.md", "workflow/gate-design.md"]
+  },
+  "implementation_feedback": ["workflow/feedback-request.md"],
+  "gate_design_leaf": ["workflow/gate-design.md"],
+  "gate_execution_leaf": ["workflow/gate-execution.md", "skills/aidlc-fitness-check/SKILL.md", "templates/work/gate-result.json"]
+}

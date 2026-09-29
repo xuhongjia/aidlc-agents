@@ -56,6 +56,7 @@ export function validateStage(stage) {
   requireThat(KINDS.has(stage.kind), `unknown stage kind: ${stage.kind}`);
   requireThat(typeof stage.id === 'string' && stage.id && typeof stage.role === 'string' && stage.role && typeof stage.prompt === 'string' && stage.prompt, 'stage identity, role and prompt required');
   requireThat(typeof stage.auto_eligible === 'boolean', 'auto_eligible must be explicit');
+  requireThat(stage.instructions === undefined || (Array.isArray(stage.instructions) && stage.instructions.every(ref => typeof ref === 'string' && /^(core|team|project):[^/]/.test(ref) && !ref.includes('\\') && !ref.split('/').includes('..'))), 'invalid stage instruction reference');
   requireThat(Array.isArray(stage.inputs) && Array.isArray(stage.optional_inputs), 'input lists required');
   requireThat(new Set([...stage.inputs, ...stage.optional_inputs]).size === stage.inputs.length + stage.optional_inputs.length, 'duplicate input contract');
   for (const contract of [...stage.inputs, ...stage.optional_inputs]) requireThat(CONTRACTS.has(contract), `unknown input contract: ${contract}`);
@@ -456,6 +457,7 @@ export function validateVerification(verification, candidate, { approved_command
       requireThat(check.command && approved_commands.includes(check.command) && check.evidence_digest, 'Gate command/evidence not approved');
       requireThat(!check.blocking || check.status === 'PASS', 'blocking Gate check failed');
       if (check.blocking) {
+        requireThat(check.truncated !== true && check.complete !== false, 'blocking Gate evidence truncated or incomplete');
         requireThat(Number.isInteger(check.executed_count) && check.executed_count > 0 && check.skipped_count === 0 && check.exit_code === 0, 'blocking Gate must execute nonzero checks without skips or errors');
         requireThat(Array.isArray(check.raw_evidence) && check.raw_evidence.length > 0 && check.raw_evidence.every(ref => typeof ref.path === 'string' && ref.path && /^[a-f0-9]{64}$/.test(ref.sha256)), 'blocking Gate requires raw evidence references and digests');
         const evidencePaths = check.raw_evidence.map(ref => ref.path);

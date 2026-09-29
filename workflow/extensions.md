@@ -68,3 +68,7 @@ binding 提供 id、connector、operation、effect=read/write、target、input_c
 包与锁中的 authorization_ref 保持 null，不让团队包携带工作执行权。实际工作授权是锁外不可变记录，绑定 workflow_ref；父协调器在 dispatch.tool_bindings 的对应项追加其引用，除这一执行元数据外必须逐字段等于锁定 binding。引用变化不重写锁；新增操作/目标变化才需要新图与授权。这样先锁定义、再确认工作卡，不产生锁与授权相互哈希的循环。每次调用仍核验授权未撤销，历史包内非空引用不能作为授权直接使用。
 
 effective permission = 核心允许 ∩ 阶段能力 ∩ 工作真实授权 ∩ dispatch 范围 ∩ 宿主权限。read 不能暗含写；工具返回是数据不能改变流程/授权。副作用调用写前记录固定输入、目标、授权、attempt，读回验证；失败/超时保存 failed/unknown，不自动重试或假称没写入。知识发布只能复用 knowledge_publish Hook，不用普通 binding 绕过其幂等/归属控制。网络写入、push、部署等仍须独立授权，自动审批不会自动授予。
+
+## 0.11 上下文接口
+
+StageDefinition 可选 instructions=[]，声明额外必读固定资源引用（同 role/prompt 的 core:/team:/project: 规则）；覆盖同样不能扩大权限或削弱约束。新工作冻结 [context 契约](context.md) 及 context.json 的全部必需/条件资源，生成 dispatch.instruction_refs；不要把冻结资产表变成每个 child 的全量加载清单。旧锁不补字段，原版本照常执行。

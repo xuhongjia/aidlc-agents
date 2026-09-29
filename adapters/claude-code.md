@@ -1,11 +1,7 @@
 <!-- AIDLC-AGENTS:START -->
 ## AIDLC Agents
 
-For AIDLC requirements, implementation, review, or continuation requests, explicitly read these files from the repository root:
-
-1. `.aidlc/system/skills/aidlc/SKILL.md`
-2. `.aidlc/system/workflow/protocol.md`
-3. `.aidlc/system/workflow/orchestration.md`
+For AIDLC requests, first read only `.aidlc/system/skills/aidlc/SKILL.md`. Route the intent before loading `.aidlc/system/workflow/protocol.md` or orchestration.md; valid children use their frozen instruction_refs instead of re-routing.
 
 Before parent delivery execution, follow `.aidlc/system/workflow/preflight.md`: check GitHub, update before creating new work, and keep existing work pinned. After an update, reload the installed router and contracts before dispatch. Status-only, approval-only, and closure controls do not require this check. Dispatched children never check for updates or install method files.
 

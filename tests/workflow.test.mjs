@@ -397,6 +397,15 @@ test('textual PASS cannot substitute for nonzero execution, raw output and rule 
   }
 });
 
+test('a short PASS summary cannot cover truncated or incomplete raw Gate evidence', () => {
+  const { candidate, verification, options } = gateFixture();
+  for (const patch of [{ truncated: true }, { complete: false }]) {
+    const invalid = copy(verification);
+    Object.assign(invalid.gates[0].checks[0], patch);
+    assert.throws(() => validateVerification(invalid, candidate, options), /truncated or incomplete/);
+  }
+});
+
 test('work lock covers definitions, graph, tool bindings and source/config digests', () => {
   const resolved = { ...resolveDefinitions(pack('team', definitions, [delivery()])), sources: { team: 'bytes-1', project_config: 'config-1' } };
   const lock = createWorkLock(resolved);

@@ -8,11 +8,16 @@
     "stage_contracts": "workflow/stage-contracts.json",
     "skill": "skills/aidlc-workflow/SKILL.md",
     "dispatch_prompt": "prompts/composed-stage.md",
-    "lock_template": "templates/work/workflow-lock.json"
+    "lock_template": "templates/work/workflow-lock.json",
+    "context_contract": "workflow/context.json"
   },
   "knowledge": {
     "contract_version": 1,
     "protocol": "workflow/knowledge.md",
+    "read_protocol": "workflow/knowledge-read.md",
+    "prepare_protocol": "workflow/knowledge-prepare.md",
+    "publish_protocol": "workflow/knowledge-publish.md",
+    "setup_skill": "skills/aidlc-knowledge-setup/SKILL.md",
     "read_stages": ["intake", "scope", "diagnose"],
     "prepare_stages": ["verify", "learn"],
     "hook_skill": "skills/aidlc-knowledge-sync/SKILL.md",
@@ -51,6 +56,9 @@
     "on_missing": "define_then_implement",
     "allow_manual_substitute": false,
     "design_prompt": "prompts/gate-design.md",
+    "design_protocol": "workflow/gate-design.md",
+    "execution_protocol": "workflow/gate-execution.md",
+    "default_execution": "sequential-single-verifier",
     "required_evidence": [
       {"kind": "architecture", "name": "architecture-gate.json", "template": "templates/work/gate-result.json"},
       {"kind": "quality", "name": "quality-gate.json", "template": "templates/work/gate-result.json"}

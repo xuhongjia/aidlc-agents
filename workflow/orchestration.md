@@ -13,7 +13,7 @@
 ## dispatch → collect
 
 1. 按固定图、真实上游批准和继续权选择 ready 节点。Verify 冻结候选；Implement 要已批准 authority。closing/closed/completed 不派发交付；控制操作按各自协议。
-2. 创建唯一 run 与 [dispatch](../templates/work/dispatch.json)：work/step/stage/kind/run、workflow_ref、原方法、必要输入摘要、读写范围、实际命令/cwd/资源/副作用/超时、输出和结果路径。所有资源经锁内 assets 解析。产品写范围不包含控制目录或整个仓库通配。
+2. 创建唯一 run 与 [dispatch](../templates/work/dispatch.json)：work/step/stage/kind/run、workflow_ref、原方法、必要输入摘要、读写范围、实际命令/cwd/资源/副作用/超时、输出和结果路径。所有资源经锁内 assets 解析；0.11 新 dispatch 按 [context](context.md) 推导 instruction_refs，冻结完整资产但只定向读取本节点及必要片段。产品写范围不包含控制目录或整个仓库通配。
 3. Verify 的 required_evidence 含两 Gate；单 Gate leaf 只含分配种类。Release/Learn 增加 source-index 与外部只读范围；knowledge.read/prepare 按能力提供必要快照。有纠错预算时按 [feedback](implementation-feedback.md) 填派发，不从“继续”推定。
 4. 真实 spawn 并记实际 agent_id、上下文选项、输入摘要和 active_runs；子 Agent 只写本 run 与明确产品范围。
 5. 等实际结果；核对 worker、dispatch_digest、输入/候选、全部文件与 hash、命令原始证据、产品 diff 和子任务 lineage。漂移、缺证据、越界、未知真实状态则 blocked。不可只读 summary 的 PASS。
@@ -22,6 +22,8 @@
 父协调器不为等待而代写代码或产物。返回 status 仍仅 ready_for_review/blocked/failed；需要 leaf 或有限纠错可 blocked 并带类型化请求，是否继续由父协调器核验，不把请求当授权。所有失败保留原样。
 
 ## 并行与 leaf
+
+默认一个 Verify child 顺序执行双 Gate，不为每条检查命令创建 Agent；只有实际收益及独立资源明确才派 Gate leaf。
 
 默认最多 2 个 live child，含等待的阶段、leaf、汇总和 knowledge Hook；以宿主更低限额为准。只读 ready 节点可并行；产品 writer 在图中有序且与正式候选读取互斥。共享文件、DB/端口/缓存/锁/外部目标无法证明隔离就串行，不能只因路径不同推定安全。
 

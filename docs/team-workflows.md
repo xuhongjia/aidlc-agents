@@ -72,7 +72,7 @@
 }
 ```
 
-实际锁还必须包含完整 sources/workflow/stages/tool_bindings、校验记录、Prompt/角色/核心协议及它们所需传递引用的资产映射。dispatch 的 input_refs 包含本次使用的固定资源摘要；模板内部引用 `core:prompts/common.md` 时解析到同图的 core 副本，不读取后来变更的安装目录。缺任一所需映射就停止，不能把上面两个片段当完整运行输入。
+实际锁还必须包含完整 sources/workflow/stages/tool_bindings、校验记录、Prompt/角色/核心协议及它们所需传递引用的资产映射。0.11 新 dispatch 以 instruction_refs 声明必读方法资源，input_refs 保留业务来源及固定资源摘要；模板引用 `core:prompts/common.md` 时解析到同图固定副本，不读取后来变更的安装目录。冻结完整、运行时仅定向读本节点；额外必读团队规则可在 StageDefinition.instructions 声明并单列预算，参见 [上下文契约](../workflow/context.md)。缺映射仍停止，不因预算删减约束。
 
 阶段独立审批；多个明确对象可以一张卡确认，记录仍逐项绑定。低风险、满足原 fix/enhance 保证的定制交付图可以明确授权 auto；standard、高风险和纯研究保持人审。`checkpoint_low_risk` 仅接受未改写的内置 fix/enhance，不适用于团队覆盖的图、阶段、Prompt 或模板。低风险非 standard 实施可单独申请有界内部反馈，默认零轮，不得借此改图或自动正式返工。工具权限和知识发布仍需其专项授权。
 

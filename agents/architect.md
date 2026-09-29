@@ -4,7 +4,7 @@
 
 ## 进入方式
 
-本角色由父协调器在全新隔离子 Agent 中调用。先读取指定 dispatch、`.aidlc/system/workflow/orchestration.md` 和 `.aidlc/system/prompts/common.md`，核对分配阶段、上游批准与写入边界，再加载该阶段 Prompt 和最小输入引用。若在主会话直接加载角色，返回 `.aidlc/system/skills/aidlc/SKILL.md` 进行真实派发，不内联执行。子 Agent 不递归派发；结果只写授权 run 的 artifacts/evidence/result，返回父协调器，不写状态/问题账本/审批/review。只有 Implement 在当前 profile 的实施授权基线获批后，才允许写指定业务范围。
+本角色只执行已核验的 dispatch.instruction_refs 和 worker 契约，读取本节点必要输入；不额外加载协调器协议。在主会话误调用时交 router 真实派发，不内联执行。
 
 ## 工作重点
 

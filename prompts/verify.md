@@ -1,19 +1,12 @@
-# Verify · 对冻结候选执行验收
+# Verify · 独立验证冻结候选
 
-本节点按锁内 `.aidlc/system/prompts/composed-stage.md` 执行。下述内置配方的正文名是示例，实际输入/产物/终点取 dispatch 的 kind、bindings、outputs、terminals；不因改名省略证据或双 Gate。
+只执行 dispatch 的固定 bindings/模板、worker 及 gate-execution 契约。读取实际批准 Implement 候选、完整请求/AC/Oracle、约束与规则；短流程从获批 change 和 DEV verification 读取，不补 Spec/Plan/Fitness JSON，不能把 DEV PASS 抄成 QE PASS。
 
-完整阶段还须读取 `.aidlc/system/workflow/knowledge.md`：核对原始 FR/NFR→AC（或明确批准排除）→测试/Oracle→证据，漏源需求阻塞；在审批前冻结可发布知识技术附件及目标。standard 保留获批架构/ADR、质量设计正文，验证结论单列；compact 只提取标明派生的条目。反模式六要素必须有实证，没有发现不生成。知识附件不能代替双 Gate，也不是第三类正文；child 不发布，父协调器批准后另派 Hook。
+默认同一新 Verify child 顺序执行双 Gate，使用固定 fitness-check Skill；真正独立资源且有收益时才请求 leaf。单 Gate leaf 仅交指定报告；汇总 child 收齐同候选的两份原始结果及 lineage，不冒称自己重跑。任一缺规则/实现则 blocked，交父回实际生产者，不能用 N/A/人工审查/宽松规则代替。
 
-按锁定 bindings 核对批准 Implement 候选与验收基线。内置 standard 读 Spec/AC/Oracle/Fitness；enhance/fix 读批准 change.md 的 AC/Oracle/检查及 Implement verification.md。输出取 dispatch 的契约与模板，短流程不补造 Spec/Plan/Fitness JSON。
+1. 执行前后核验完整候选、批准命令及规则摘要，保存 Architecture/Quality 两份 Gate JSON 与原始日志。零测试、全跳过、无关检查、超时、未知、缺失/截断证据或漂移均阻塞；定向读取实际文件，不从短摘要猜通过。
+2. 原始 FR/NFR→AC 或明确批准排除→测试/Oracle→实际证据逐项对应；标准 acceptance/coverage/results 集合一致，compact 沿用同一表。人工 AC 缺实际观察就保持未验证，不能 AI 补签。
+3. 修复任务核验可信修复前失败、同 Oracle 修复后成功及邻近回归；每个 blocking 项须真实通过，双 Gate 不替代需求完整性。失败定位证据/影响并给回退建议，不改业务代码、项目测试、Oracle、阈值，也不自动纠错。
+4. 完整阶段按固定 `.aidlc/system/workflow/knowledge-prepare.md` 在本 run 冻结四类有实证的知识技术附件、来源/目标与脱敏；设计批准与实现验证分开，compact 标派生，无反模式就不造条目。leaf 不准备知识；父核验批准后另派 Hook，child 不发布。
 
-workflow/gates.md 的双 Gate 及 catalog.gates.required_evidence 对全部 profile 的完整 Verify 生效：实际执行两类并收齐结果。kind=leaf 时仅执行 dispatch 指定 Gate、角色与证据契约，写自己的报告；不运行另一类或生成整阶段文件。阶段汇总 child 可引用已验真的 leaf 原始报告，将两类汇总报告写到自己的 evidence，保留原执行 lineage，不能冒称汇总 child 重新执行了命令。缺任一规则或实现时 blocked 并回退对应阶段补建；不能临时只做人工检查、N/A、写一个 PASS 或省略架构 Gate。
-
-1. 使用 `.aidlc/system/skills/aidlc-fitness-check/SKILL.md` 执行已批准 Architecture / Quality 检查。执行前后核对候选；工具缺失、未授权、零测试、跳过或证据不完整不算 PASS。两类 Gate 或独立 AC 检查可向父协调器提出并行请求，仅限同一冻结候选、独立报告/临时目录且没有共享可写数据库、缓存、端口或环境状态；不能确认隔离则串行。
-2. 按批准覆盖映射验证每个 AC。结果引用真实原始日志、报告或人类观察记录，说明时间、方法、环境、候选与来源；不可由“程序没报错”推断业务满足。
-3. 自动与人工结果分别记录。未取得人工证据的 AC 保持未验证；不能把预期说明写成观测事实。
-4. 失败时定位证据与影响并提出回退阶段。当前阶段不改业务代码、项目测试、Oracle、阈值或批准规则；修复后需新候选和重新验证。
-5. 收集检查未覆盖的风险。所有 blocking 检查通过仍不保证需求完整，需检查 AC 覆盖和证据相关性。
-
-enhance/fix 用 compact 模板只提交新的 verification.md：引用 DEV 版本、保留真实变更摘要、逐 AC 增加独立 QE 结果、架构边界核对和项目质量规则证据。fix 必须检查可信的修复前失败/修复后成功及相关回归。不能把 DEV PASS 直接抄成 QE PASS；必需项 FAIL/NOT_RUN 或证据缺失则 blocked。获有效批准后短流程到此结束（verified / business not_evaluated），不生成 Release/Learn 或声称已部署。
-
-standard 按模板交付 `verification.md`、`acceptance-results.json`，与批准 AC 集合完全对应。所有路线真实证据写本 run evidence，按 composed-stage 返回 result；父协调器校验后按 approval.md 处理审批，不自我批准。
+按实际模板交付 verification 语义，引用 DEV 版本并新增独立 QE/架构/质量结论、缺口、风险及证据链接；compact 仅新 verification.md，standard 再有 acceptance-results.json。必需项 FAIL/NOT_RUN、输入或证据缺失即 blocked。返回 worker result；父处理 review/批准/继续权，不自批。短流程终点仅 verified/business not_evaluated，不生成 Release/Learn 或声称已部署。

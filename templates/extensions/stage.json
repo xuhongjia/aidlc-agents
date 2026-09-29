@@ -3,6 +3,7 @@
   "kind": null,
   "role": null,
   "prompt": null,
+  "instructions": [],
   "inputs": [],
   "optional_inputs": [],
   "outputs": [],

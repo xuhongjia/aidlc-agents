@@ -1,6 +1,6 @@
 # 当前工作共同契约
 
-0.10 新工作只有一条执行链：router → [extensions](extensions.md) 固定图 → [dag](dag.md) 依赖/分支 → [orchestration](orchestration.md) 真实派发 → [approval](approval.md) 决策。旧工作只读 [原版本规则](legacy.md)，不迁移。宿主是执行者，本包没有运行器、身份认证或防篡改保证；硬门禁由项目 [CI/权限](../docs/fitness-and-ci.md) 执行。
+0.11 新工作只有一条父协调链：router → [extensions](extensions.md) 固定图 → [dag](dag.md) 依赖/分支 → [orchestration](orchestration.md) 真实派发 → [approval](approval.md) 决策。child 的必读名单按 [context](context.md)，不加载本协调协议。旧工作只读 [原版本规则](legacy.md)，不迁移。宿主是执行者，本包没有运行器、身份认证或防篡改保证；硬门禁由项目 [CI/权限](../docs/fitness-and-ci.md) 执行。
 
 父协调器维护控制记录；每个 stage/run 新建隔离 child，只有 implementation 的批准范围允许产品写入。项目规范冲突、输入不足、越权和漂移先停，不靠加载更多角色覆盖约束。
 
