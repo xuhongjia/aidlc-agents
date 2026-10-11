@@ -22,13 +22,15 @@
 
 1. 有效批准当前路线的验收与检查基线（standard 的 Spec/Pack，或短流程的 change.md），明确允许的命令；不把网络安装、删除、部署隐藏进测试命令。短流程可合并文档，不能取消任一 Gate；没有现成检查时先补建，至少每类一项相关、可执行的 blocking 检查。
 2. 实施完成后固定候选文件集合和摘要，独立核对测试 Oracle 与已批准设计。
-3. Verify 子 Agent 用宿主工具执行批准命令，保存 stdout/stderr、退出码、报告、测试数量、跳过项和时间；主 Agent 只调度与收回核验。命令未运行就标 NOT_RUN/UNKNOWN。
+3. 父分别派 Architecture/Quality Gate Reviewer，执行/核对批准命令及真实 CI；保存 stdout/stderr、退出码、报告、数量、跳过项和时间。Verify collector 只核对来源/AC/TDD 后汇总，主 Agent 调度与验真。命令未运行即 NOT_RUN/UNKNOWN。
 4. 比较运行前后候选；变化则结果失效。逐项 AC 核对真实证据，不能仅看总体进程 exit 0。
 5. 保存 architecture-gate.json / quality-gate.json 与原始证据，再按审批策略处理审查卡。无法运行的集成/性能/人工验收如实 blocked 或保持未验证，不能伪造生产结果。
 
 Architecture Gate 与 Quality Gate 可以由主 Agent 派发独立 leaf 子 Agent 并行执行，但必须绑定同一冻结 candidate 与已批准规则，并隔离报告目录、生成物、数据库、端口等可写资源；不能证明无冲突时串行子 Agent。等待所有必需检查后，由 Verify 汇总 child 合成 AC 结果，主 Agent 验真再呈交人审。Gate 期间不允许开发 worker 继续改候选。详见 [调度协议](../workflow/orchestration.md)。
 
 ## 在业务仓库 CI 中实施硬门禁
+
+已有公司的 GitLab pipeline 可以通过 [配置与认证](../bootstrap/pipelines.md) 只读接入，不必本地重跑每项有效检查。0.12 支持 local/ci/hybrid：独立 Verify 核对同候选、批准规则/有效配置、最新 job attempt、非零检查与完整报告，符合条件的 CI 才能成为 Gate 证据；不能把缺 Gate、缺报告或远端失败改成本地放行。部署后校验还需目标环境的实际运行身份和 smoke/health；详见 [使用说明](ci-cd-validation.md)。等待释放阶段槽位，恢复保留旧检查的原执行者，不能补造本地退出码。
 
 需要平台/项目负责人另行批准并配置，本包 setup 不修改这些设置：
 

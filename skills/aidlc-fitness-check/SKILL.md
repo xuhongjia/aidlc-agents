@@ -12,10 +12,10 @@ description: 执行 AIDLC 已批准的 Architecture 和 Quality Fitness，记录
 先读 `.aidlc/system/workflow/gate-execution.md`。所有路线均要求 Architecture 与 Quality；缺规则或实现时阻塞并按该协议回退补建，不在 Verify 自造替代规则，不用人工观察/N/A 替代执行。
 
 1. 核对规则来源、revision、真实 SHA-256 和候选文件摘要；查看每条命令、范围、运行目录、依赖、超时、阈值及副作用。缺少 hash 工具或必要权限时阻塞。
-2. 使用宿主工具实际执行项目已批准的检查入口。不能执行的命令标为 UNKNOWN，不用自行编写的“等价”检查替代批准规则。
+2. 默认使用宿主工具实际执行项目已批准的检查入口；有固定 pipeline_requests 时按 pipelines 的 local/ci/hybrid 核对真实 CI 运行及完整规则断言。不伪称本地执行，不编造远端未提供的退出码；没有真实证据仍 UNKNOWN，不自行编写“等价”检查替代批准规则。
 3. 未获授权不联网、安装工具、访问外部系统或改变文件权限；不把 shell 包装或环境变量隐藏在不透明命令中。
 
-只有同一冻结候选、独立证据/临时目录、无共享可写数据库/缓存/端口/环境状态时，才向父协调器建议将 Architecture 与 Quality Gate 拆成并行叶子任务。父协调器分配容量和唯一路径；本 Skill 不自行启动 Agent。存在资源冲突或无法证明隔离时串行运行。
+正式 Gate 必须由两个专职 Reviewer 分别执行；本 Skill 在单 Gate leaf 中只跑分配种类，collector 只核对来源与汇总。证实同候选、独立证据/临时目录且无共享可写资源时可并行，否则两个 Reviewer 串行。父协调器分配容量/唯一路径，本 Skill 不自行派发。Implement 调用只作 DEV 自测，不能套用正式 Reviewer 身份签 Gate。
 
 ## 结果判断
 

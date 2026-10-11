@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | fix | 局部、可复现、恢复明确既有行为 | diagnose → implement → verify | 已批准根因、范围、Oracle 与计划 | change.md、verification.md |
 | enhance | 原边界内、可独立验收回滚的小增强 | scope → implement → verify | 已批准范围、AC、Oracle 与计划 | change.md、verification.md |
-| standard | 新能力或高风险 | intake → spec → architecture → quality → plan → implement → verify → release → learn | 已批准 Plan 及其设计基线 | 各阶段必要产物 |
+| standard | 新能力或高风险 | intake → spec → architecture → quality → plan → implement → verify | 已批准 Plan 及其设计基线 | 各阶段必要产物；verified handoff 后结束 |
 
 config.workflow/profile 是偏好不是权限；用户明确选择优先，但冲突先确认，风险不能豁免。auto 下恢复既有行为先 fix，小增强先 enhance，新能力/明显高风险先 standard；意图不清先问关键问题，不在父上下文诊断。AI 可组合已注册阶段，不在交付时发明新职责/模板。首只读 child 核实初选，首卡一并确认图与范围。
 

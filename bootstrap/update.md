@@ -1,5 +1,9 @@
 # AI-native update
 
+0.12 → 0.13：只对新工作启用 V2.1 Implement-only TDD、同名适配工程 Skill/按需资源、两个独立 Gate Reviewer 与 verified handoff。明确展示 Standard 从九阶段改为七阶段、默认不激活 Release/Learn；已有 config.delivery 保留，只绑定选中节点，不静默添加 CD。要继续发布/反馈，新工作选择团队扩展 ID。state/dispatch/result 原 schema 不变，只对新 work 增添空 optional refs/skill_uses/handoff；不迁移旧锁、批准、TDD 历史或旧 Gate 身份，不自动安装外部插件。团队定义/模板不兼容时按原三方冲突流程停止确认。
+
+0.11 → 0.12：只为新工作启用可选 CI/CD 绑定及 waiting_external，state/dispatch/result/review/source-index/gate 分别为 schema 5/5/4/3/2/2。缺 config.delivery 只补 null，保留已有设置；不为旧工作补绑定/监控/权限，不迁移历史批准。原需求用原资产，等待中的工作与未停宿主 monitor 阻止应用更新。新的接入 Skill 独立配置已有流水线，普通 setup/update 不认证、不启动监控、不修改 CI/CD。
+
 0.9 → 0.10：新工作只走 DAG 主链，增加可选 checkpoint_low_risk 和独立的 Implement 纠错预算。config/state/扩展契约版本不变；新的 policy/dispatch/result/approval 模板为 schema 3。旧工作、历史卡及委托原样保留，不改模式、不补授权/额度；新增预算默认 0。先按 [legacy](../workflow/legacy.md) 完成旧工作再切换，缺原方法时阻塞，不从新版重建旧规则。
 
 0.8 → 0.9：只为新工作启用 [extensions](../workflow/extensions.md)/DAG 和 schema 4；旧 work/批准不迁移。config 仅补缺失的 workflow=auto、空 team 与 project_overrides=null，保留 profile 和用户扩展字段。更新前核验已配置 team/project 与目标 core_contract 兼容；不兼容先阻塞，不改团队定义。`.aidlc/team/`、overrides、团队更新账本、工作锁定资源副本及 knowledge 均不纳入核心受管清单。未完成 work/活 worker（含并行节点和 Hook）阻止核心/团队应用更新；团队更新另走 [team.md](team.md)。

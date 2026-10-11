@@ -5,7 +5,8 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeBuiltins, resolveDefinitions } from './support/workflow-model.mjs';
-import { instructionPlan, bindInstructions, byteDigest, safeFile } from './support/context-model.mjs';
+import { instructionPlan, optionalInstructionPlan, bindInstructions, byteDigest, safeFile } from './support/context-model.mjs';
+import { freezeDelivery, pipelineRequests } from './support/pipeline-model.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const read = name => readFileSync(path.join(root, name));
 const json = name => JSON.parse(read(name));
@@ -37,10 +38,11 @@ test('capabilities, semantic outputs and feedback select only the relevant instr
   assert.ok(!refs('scope').includes('core:workflow/knowledge-publish.md'));
   assert.ok(refs('verify').includes('core:workflow/knowledge-prepare.md'));
   assert.ok(refs('verify').includes('core:workflow/gate-execution.md'));
+  assert.ok(!refs('verify').includes('core:workflow/pipelines.md'));
   assert.ok(!refs('implement').includes('core:workflow/feedback-request.md'));
   assert.ok(refs('implement', { feedback: 2 }).includes('core:workflow/feedback-request.md'));
   assert.throws(() => refs('verify', { feedback: 2 }), /feedback/);
-  const leaf = refs('verify', { leaf: 'gate-execution' });
+  const leaf = refs('verify', { leaf: 'gate-execution', gate_kind: 'quality' });
   assert.ok(!leaf.includes('core:workflow/knowledge-prepare.md'));
   assert.throws(() => refs('verify', { leaf: 'invented' }), /unknown leaf/);
 });
@@ -61,22 +63,32 @@ test('actual team DAGs and custom stage/template/instructions retain their decla
   const plan = instructionPlan(context, stage, node).map(item => item.ref);
   for (const ref of ['team:policy.md', 'team:scope.md', 'team:brief.md', 'core:workflow/gate-design.md']) assert.ok(plan.includes(ref));
 });
-function fixture() {
+function fixture({ pipelines = false, step_id = null } = {}) {
   const project = mkdtempSync(path.join(tmpdir(), 'aidlc-context-'));
-  const workflow = core.workflows.find(w => w.id === 'core.enhance'), node = workflow.nodes[0], stage = definition('scope');
-  const plan = instructionPlan(context, stage, node);
-  const assets = [...plan, { ref: 'core:workflow/context.json' }].map(item => {
+  const workflow = core.workflows.find(w => w.id === 'core.enhance'), node = step_id ? workflow.nodes.find(n => n.step_id === step_id) : pipelines ? workflow.nodes.at(-1) : workflow.nodes[0];
+  const stage = core.stages.find(s => s.id === node.stage_id);
+  const delivery = pipelines ? freezeDelivery(json('examples/delivery/gitlab-same-project.json').delivery, workflow, core.stages) : null;
+  const plan = instructionPlan(context, stage, node, { pipeline_bindings: delivery?.bindings ?? [] });
+  const optional = optionalInstructionPlan(context, stage);
+  const assets = [...plan, ...optional, { ref: 'core:workflow/context.json' }].map(item => {
     const relative = 'frozen/' + item.ref.replace(':', '/');
     mkdirSync(path.dirname(path.join(project, relative)), { recursive: true });
     const body = read(item.ref.slice(5)); writeFileSync(path.join(project, relative), body);
     return { ref: item.ref, path: relative, sha256: byteDigest(body) };
   });
-  const lock = { work_id: 'synthetic-work', workflow, stages: core.stages, assets };
+  const lock = { work_id: 'synthetic-work', workflow, stages: core.stages, assets, delivery };
   const lockBytes = Buffer.from(JSON.stringify(lock)); writeFileSync(path.join(project, 'lock.json'), lockBytes);
   const dispatch = { ...json('templates/work/dispatch.json'), work_id: lock.work_id, step_id: node.step_id, stage_id: stage.id,
     stage_kind: stage.kind, input_bindings: node.bindings, workflow_ref: { path: 'lock.json', sha256: byteDigest(lockBytes) },
     role_path: assets.find(a => a.ref === stage.role).path, stage_prompt_path: assets.find(a => a.ref === stage.prompt).path,
-    instruction_refs: plan.map(item => ({ ...assets.find(a => a.ref === item.ref), purpose: item.purpose })) };
+    instruction_refs: plan.map(item => ({ ...assets.find(a => a.ref === item.ref), purpose: item.purpose })),
+    optional_instruction_refs: optional.map(item => ({ ...assets.find(a => a.ref === item.ref), id: item.id, purpose: item.purpose })) };
+  if (pipelines) {
+    const candidate = { scope: ['src'], files: [], commit: 'a'.repeat(40) }, body = JSON.stringify(candidate);
+    writeFileSync(path.join(project, 'candidate.json'), body);
+    dispatch.candidate = { ...candidate, ref: { path: 'candidate.json', sha256: byteDigest(body) } };
+    dispatch.pipeline_requests = pipelineRequests(delivery, node.step_id, dispatch.candidate);
+  }
   return { project, dispatch };
 }
 test('verified full lock yields a node projection; omitted, changed or widened references block', () => {
@@ -108,4 +120,42 @@ test('drift anywhere in the full lock and symlinks cannot be hidden by a correct
   assert.throws(() => bindInstructions(project, dispatch), /fixed bytes changed/);
   symlinkSync(path.join(project, 'lock.json'), path.join(project, 'alias.json'));
   assert.throws(() => safeFile(project, 'alias.json'), /symlink/);
+});
+test('configured execution derives the exact current binding and adapter resources from the full frozen lock', () => {
+  const { project, dispatch } = fixture({ pipelines: true });
+  const result = bindInstructions(project, dispatch);
+  assert.equal(result.pipeline_requests.length, 2); assert.equal(result.pipeline_bindings.length, 2);
+  assert.ok(result.instruction_refs.some(r => r.ref === 'core:workflow/pipelines.md'));
+  assert.ok(result.instruction_refs.some(r => r.ref === 'core:adapters/delivery/gitlab.md'));
+  assert.ok(!result.instruction_refs.some(r => r.ref === 'core:workflow/pipeline-wait.md'));
+  for (const mutate of [
+    d => { d.pipeline_requests.pop(); }, d => { d.pipeline_requests.push(d.pipeline_requests[0]); },
+    d => { d.pipeline_requests[0].binding_id = 'other-project'; }, d => { d.pipeline_requests[0].binding_digest = '0'.repeat(64); },
+    d => { d.pipeline_requests[0].candidate_commit = 'b'.repeat(40); },
+    d => { d.pipeline_requests[1].expected_artifacts = [{ digest: 'old-green' }]; },
+    d => { d.candidate.commit = 'b'.repeat(40); },
+    d => { d.instruction_refs = d.instruction_refs.filter(r => r.ref !== 'core:workflow/pipelines.md'); },
+  ]) { const changed = structuredClone(dispatch); mutate(changed); assert.throws(() => bindInstructions(project, changed)); }
+});
+test('unconfigured stages reject injected CI instructions or requests instead of granting external reads', () => {
+  const { project, dispatch } = fixture();
+  const changed = structuredClone(dispatch); changed.pipeline_requests = [{ binding_id: 'injected' }];
+  assert.throws(() => bindInstructions(project, changed), /incomplete or widened/);
+  changed.pipeline_requests = []; changed.instruction_refs.push({ ref: 'core:workflow/pipelines.md' });
+  assert.throws(() => bindInstructions(project, changed), /instruction set/);
+});
+
+test('implementation optional Skill assets are integrity-checked without entering default instruction text', () => {
+  const { project, dispatch } = fixture({ step_id: 'implement' });
+  const bound = bindInstructions(project, dispatch);
+  assert.equal(bound.optional_instruction_refs.length, 2);
+  assert.ok(bound.optional_instruction_refs.every(r => !bound.instruction_refs.some(i => i.ref === r.ref)));
+  for (const mutate of [d => d.optional_instruction_refs.pop(), d => { d.optional_instruction_refs[0].id = 'wrong-skill'; },
+    d => { d.optional_instruction_refs[0].sha256 = '0'.repeat(64); }, d => { d.optional_instruction_refs[0].path = '../outside'; }]) {
+    const changed = structuredClone(dispatch); mutate(changed); assert.throws(() => bindInstructions(project, changed));
+  }
+  writeFileSync(path.join(project, dispatch.optional_instruction_refs[0].path), 'changed optional resource');
+  assert.throws(() => bindInstructions(project, dispatch), /fixed bytes changed/);
+  const readonly = fixture(); readonly.dispatch.optional_instruction_refs = dispatch.optional_instruction_refs;
+  assert.throws(() => bindInstructions(readonly.project, readonly.dispatch), /optional instruction/);
 });

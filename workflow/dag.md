@@ -4,7 +4,7 @@
 
 ## 状态、分支和就绪
 
-state.nodes[step_id] 保存 stage_id、revision、status、review/approval/input/candidate 引用；状态为 pending/ready/working/awaiting_approval/approved/blocked/failed/not_selected/superseded。state.branch_decisions 保存 switch ID、chosen case、批准来源/事实字段/值/证据摘要、时间和 workflow_ref，不能以 Agent 聊天判断替代。全局 status 只是摘要，不能以 awaiting_approval 阻塞无依赖且已获继续权的 sibling；closing/closed、工作级停止或撤销则冻结所有派发。
+state.nodes[step_id] 保存 stage_id、revision、status、review/approval/input/candidate 引用；状态为 pending/ready/working/waiting_external/awaiting_approval/approved/blocked/failed/not_selected/superseded。waiting_external 按 [pipeline-wait](pipeline-wait.md) 释放槽位，仅恢复原节点；消费者仍等 approved，独立 sibling 可继续。state.branch_decisions 保存 switch ID、chosen case、批准来源/事实字段/值/证据摘要、时间和 workflow_ref，不能以 Agent 聊天判断替代。全局 status 只是摘要，不能以 awaiting_approval 阻塞无依赖且已获继续权的 sibling；closing/closed、工作级停止或撤销则冻结所有派发。
 
 1. entry 首先调查，在其 review 冻结 result.routing_facts 的 `{字段:{value,evidence_refs}}` 及全部证据；父协调器核验其与正文一致，再随 review 取得实际批准。没有证据的路由事实不能批准。
 2. switch 的 after 必须有效 approved，事实来自该精确 review/当前图而非可变 result、未批准草稿或实时工具结果。类型缺失/值未知/多 case 命中均 blocked；不能把 Gate FAIL、执行超时、缺授权当“跳过检查”分支。
@@ -24,6 +24,8 @@ state.nodes[step_id] 保存 stage_id、revision、status、review/approval/input
 
 首次 writer 使用已核实的产品基线与批准 authority，后续 writer 使用已批准的当前候选，保存完整候选 lineage。唯一窄例外是首次候选 review 前的授权内部纠错：按 feedback 预约记录使用失败候选与原 authority，不另造批准。verification 为独立新 child，只读冻结最终候选；两 Gate 可分 leaf，但报告必须同候选。首次候选 review 后或超出内部纠错范围的产品修改需新实施批准和下游重新验证，不能把旧 Gate digest 改成新候选。
 
+0.13 两 Gate 必须分别由独立 Reviewer leaf 执行，collector 只汇总；可并行不等于可合并执行身份。implementation 的 approved 只批准候选，不标工程 verified；完成条件按 tdd/gate 契约，默认 Standard 在 Verify 人审后的 verified handoff 结束。
+
 ## 审批与自动继续
 
 审批统一读 [approval](approval.md)：manual 默认逐节点人审；checkpoint_low_risk 仅原样内置 fix/enhance 的 Implement 候选可委托批准，首阶段与最终 Verify 人审；auto_low_risk 继续仅适用实际低风险且所有可激活阶段 auto_eligible 的交付图。三者不改变依赖、候选或双 Gate。策略绑定精确工作图/步骤/范围，资格不是授权，图或权限变化需新确认。
@@ -36,7 +38,7 @@ approval.authorized_steps 保存这次明确获准继续的实例；next_stage_a
 
 图不变时按依赖失效链为受影响节点建立新 revision，并使依赖其候选/事实的分支决定、下游审批和 Gate 失效。需要新阶段、换模板或改变条件时新 graph revision，停止旧活任务、保留旧锁，新卡明确确认；不得沿用旧自动 policy 或把旧审查改挂新图。
 
-正常完成要求全部选中节点批准、终点与必需语义/证据满足、无活动 stage/leaf。analysis_complete 不设置 verified；verified 要最终候选双 Gate；learned 还要真实 accepted/rejected 的观察批准，rejected 不是业务成功。未选节点保留 not_selected 来源。终结控制继续按 closure 执行，不能因直接终结伪造 Gate/业务结果。
+正常完成要求全部选中节点批准、终点与必需语义/证据满足、无活动 stage/leaf、有效等待项或未停止监控。analysis_complete 不设置 verified；verified 要最终候选双 Gate及所有已选中节点的绑定 CI/CD 证据；not_selected 不请求流水线或注册等待。learned 还要真实 accepted/rejected 的观察批准，rejected 不是业务成功。未选节点保留分支来源。终结控制继续按 closure 执行，不能因直接终结伪造 Gate/业务结果。
 
 知识 read/prepare 按 capability 而非名字触发：knowledge.read 核实历史适用性；knowledge.prepare 在 verification/learning 的本 run evidence 冻结快照。其它 kind 若要知识准备必须作为明确设计提案交审，不假冒已验证结果。含 architecture/quality 已批准语义产物则同步其设计正文，只有 change/verification 则标 derived，不按 workflow 名猜 full/compact。source 追加 workflow_ref/step_id，Gate/外部取证仍按 kind/证据能力强制。
 

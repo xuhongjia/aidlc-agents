@@ -15,15 +15,21 @@ AIDLC_DRAFT — 针对当前精确候选执行批准的检查后填写并替换�
 
 ## 双 Gate 证据
 
+分别记录 architecture-gate-reviewer 与 quality-gate-reviewer 的真实独立 Agent/run、同一候选与原执行证据；collector 不能代跑/代签或冒称重跑。
+
 | Gate/Check | 规则版本与 SHA-256 | 候选/输入身份 | 实际命令与退出码/数量 | PASS/FAIL/UNKNOWN/NOT_RUN | 原始日志 |
 |---|---|---|---|---|---|
 
 规则未配置、零测试、全跳过、缺少依赖或执行未覆盖候选均不能视为通过。记录实际成功判据，不以 Agent 的自然语言判断代替工具结果。
 
+有固定 CI/CD 绑定时引用各 pipeline-result/source-index，列精确 pipeline/job/attempt、规则/候选、构建物及目标环境观察。远端执行与本地执行分开记录，实际未提供的退出码留空；恢复保留旧检查的原执行来源，不冒称重跑。
+
 ## 缺陷与变化
 
 列出复现、影响、证据及退回阶段。验证期间不得悄悄修改源码、测试 Oracle 或已批准规则；候选/输入变化后旧结果失效，重新审核并运行。
 
-## 审核建议
+## Implementation Verified Handoff
+
+列 TDD/例外与最终回归的独立核验、双 Gate PASS、全 AC PASS、完整证据及候选无漂移的来源。必要批准未完成时只作建议；父保存精确审批后才标 verified handoff。Standard 到此结束，业务结果未评估，不自动 Release/Learn 或 Production。
 
 解释业务正确性、测试相关性和证据完整性仍需人类审查。单人模式如实记录一人兼任角色，不称为职责分离。

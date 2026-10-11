@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "work_id": null,
   "jira_issue": null,
   "evidence_sources": [],
@@ -18,6 +18,9 @@
   "execution_mode": "isolated-subagents",
   "active_runs": [],
   "run_history": [],
+  "waits": [],
+  "wait_monitor": null,
+  "wait_authorization_ref": null,
   "current_stage": null,
   "status": "ready",
   "closure_ref": null,
@@ -25,6 +28,7 @@
   "current_revision": 1,
   "blockers": [],
   "delivery_status": "in_progress",
+  "implementation_verified_handoff": null,
   "business_outcome": "not_evaluated",
   "stages": {}
 }

@@ -1,8 +1,10 @@
 # 审批人确认后直接终结
 
-schema 4 的终结快照保存 workflow_ref 和全部节点/分支/活动 worker，不只记一个 current_stage。停止覆盖所有并行节点、leaf、汇总及 Hook；未选分支保留 not_selected，不补造 approved。其它身份确认、真实停止及保留实际结果规则不变。
+当前 state schema 5 的终结快照保存 workflow_ref 和全部节点/分支/活动 worker，不只记一个 current_stage；旧工作仍用原字段。停止覆盖所有并行节点、leaf、汇总及 Hook；未选分支保留 not_selected，不补造 approved。其它身份确认、真实停止及保留实际结果规则不变。
 
 按 [knowledge.md](knowledge.md) 一并撤销当前 work 的发布委托并停止/收回活动 Hook（包括 completed 工作的显式撤销）；撤销记录独立保留，不自动删除已发布页面。交付已经 completed 时只记录发布撤销/停止，不重写交付状态；closed 后重试不能复活旧授权。
+
+0.12 按 [pipeline-wait](pipeline-wait.md) 将 waits/实际 monitor 纳入终结快照，停止宿主监控及正在恢复的 worker，保存真实清理结果；未确认停止保持 closing/stop_pending。仅取消本地监控，不取消公司流水线，不改变 GitLab 审批或部署记录。
 
 所有路线、任何未终结阶段均支持：`终结 REQ-001 当前工作。` 审批人的明确指令就是确认，不再要求依次批准剩余阶段。仅说“暂停”“先等等”不算终结；多个工作且目标不明时只确认目标。终结是父协调器的控制操作，不创建阶段子 Agent，不要求补齐 Gate、镜像 digest 或 Jira 反馈。
 

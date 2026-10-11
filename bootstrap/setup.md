@@ -1,5 +1,9 @@
 # AI-native setup
 
+0.13 新工作采用 V2.1：TDD 只在 Implement，冻结同名适配 Skill/可选资源与两个独立 Reviewer；Standard 在 verified handoff 结束，Release/Learn 仅团队显式扩展。无需另装第三方 Skill 插件或 TDD Agent，普通 setup 不运行 TDD、不授予生产权限。旧 work 保留原资产/方法。
+
+0.12 新安装 config.delivery=null，不自动连接 CI/CD 或注册后台监控。新 work 使用 state schema 5、dispatch schema 5、stage-result schema 4；实际配置另按 [pipelines.md](pipelines.md)。旧工作仍用原方法，不新增读取/等待授权。
+
 0.10 新安装 config.workflow=auto、team.manifest/source/authorization=null、project_overrides=null；不自动启用示例或团队包。新 work 使用 schema 4 的锁定工作流，内置配方同样解析。实际团队接入另按 [team.md](team.md) 的明确配置请求处理；读取样例不授权企业连接。审批默认 manual、纠错预算为 0，不创建工作级 policy；两次人审与自纠错只能在实际工作中另行明确授权。
 
 0.8 新安装 config.knowledge.targets=[]，不授予知识库写权限，不创建空知识条目。`.aidlc/knowledge/` 是项目数据，只在实际获批知识出现时建立；不纳入 managed_files。目标配置与授权见 [knowledge.md](../workflow/knowledge.md)。
@@ -84,3 +88,5 @@
 ## 可选接入，不是默认安装步骤
 
 默认不修改项目/全局 Codex 配置；用户明确启用时按 [精简设置](../docs/context-efficiency.md) 备份并只合并 tool_output_token_limit。知识 targets 默认空，用户明确配置 Confluence 时交 [知识 setup Skill](../skills/aidlc-knowledge-setup/SKILL.md)，按 [TWG 安装/登录](knowledge.md) 处理；普通 setup 不安装 CLI 或认证、不获得发布权限。
+
+delivery 默认 null；明确接入公司 CI/CD 时交 [pipeline setup Skill](../skills/aidlc-pipeline-setup/SKILL.md)，只做配置与已授权的只读探测，普通 setup 不连接公司 GitLab、不创建监控或更改流水线。

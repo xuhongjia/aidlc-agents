@@ -40,7 +40,7 @@ test('each profile has its own ordered approval chain and implementation authori
   assert.equal(catalog.schema_version, 3);
   assert.equal(catalog.default_profile, 'auto');
   assert.deepEqual(Object.keys(profiles).sort(), ['enhance', 'fix', 'standard']);
-  assert.deepEqual(profiles.standard.stages, ids);
+  assert.deepEqual(profiles.standard.stages, ids.slice(0, 7));
   assert.deepEqual(profiles.enhance.stages, ['scope', 'implement', 'verify']);
   assert.deepEqual(profiles.fix.stages, ['diagnose', 'implement', 'verify']);
   for (const profile of Object.values(profiles)) {
@@ -112,6 +112,10 @@ test('run and review templates preserve identity, constrained writes and non-app
   assert.ok(!Object.hasOwn(result, 'approval'));
   assert.equal(state.execution_mode, 'isolated-subagents');
   assert.equal(state.profile, null, 'No fabricated route assessment');
+  assert.equal(state.implementation_verified_handoff, null, 'Candidate submission is not verified completion');
+  assert.equal(dispatch.gate_assignment, null);
+  assert.deepEqual(dispatch.optional_instruction_refs, []);
+  assert.deepEqual(result.skill_uses, []);
   assert.deepEqual(state.route_history, []);
   assert.equal(json('templates/work/review.json').profile, null);
   assert.equal(json('templates/work/approval.json').profile, null);
@@ -141,9 +145,9 @@ test('checkpoint and correction templates add no default delegation or correctio
   assert.deepEqual(policy.implementation_feedback, {step_id: null, revision: null, max_correction_rounds: 0});
   assert.equal(policy.authorization.user_statement, null);
   const dispatch = json('templates/work/dispatch.json'), result = json('templates/work/stage-result.json');
-  assert.equal(dispatch.schema_version, 4); assert.equal(dispatch.revision, null);
+  assert.equal(dispatch.schema_version, 5); assert.equal(dispatch.revision, null);
   assert.deepEqual(dispatch.implementation_feedback, {policy_ref: null, max_correction_rounds: 0, round: 0, attempt_refs: []});
-  assert.equal(result.schema_version, 3); assert.equal(result.feedback_request, null);
+  assert.equal(result.schema_version, 4); assert.equal(result.feedback_request, null);
   const attempt = json(feedback.attempt_template);
   for (const field of ['work_id', 'workflow_ref', 'method_revision', 'step_id', 'revision', 'round', 'policy_ref',
     'failure_result_ref', 'input_candidate', 'run_id', 'reserved_at']) assert.equal(attempt[field], null);
@@ -213,6 +217,8 @@ test('every built-in delivery route requires both executable Gates independently
   assert.equal(gates.minimum_blocking_checks_per_kind, 1);
   assert.equal(gates.on_missing, 'define_then_implement');
   assert.equal(gates.allow_manual_substitute, false);
+  assert.equal(gates.default_execution, 'independent-specialists');
+  for (const kind of ['architecture', 'quality']) assert.ok(existsSync(path.join(root, gates.reviewers[kind])));
   assert.ok(existsSync(path.join(root, gates.design_prompt)));
   assert.deepEqual(gates.required_evidence.map(item => item.kind).sort(), ['architecture', 'quality']);
   assert.equal(new Set(gates.required_evidence.map(item => item.name)).size, 2);
@@ -270,6 +276,9 @@ test('all JSON artifacts parse, templates start without fabricated approvals or 
   assert.equal(json('templates/work/approval.json').decision, null);
   assert.equal(json('templates/work/approval.json').review_digest, null);
   assert.equal(json('templates/work/handoff.json').status, 'blocked');
+  assert.equal(json('templates/work/tdd-evidence.json').status, 'NOT_RUN');
+  assert.deepEqual(json('templates/work/tdd-evidence.json').slices, []);
+  assert.deepEqual(json('templates/work/review.json').tdd_evidence, []);
   assert.deepEqual(json('templates/spec/acceptance.json').criteria, []);
   assert.deepEqual(json('templates/quality/coverage.json').criteria, []);
   assert.deepEqual(json('templates/verify/acceptance-results.json').criteria, []);
@@ -279,9 +288,9 @@ test('all JSON artifacts parse, templates start without fabricated approvals or 
   assert.equal(Object.hasOwn(json('templates/work/review.json'), 'digest'), false, 'No self-referential manifest hash');
 });
 
-test('nineteen unique skills have valid discovery metadata', () => {
+test('twenty-four unique skills have valid discovery metadata', () => {
   const skillFiles = all.filter(file => path.basename(file) === 'SKILL.md');
-  assert.equal(skillFiles.length, 19);
+  assert.equal(skillFiles.length, 24);
   const names = new Set();
   for (const file of skillFiles) {
     const text = readFileSync(file, 'utf8');
@@ -374,7 +383,7 @@ test('composable workflow entrypoints and blank templates preserve locked identi
   assert.deepEqual(config.team,{manifest:null,source:null,authorization:null});
   assert.equal(config.project_overrides,null);
   const state=json('templates/work/state.json');
-  assert.equal(state.schema_version,4); assert.deepEqual(state.nodes,{}); assert.deepEqual(state.branch_decisions,[]);
+  assert.equal(state.schema_version,5); assert.deepEqual(state.nodes,{}); assert.deepEqual(state.branch_decisions,[]);
   for (const file of ['state','dispatch','stage-result','review','approval','approval-policy']) {
     assert.equal(json(`templates/work/${file}.json`).workflow_ref,null);
   }
@@ -412,4 +421,23 @@ test('builtin semantic metadata and example resource references resolve without 
       }
     }
   }
+});
+
+test('pipeline metadata, empty templates and schemas add no implicit connection, monitoring or PASS', () => {
+  const delivery = catalog.delivery;
+  assert.equal(delivery.contract_version, 1); assert.equal(delivery.default_enabled, false); assert.equal(delivery.access, 'read-only');
+  for (const key of ['setup_skill', 'config_protocol', 'execution_protocol', 'wait_protocol', 'config_template', 'result_template', 'wait_template'])
+    assert.ok(existsSync(path.join(root, delivery[key])), key);
+  for (const adapter of Object.values(delivery.providers)) assert.ok(existsSync(path.join(root, adapter)));
+  assert.equal(json('templates/setup/config.json').delivery, null); assert.equal(json('templates/work/workflow-lock.json').delivery, null);
+  const config = json(delivery.config_template); assert.deepEqual(config.bindings, []);
+  assert.deepEqual(config.wait, { mode: 'native_wakeup', interval_seconds: 300, timeout_seconds: 7200 });
+  const dispatch = json('templates/work/dispatch.json'), result = json('templates/work/stage-result.json'), state = json('templates/work/state.json');
+  assert.deepEqual(dispatch.pipeline_requests, []); assert.deepEqual(dispatch.continuation_refs, []); assert.equal(result.wait_request, null);
+  assert.deepEqual(state.waits, []); assert.equal(state.wait_monitor, null); assert.equal(state.wait_authorization_ref, null);
+  assert.deepEqual(json('templates/work/review.json').pipeline_evidence, []);
+  assert.equal(json('templates/work/source-index.json').schema_version, 2);
+  assert.deepEqual(json('templates/work/source-index.json').environment_checks, []);
+  const pipeline = json(delivery.result_template); assert.equal(pipeline.status, 'NOT_RUN'); assert.equal(pipeline.collection_status, 'not_collected');
+  assert.deepEqual(pipeline.pipelines, []); assert.deepEqual(pipeline.gate_evidence, []); assert.ok(pipeline.gaps.length);
 });

@@ -2,6 +2,8 @@
 
 0.9 自定义工作流按 kind=release_readiness/learning 及 evidence.read 能力触发本契约，不依赖 Release/Learn 名字；sources/index 与实际候选仍必须固定在本 step 的 review。其它阶段的 evidence.read 只授予明确 dispatch 中的只读来源，不产生外部写权限。
 
+0.12 已锁 delivery 绑定优先按 [pipelines](pipelines.md) 的精确 job/构建物/环境条件收集，Verify 也可使用。source-index schema 2 的 environment_checks 记录实际部署后观察；正常运行中的必需绑定返回 waiting_external，协调器按 pipeline-wait 恢复。本页的未配置就绪例外不能跳过已配置 CD。
+
 进入获准的 Release 或 Learn 后，阶段子 Agent 主动读取本需求绑定的 Git 仓库、CI 和 Jira。优先使用已连接的只读工具/API，其次是已安装且已登录的 Git/平台 CLI；先检索，再报告缺口。用户无需逐份粘贴已有的流水线结果或反馈。此能力不添加正式阶段，fix/enhance 仍在 Verify 结束。
 
 ## 确定来源与读取范围
@@ -15,10 +17,10 @@ Git/CI 读取可包括目标 commit、关联 PR/MR、审核与合并信息、精
 ## Release：提交 → CI → 镜像 → 环境
 
 1. 从批准的 Verify review 取得完整候选文件范围/摘要，解析实际交付 commit。核对远程提交的相关文件与批准候选一致、CI 的 head/source commit 与它匹配；本地未提交改动不能冒充远程 CI 已验证。Squash/rebase/merge 改变 commit 时，以真实文件/树与 PR/MR 映射证据证明等价；内容变化则回 Verify，无法证明关联则 blocked。不得自动 commit/push 或重跑 CI 来制造证据。
-2. 读取该候选的相关流水线及 job 状态、run/job ID、attempt、时间、链接与原始报告。按项目必需检查逐项核对，记录重试；不能选旧的绿色 run 忽略较新失败，pending/cancelled/skipped 不当成功。CI 中的 Gate 报告仅在规则/候选匹配时作为佐证，沿用本流程的已批准 Verify 基线。
+2. 读取该候选的相关流水线及 job 状态、run/job ID、attempt、时间、链接与原始报告。按项目必需检查逐项核对，记录重试；不能选旧的绿色 run 忽略较新失败，pending/cancelled/skipped 不当成功。有配置时 CI Gate 按 pipelines 作为真实执行来源核验，沿用本流程已批准的候选/规则基线，不能用总绿覆盖独立 Verify。
 3. 容器交付从成功构建/发布 job 的结构化输出、构建元数据或对应 artifact 中获取完整 image repository 与 **image digest**，例如 repository@sha256:…，同时保留产生它的 job/commit 和原始证据。区分镜像 manifest/index digest、平台 manifest digest、image config ID、下载包文件 SHA；不能把任意 SHA、tag/latest 或日志中无上下文的字符串当镜像摘要。多镜像逐项列出，多架构记录 index/platform 的关系及发布所用层级。
 4. 只有经已绑定且获准的 registry 只读查询核实后才写 registry verified；CI 提供的值如实标为 CI-reported，不臆称已验证仓库可拉取。若发布计划要求该核验而无法执行，则列阻塞；一般取证不额外拉取/运行镜像。非容器交付记录实际构建物及校验值并说明适用性，不虚构镜像。
-5. 如果已有部署记录，读取环境、实际部署的 commit/digest、状态和时间；成功构建/推送镜像、创建 Git release 都不能证明环境已部署。就绪审核可在部署前完成；缺部署记录记 unknown/not_deployed，不单独据此阻塞发布准备。必需构建、目标镜像 digest、审批或计划要求的证据缺失/不一致才阻塞。
+5. 如果已有部署记录，读取环境、实际部署的 commit/digest、状态和时间；成功构建/推送镜像、创建 Git release 都不能证明环境已部署。未绑定 CD 时就绪审核可在部署前完成，缺部署记录记 unknown/not_deployed，不单独据此阻塞；绑定 CD 时必须通过指定环境的实际部署、不可变构建物与必需 smoke/health 检查。必需证据缺失/不一致阻塞，正常尚在执行按等待协议返回。
 
 Release 同时检索 Jira 中与本候选有关的验收反馈/阻塞项，写进 readiness。反馈不明确或仅状态 Done 时不推断已 UAT 通过；是否阻塞发布取决于批准的发布前置条件。
 

@@ -33,6 +33,7 @@
     "probe": null
   },
   "knowledge": {"targets": []},
+  "delivery": null,
   "installed_at": null,
   "managed_files": []
 }

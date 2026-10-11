@@ -22,6 +22,6 @@
 
 ## 返回
 
-仅写本 run artifacts/evidence/result 及明确授权的产品路径；不写 state/questions/reviews/approvals/policies/反馈账本、锁、配置或其它 run。result 绑定 workflow_ref/step/stage/revision/run、dispatch_digest、真实 worker/产物/检查/摘要，状态仅 ready_for_review/blocked/failed。leaf 只交分配输出；routing_facts 仅交声明类型的 {value,evidence_refs}，不自行选择分支。
+仅写本 run artifacts/evidence/result 及明确授权的产品路径；不写 state/questions/reviews/approvals/policies/反馈账本、锁、配置或其它 run。result 绑定 workflow_ref/step/stage/revision/run、dispatch_digest、真实 worker/产物/检查/摘要，状态为 ready_for_review/blocked/failed，或有固定 pipeline_requests 时的 waiting_external（须带真实 wait_request，停止并释放槽位）。leaf 只交分配输出；routing_facts 仅交声明类型的 {value,evidence_refs}，不自行选择分支。
 
 聊天只回结论、检查数量、失败位置、风险及证据链接，不粘整份日志或清单；截断时定向读取原文件，不能猜结论。独立任务只提 parallel_requests；父协调器处理容量、汇总、快照、审批、恢复和停止。结果不是批准、部署或业务接受。

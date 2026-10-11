@@ -24,12 +24,13 @@
 
 > 为当前团队增加一个只读兼容性审查阶段，替换架构文档模板，并给 API 流程加入条件分支；写入团队/项目扩展，不改核心，先给精确差异，已有需求继续锁定版本。
 
-## 两个完整示例
+## 完整示例
 
 | 示例 | 流程与用途 |
 |---|---|
 | [API 团队](../examples/team-packs/api-team/README.md) | Scope → 按获批 needs_review 分支 → 两个独立审查并行或直接实施 → Implement → Verify；正文改名但语义不变 |
 | [设计团队](../examples/team-packs/design-team/README.md) | Brief → Options 与 Security 并行 → 设计汇总；只读分析，结束为 analysis_complete，不冒充已验证交付 |
+| [发布团队](../examples/team-packs/release-team/README.md) | 显式在 verified handoff 后加入 Release/Learn；manual 审批及独立生产授权，非 Standard 默认路径 |
 
 示例在 `.aidlc/system/examples/team-packs/` 可读取；选择一个复制到 team 的行为需要团队接入授权，不是 setup 默认动作。它们不是企业强制规范，尚未执行真实交付。
 
@@ -42,7 +43,11 @@
 
 不能通过改名、模板删除章节或节点裁剪来去掉批准、AC/Oracle、独立验证和两 Gate。非实施分析流不用产品 Gate，但它也不能写业务源码/配置。核心流程标准详见 [Interface](../workflow/extensions.md)；节点调度详见 [DAG](../workflow/dag.md)。
 
+0.13 自定义 implementation-kind 自动继承 Implement-only TDD/任务例外与证据；角色/模板可改，不能把 RED/GREEN/REFACTOR 挪到 Quality/Plan 或让实施者代签 Gate。固定可选 Skill 元数据不默认加载正文。Standard 默认只交 verified handoff，发布/反馈必须使用明确的新团队 Workflow ID。见 [V2.1](engineering-skills.md)。
+
 ## 工作级固定与运维
+
+0.12 可在 config.delivery 通过 kind/workflow_ids/step_ids 将公司 CI/CD 绑定到团队节点，节点须有 evidence.read；实际绑定、报告映射和等待策略随 work 冻结。未绑定的阶段不加载流水线协议；CD 若依赖最终 Verify 批准，必须放在后置 release_readiness 节点，不能让 Verify 等自身批准。使用与示例见 [CI/CD 校验](ci-cd-validation.md)。这不是新阶段或新的外部写权限。
 
 每个新 work 保存解析图、团队来源、实际 Prompt/模板副本和哈希。首张审批卡包含图与范围；之后分支只使用已批准的事实。团队改动不热加载到旧 work；图需要改变就新 revision、新确认，旧授权不跨图继承。
 

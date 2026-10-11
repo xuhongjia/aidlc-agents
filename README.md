@@ -2,7 +2,7 @@
 
 **让 AI 按需求大小选流程，每阶段独立子 Agent 执行，默认交给你批准，也支持有限自动批准。**
 
-AI-assisted、Spec-driven、Human-governed。没有 Python 安装器、额外 Agent CLI 或常驻服务。当前包版本 **0.11.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents)
+AI-assisted、Spec-driven、Human-governed。没有 Python 安装器、额外 Agent CLI 或常驻服务。当前包版本 **0.13.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents)
 
 ## 团队可组合工作流
 
@@ -27,6 +27,21 @@ Verify/Learn 将有证据的架构、质量、反模式、经验冻结进现有�
 
 [同步契约](workflow/knowledge.md) · [交付演练说明](docs/delivery-rehearsal.md) · [本版验证范围](docs/validation.md)
 
+## 公司的 CI/CD 校验与等待
+
+在业务仓库发送：
+
+```text
+为当前仓库配置公司的 GitLab CI/CD 校验，识别已有流水线和检查报告，
+配置目标环境、结果映射与自动等待。
+```
+
+[接入 Skill](skills/aidlc-pipeline-setup/SKILL.md) 配置可选 delivery，不改公司流水线。双 Gate 可用 local/CI/hybrid 证据；standard 在 Verify 核验 CI 后交接，CD 只在显式团队发布链启用；fix/enhance 可将 CD 校验放在同一 Verify，仍是三阶段、两类正文。部署通过需实际环境构建物身份和 smoke/health，不能只看 pipeline 绿或镜像推送。
+
+默认每 5 分钟只读检查，最多 2 小时；阶段保存 waiting_external 后释放 worker，结果就绪再派新子 Agent。一个 work 共用宿主监控；没有自动唤醒能力就明确给出人工恢复。可说“继续 aidlc REQ-001”或“停止等待 REQ-001”；停止等待不终结需求、不取消公司流水线。旧安装默认关闭，配置不授予执行/审批/部署权。
+
+[使用与恢复](docs/ci-cd-validation.md) · [认证步骤](bootstrap/pipelines.md) · [同项目示例](examples/delivery/gitlab-same-project.json) · [跨项目部署示例](examples/delivery/gitlab-cross-project.json)
+
 ## 一句话接入
 
 在具有本地文件和独立子 Agent 能力的 AI 工具中，打开**业务仓库**，发送：
@@ -45,7 +60,7 @@ AI 固定来源版本，配置项目 `.aidlc/` 和当前工具的最小入口，
 |---|---|---|
 | `fix` | 恢复局部、明确的既有行为 | 诊断 → 修复 → 验证 |
 | `enhance` | 现有架构边界内的小增强 | 范围与验收 → 实现 → 验证 |
-| `standard` | 新能力、跨系统或高风险变化 | Intake → Spec → Architecture → Quality → Plan → Implement → Verify → Release → Learn |
+| `standard` | 新能力、跨系统或高风险变化 | Intake → Spec → Architecture → Quality → Plan → Implement → Verify → verified handoff |
 
 新安装默认 `auto`：主 Agent 初选路线，首阶段子 Agent 核实风险，你在首张审查卡确认。也可以明确指定：
 
@@ -56,6 +71,10 @@ AI 固定来源版本，配置项目 `.aidlc/` 和当前工具的最小入口，
 ```text
 使用 aidlc fix：搜索结果为 0 条时，页面计数错误显示为 1。先复现并定位根因，给出最小修复范围，等批准再改代码。
 ```
+
+V2.1：测试设计可前移，**TDD 执行只在 Implement**。Software Engineer 默认使用唯一 test-driven-development / incremental-implementation，按任务执行真实 RED→GREEN→REFACTOR；debugging/self-review 按需加载。冻结后父分别派独立 Architecture/Quality Gate Reviewer，Verify 汇总并等必要审批。TDD 自测不等于双 Gate PASS。
+
+最终输出 **Implementation Verified Handoff**；Standard 不自动进入 Production。Release/Learn 保留为[可选团队发布链](examples/team-packs/release-team/README.md)。[执行与复用说明](docs/engineering-skills.md) 包含任务例外、证据、完成条件和 Skill 来源；不新增 TDD Agent 或短流程正文。
 
 涉及权限/信任边界、支付、敏感数据、迁移、破坏性契约、新服务/基础设施等变化必须采用 standard，或满足同等语义保障的人工审批团队流程；高风险 bug 也不例外。不能用“只有几行”代替风险判断。发现风险就停下请求升级，不悄悄扩展范围。详见 [分级规则](workflow/profiles.md)。
 
@@ -94,7 +113,7 @@ AI 固定来源版本，配置项目 `.aidlc/` 和当前工具的最小入口，
 
 主聊天只处理调度、澄清和审批，不执行阶段业务任务。默认最多 2 个 live 子 Agent；依赖已批准、已获派发授权的独立阶段，以及独立调查或同一冻结候选上的双 Gate 可以并行。业务写入阶段必须有先后顺序；文件、数据库或缓存存在冲突就串行，不预跑尚未满足批准依赖的阶段。见 [调度协议](workflow/orchestration.md)。
 
-短流程最终批准表示 **delivery verified / business not evaluated**，不是部署或业务收益验证。标准流程的 Release/Learn、审批与返工详见 [工作协议](workflow/protocol.md)。
+默认三条流程最终批准均表示 **delivery verified / business not evaluated**；只有显式配置且实际通过的 CD 环境才可标部署已校验，不代表业务收益或发布授权。团队可选 Release/Learn、审批与返工详见 [工作协议](workflow/protocol.md)。
 
 ## Release / Learn 自动取证与直接终结
 
@@ -157,10 +176,10 @@ AI 先核实风险并准备精确授权卡；这段请求不代替对实际范�
 
 仓库核心：`skills/` 路由与能力，`prompts/` 阶段任务，`workflow/` 路线与协议，`templates/` 产物，`bootstrap/` 接入/升级，`adapters/` 工具桥，`examples/team-packs/` 团队包样例。共享规范只维护一次，按需加载。
 
-维护者检查：`node --test tests/*.test.mjs`（不是用户 setup 依赖）。实际验证与未验证范围见 [验证记录](docs/validation.md)。安全反馈见 [SECURITY.md](SECURITY.md)。当前未附开源许可证，不将 GitHub 可见等同于任意再分发授权。
+维护者检查：`node --test tests/*.test.mjs`（不是用户 setup 依赖）。实际验证与未验证范围见 [验证记录](docs/validation.md)。安全反馈见 [SECURITY.md](SECURITY.md)。方法仓库未附整体开源许可证，不将 GitHub 可见等同于任意再分发授权；四个适配工程 Skill 单独保留上游 MIT 声明/许可证。
 
 ## 更省上下文
 
-0.11 按需加载：入口先识别意图，子 Agent 只读固定 instruction_refs、当前角色/Stage/模板和必要批准输入；完整锁/候选仍用工具核验，不整份注入。知识分读取/准备/发布，Gate 分设计/执行，默认一个独立 Verify child 顺序跑双 Gate。
+按需加载：子 Agent 只读固定 instruction_refs、当前角色/Stage/模板和必要批准输入；完整锁/候选仍用工具核验，不整份注入。工程 Skill 仅在 Implement 加载，两项可选 Skill 不默认注入。双 Gate 是两个专职 Reviewer，不为每条检查创建 Agent；资源有冲突就串行，collector 只汇总。
 
 一项新需求一个新会话；继续时提供 work ID/路径，不把旧聊天摘要当批准。大日志留证据文件，聊天只回结果/数量/失败位置/链接。可选一句话启用 Codex 项目 tool_output_token_limit=3000，不改全局模型/插件；[使用与测量](docs/context-efficiency.md)。普通 setup/update 不自动改宿主配置。静态字节节省不等于实测 tokens 或费用节省。

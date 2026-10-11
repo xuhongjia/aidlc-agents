@@ -1,5 +1,44 @@
 # 本版验证记录
 
+## 0.13.0 / V2.1：Implement-scoped TDD 与独立 Gate Reviewer
+
+验证日期：2026-10-11；本地方法包 0.13.0，行为契约 V2.1，Node v26.10.0。保留既有未提交的 CI/CD 改动；未 commit/push，未安装外部插件或依赖。旧 work、冻结资产、批准和委托不迁移。
+
+| 范围 | 结果与边界 |
+|---|---|
+| 内容与全部回归 | 154 项 Node 测试通过，0 failed / 0 skipped；包含 24 个 Skill 元数据、JSON/链接、团队 DAG/模板、审批、候选漂移、知识同步、CI/CD 和等待契约。fix/enhance 仍为三阶段、两类正文 |
+| Implement 边界 | 默认加载唯一 TDD/incremental Skill；两项可选 Skill 只冻结路径/摘要，实际触发才读正文。上游和 Reviewer 不加载 TDD 执行；阻止团队 instructions 将执行 Skill 注入上游，校验可选资源的真实字节漂移 |
+| TDD 证据契约 | synthetic 参考模型拒绝环境故障冒充 RED、修改 Oracle、零检查/跳过、缺失或截断原始报告、漏任务、行为任务假例外、错误最终候选和未验证最终回归。真实文档例外仍需理由及适用验证；模型不替业务执行或认证身份 |
+| 独立 Gate 与交接 | 两个专职 Reviewer 和最终 collector 的真实身份必须各异，并独立于实施者；负向测试重建合法原始摘要/来源后仍拒绝同一 Reviewer。TDD/双 Gate 全绿但缺失、失败、无关或未观察的 AC、候选漂移或无批准仍不能 handoff。人工记录/compact 委托均为 synthetic，不是用户签字 |
+| 维护测试先行 | 修改前实际运行的 Standard 终点、Implement 默认 Skill 行为断言失败；独立身份负向测试在补入检查前实际出现 Missing expected exception，补入后通过。仅为本方法包维护回归，不冒充真实需求的 RED/GREEN/REFACTOR、独立 Gate 或交付审批 |
+| Standard / CI/CD | 默认 Standard 七阶段，终点为 Implementation Verified Handoff，只采用其实际选中 CI 绑定；显式 release-team 示例保留 Release/Learn/CD 链。继续覆盖原 CI/CD 失败、证据、审批循环及等待恢复边界，没有生产操作权限 |
+| 静态上下文预算 | 三阶段声明的方法正文：fix 145,285 → 51,427 字节（64.60%），enhance 145,199 → 51,341（64.64%）；共同执行契约 5,021 字节，低于 6 KB。两个 Reviewer leaf 分别额外 14,117 / 14,252 字节；串行/并行都须分别计量，collector 重派与等待唤醒也另计。模板、业务输入、证据、锁、团队额外规则不裁剪；不是实际 tokens/费用节省 |
+| 真实宿主交付 / 模型 token A/B | NOT_RUN；未在业务仓库派发真实 TDD 实施链、两个 Reviewer 或取得人类交付批准。没有原生子 Agent 数量、输入/缓存/输出 tokens 或费用测量 |
+| 真实 GitLab / 自动唤醒 / Confluence | NOT_RUN；未查询公司流水线或运行环境、创建监控、发布知识、部署或审批。既有模拟/契约测试不替代真实联调 |
+
+命令：`node --test tests/*.test.mjs`；`git diff --check` 通过。测试/support 仅供维护者，不随 payload 安装；本包仍为指令和协议，不增加运行器、身份认证、Python setup 或强制安装依赖。
+
+已只读评估 addyosmani/agent-skills 并固定 commit `1be8e34187e34647bb83adc3a1323b26ae6f6abe`，保留四个同名短适配 Skill、来源与原 MIT 许可证；没有另建同职责 TDD Skill/Agent或安装整套第三方插件。详情见 [执行与复用说明](engineering-skills.md)。新 TDD Skill 的官方 quick_validate.py 因缺 PyYAML 失败；未安装依赖，不宣称该校验通过，24 个 Skill 的 Node 元数据/链接检查通过。以下历史记录保持原样，不用本版结果回填旧版本。
+
+## 0.12.0：可配置 CI/CD 取证与有限自动等待
+
+验证日期：2026-09-30；本地 0.12.0 指令包，Node v26.8.1。未 commit/push，未连接公司项目或注册真实监控。旧 work/批准/授权不迁移，delivery 默认 null。
+
+| 范围 | 结果与边界 |
+|---|---|
+| 内容与全部回归 | 143 项 Node 测试通过，0 failed / 0 skipped；包括 20 个 Skill 元数据、JSON/路径/模板、既有 DAG/审批/知识与业务夹具。保留三阶段、两类正文和独立双 Gate |
+| CI/CD 契约 | 模拟真实响应形态，验证同 pipeline、父子/跨项目、团队选择、报告映射、同 Verify 先 CI 后 CD、只读环境查询；拒绝旧绿新红、错误候选/规则、失败 retry、allow_failure、跳过/零检查、缺失/截断报告、错误环境/运行 digest、审批循环。不代表真实 GitLab 返回或原生子 Agent 行为 |
+| Gate 集成 | 参考模型读取并校验完整原始字节，覆盖 CI/hybrid、远端执行身份、非零断言、原始 job/配置/报告、不能补造 exit code；恢复保留旧执行者与原始记录，规则/输入/候选漂移不能复用 |
+| 等待行为模拟 | 观察实际模型状态写入与宿主回调调用次数：pending→收集、manual、失败、权限、超时、重复唤醒、共享监控、未知创建结果、停止/关闭/撤销、迟到结果及有效检查复用。假 PASS 不呈审，manual/auto 等待处理本身均不生成批准；无原子领取时不自主派发。这不是已运行的后台服务 |
+| 静态上下文预算 | 未配置 CI/CD：fix 145,285 → 44,667 字节（69.26%）；enhance 145,199 → 44,581（69.30%）；共同执行契约 5,021 字节，低于 6 KB。配置后当前阶段额外加载 8,006 字节的方法正文；未绑定阶段不加载。模板、业务输入/证据、锁和团队规则单列，不裁剪 |
+| 真实宿主自动唤醒 | NOT_RUN；未创建 heartbeat/定时任务，未验证真实唤醒、原子领取、原生 fresh child 和监控清理。需在业务 work 有实际有限授权后验证 |
+| 真实公司 GitLab | NOT_RUN；缺真实项目/连接，未查询公司 pipeline/部署/运行环境，未登录、改流水线、执行部署或审批。示例仅为可配置样本 |
+| 实际 token A/B / 真实交付 / Confluence | NOT_RUN；静态字节不是 tokens/费用节省，模型/夹具不是审批或交付演练，未新增外部发布 |
+
+命令：`node --test tests/*.test.mjs`；`git diff --check` 通过。新增测试/support 只供维护者，不随 payload 安装；没有新的 CLI、Python setup、服务或依赖。接口和等待由宿主已有工具按契约执行，本包不是权限/认证/调度运行器。
+
+新 pipeline Skill 的官方 quick_validate.py 尝试因缺 PyYAML 失败；未安装依赖，不宣称该校验通过。20 个 Skill 的 Node frontmatter/链接检查通过。使用见 [CI/CD 指南](ci-cd-validation.md)、[认证与接入](../bootstrap/pipelines.md)。以下历史记录保持原样，不用本版测试回填过去结果。
+
 ## 0.11.0：按需上下文与 TWG 知识接入
 
 验证日期：2026-09-29；对象为本地未发布 0.11.0 指令包。旧方法、工作、审批与授权不迁移；本次未 commit/push。

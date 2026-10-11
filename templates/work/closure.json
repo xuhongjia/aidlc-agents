@@ -1,6 +1,7 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "work_id": null,
+  "workflow_ref": null,
   "method_revision": null,
   "decision": null,
   "approver": null,
@@ -13,9 +14,15 @@
   "stage": null,
   "state_snapshot": {
     "delivery_status": null,
+    "implementation_verified_handoff": null,
     "business_outcome": null,
     "last_reviews": [],
+    "nodes": {},
+    "branch_decisions": [],
     "outstanding": [],
-    "active_run_ids": []
+    "active_run_ids": [],
+    "waits": [],
+    "wait_monitor": null,
+    "wait_authorization_ref": null
   }
 }

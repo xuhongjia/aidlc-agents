@@ -31,6 +31,7 @@ authorization/by 与责任人分开，按 [identity](identity.md) 在卡及决�
 - 真实 worker/dispatch/result、全部产物、候选和历史相符，无越权、漂移、未收齐子任务或占位证据。
 - Implement 最终 DEV 自测和双 Gate 自测实际通过；以前纠错的 FAIL 仍保留，仅有 [feedback](implementation-feedback.md) 完整合规链且最终同规则通过才算解决。未来独立 QE 项可明确 NOT_RUN，不能当已验收。
 - Verify 必须新独立 child、同候选双 Gate 与全部 AC 证据，不能抄 DEV PASS。checkpoint 在此始终 awaiting_approval，不能沿用候选策略自动完成。
+- 有 delivery 绑定时首卡冻结目标/映射/等待期限，明确后台只读等待及同一已授权节点的新 child 恢复权；真实确认引用存 state.wait_authorization_ref，不从配置/旧授权推定。完整呈审还需全部必需 CI/CD 证据。waiting_external 不产生批准，保留既有委托供有限同节点恢复；它不处理真实失败或缺报告。宿主唤醒不授予下一节点继续权。
 - 策略不准跨阶段返工。只有明确 budget 的合格实施内部失败可先进入 feedback 检查；其他 FAIL、必需 NOT_RUN/UNKNOWN、范围/风险/权限变化立即撤销委托、停 worker、交人处理。
 
 ## 决定、继续与撤销
@@ -43,6 +44,6 @@ checkpoint 的 allowed_steps=[implement]，Implement 合格且 auto_continue=tru
 
 manual 可保存仅授权 [实施反馈](implementation-feedback.md) 的 policy；它不自动批准任何阶段。所有模式的 feedback 缺省为零，不能因持有 checkpoint/auto 策略推定两轮额度。
 
-“改回人工/停止”撤销整个当前委托（含纠错与知识发布），保留历史并按 orchestration 实际收回 worker。不合格失败、额度耗尽仍失败、升级、图/职责改变、正式返工、完成或撤销均清空活动策略；只有按 feedback 核验合格、仍有预算的内部失败保留原策略供预约继续。资格未核实前停止派发；预先批准且符合预期的负向证据不是工作失败。新会话还须用户继续并核验真实状态，不能凭旧 auto 标记自启动。重新授权不抹掉同一实施 revision 已用额度。
+“改回人工/停止”撤销整个当前委托（含纠错与知识发布），保留历史并按 orchestration 实际收回 worker，按 pipeline-wait 停止 monitor。不合格失败、额度耗尽仍失败、升级、图/职责改变、正式返工、完成或撤销均清空活动策略；只有按 feedback 核验合格、仍有预算的内部失败保留原策略供预约继续。资格未核实前停止派发；预先批准且符合预期的负向证据不是工作失败。新会话还须用户继续并核验真实状态；仅有明确范围/期限的流水线宿主唤醒可恢复同一已授权节点，不能凭旧 auto 标记自启动。重新授权不抹掉同一实施 revision 已用额度。
 
 knowledge_publish 始终独立显式授权，默认 null；checkpoint 最终人审可同卡批准固定知识和精确目标。候选放行不授予发布权，自动沉淀不等于企业规范修改权。发布/撤销按 [knowledge](knowledge.md) 原协议。任何模式不自动授权 push/merge/deploy、依赖安装、生产数据、付费、权限变更或业务接受，也不授予直接终结权。

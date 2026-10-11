@@ -439,7 +439,12 @@ export function canAutoApprove(workflow, stage, { risk, step_id, work_id, lock_d
     && commands.every(command => policy.allowed_commands?.includes(command)));
 }
 
-export function validateVerification(verification, candidate, { approved_commands = [] } = {}) {
+export function validateVerification(verification, candidate, { approved_commands = [], approved_remote = {}, remote_evidence = [], execution_refs = [], raw_files = null, reviewer_policy = null } = {}) {
+  const readRaw = ref => {
+    const bytes = raw_files?.[ref?.path];
+    requireThat(bytes && createHash('sha256').update(bytes).digest('hex') === ref.sha256, 'raw evidence bytes missing/truncated/drifted');
+    return Buffer.from(bytes).toString();
+  };
   requireThat(candidate?.digest && candidate.implementation_runs?.length, 'frozen implementation candidate required');
   for (const key of ['work_id', 'lock_digest']) requireThat(verification[key] === candidate[key] && candidate[key], `candidate mismatch: ${key}`);
   requireThat(verification.candidate_digest === candidate.digest && verification.run_id, 'stale verification candidate');
@@ -447,10 +452,22 @@ export function validateVerification(verification, candidate, { approved_command
   requireThat(verification.actor && !implementers.includes(verification.actor), 'final verifier must be independent');
   requireThat(Array.isArray(verification.gates) && verification.gates.length === GATE_KINDS.length, 'both Gate contracts required');
   indexBy(verification.gates, 'kind', 'Gate kind');
+  requireThat(reviewer_policy === null || reviewer_policy === 'independent-specialists', 'unknown reviewer policy');
+  if (reviewer_policy) {
+    requireThat(new Set(verification.gates.map(g => g.actor)).size === 2 && new Set(verification.gates.map(g => g.run_id)).size === 2, 'Gate reviewers must be different actual Agents/runs');
+    requireThat(verification.gates.every(g => g.actor !== verification.actor && g.run_id !== verification.run_id
+      && g.reviewer_role === g.kind + '-gate-reviewer'), 'collector or wrong role cannot execute specialist Gate');
+  }
   for (const kind of GATE_KINDS) {
     const gate = verification.gates.find(item => item.kind === kind);
     requireThat(gate?.status === 'PASS', `required ${kind} Gate did not pass`);
-    requireThat(gate.candidate_digest === candidate.digest && gate.lock_digest === candidate.lock_digest && gate.work_id === candidate.work_id && gate.run_id === verification.run_id, 'stale Gate evidence');
+    requireThat(gate.candidate_digest === candidate.digest && gate.lock_digest === candidate.lock_digest && gate.work_id === candidate.work_id, 'stale Gate evidence');
+    if (gate.run_id !== verification.run_id) {
+      const origin = execution_refs.find(ref => ref.run_id === gate.run_id && ref.actor === gate.actor && ref.gate_digest === digest(gate));
+      requireThat(origin && ['work_id', 'step_id', 'revision', 'lock_digest', 'candidate_digest', 'input_digest', 'baseline_digest']
+        .every(key => verification[key] !== undefined && origin[key] === verification[key]), 'stale Gate evidence: execution lineage');
+      requireThat(digest(JSON.parse(readRaw(origin.gate_ref))) === digest(gate), 'stale Gate evidence: original bytes');
+    }
     requireThat(gate.actor && !implementers.includes(gate.actor), 'Gate reviewer must be independent');
     requireThat(gate.checks?.some(check => check.blocking), 'executable blocking Gate check required');
     for (const check of gate.checks) {
@@ -458,10 +475,42 @@ export function validateVerification(verification, candidate, { approved_command
       requireThat(!check.blocking || check.status === 'PASS', 'blocking Gate check failed');
       if (check.blocking) {
         requireThat(check.truncated !== true && check.complete !== false, 'blocking Gate evidence truncated or incomplete');
-        requireThat(Number.isInteger(check.executed_count) && check.executed_count > 0 && check.skipped_count === 0 && check.exit_code === 0, 'blocking Gate must execute nonzero checks without skips or errors');
+        requireThat(Number.isInteger(check.executed_count) && check.executed_count > 0 && check.skipped_count === 0
+          && (check.execution?.provider === 'gitlab' ? [null, 0].includes(check.exit_code) : check.exit_code === 0), 'blocking Gate must execute nonzero checks without skips or errors');
         requireThat(Array.isArray(check.raw_evidence) && check.raw_evidence.length > 0 && check.raw_evidence.every(ref => typeof ref.path === 'string' && ref.path && /^[a-f0-9]{64}$/.test(ref.sha256)), 'blocking Gate requires raw evidence references and digests');
+        if (raw_files) check.raw_evidence.forEach(readRaw);
+        if (check.execution) {
+          const remote = check.execution, approved = approved_remote[kind];
+          const proof = remote_evidence.find(item => item.kind === kind && digest(item.execution) === digest(remote));
+          requireThat(remote.provider === 'gitlab' && approved && proof && remote.status === 'success' && remote.source_commit === candidate.commit
+            && remote.project_id === approved.project_id && remote.job_name === approved.job_name && remote.rule_digest === approved.rule_digest
+            && remote.configuration_ref?.sha256 === approved.configuration_digest, 'remote execution/rule not approved');
+          const pipeline = JSON.parse(readRaw(proof.pipeline_ref)), job = JSON.parse(readRaw(proof.job_ref));
+          readRaw(remote.configuration_ref);
+          const rawReport = JSON.parse(readRaw(proof.report_ref)), mapping = approved.report_mapping
+            ?? { candidate_commit: 'source_commit', rule_digest: 'rule_sha256', checks: 'checks' };
+          const at = (raw, path) => path.split('.').reduce((value, key) => value && Object.hasOwn(value, key) ? value[key] : undefined, raw);
+          const rows = at(rawReport, mapping.checks);
+          const report = { source_commit: at(rawReport, mapping.candidate_commit), rule_sha256: at(rawReport, mapping.rule_digest),
+            checks: Array.isArray(rows) ? rows.map(row => Object.fromEntries(['rule_id', 'status', 'executed_count', 'skipped_count', 'evidence']
+              .map(key => [key, mapping['checks.' + key] ? at(row, mapping['checks.' + key]) : row[key]]))) : rows };
+          requireThat(pipeline.id === remote.pipeline_id && pipeline.project_id === remote.project_id && pipeline.sha === candidate.commit
+            && ['success', 'created', 'pending', 'running', 'manual', 'blocked', 'waiting_for_resource', 'scheduled', 'preparing'].includes(pipeline.status)
+            && job.id === remote.job_id && job.name === remote.job_name && job.pipeline.id === pipeline.id
+            && job.pipeline.project_id === pipeline.project_id && job.status === 'success' && job.commit.id === candidate.commit
+            && job.started_at && job.finished_at && remote.attempt === job.id, 'remote execution source mismatch');
+          requireThat(Object.hasOwn(job, 'exit_code') ? check.exit_code === job.exit_code && job.exit_code === 0 : check.exit_code === null, 'remote unreported exit code fabricated');
+          requireThat(report.source_commit === candidate.commit && report.rule_sha256 === approved.rule_digest
+            && Array.isArray(report.checks) && report.checks.length === approved.rule_ids.length
+            && new Set(report.checks.map(c => c.rule_id)).size === report.checks.length
+            && approved.rule_ids.every(id => report.checks.some(c => c.rule_id === id))
+            && report.checks.every(c => c.status === 'PASS' && Number.isInteger(c.executed_count) && c.executed_count > 0 && c.skipped_count === 0)
+            && report.checks.reduce((sum, c) => sum + c.executed_count, 0) === check.executed_count, 'remote rule report mismatch');
+          requireThat([proof.pipeline_ref, proof.job_ref, proof.report_ref, remote.configuration_ref].every(ref => check.raw_evidence.some(r => r.path === ref.path && r.sha256 === ref.sha256)), 'remote raw sources omitted');
+        }
         const evidencePaths = check.raw_evidence.map(ref => ref.path);
         requireThat(Array.isArray(check.rule_evidence) && check.rule_evidence.length > 0 && check.rule_evidence.every(rule => typeof rule.rule_id === 'string' && rule.rule_id && Array.isArray(rule.evidence_refs) && rule.evidence_refs.length > 0 && rule.evidence_refs.every(ref => evidencePaths.includes(ref))), 'blocking Gate requires nonzero rule evidence bound to raw outputs');
+        if (check.execution) requireThat(approved_remote[kind].rule_ids.every(id => check.rule_evidence.some(r => r.rule_id === id)), 'remote approved rule evidence missing');
       }
     }
   }

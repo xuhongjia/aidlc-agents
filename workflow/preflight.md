@@ -4,6 +4,8 @@
 
 知识同步状态另按 [knowledge.md](knowledge.md) 检查：所有 work（含 completed）的活动 Hook、孤儿 dispatch/attempt 与宿主 worker 都要盘点；未证实停止不更新。单纯 pending/failed/unknown 投递且无活 worker 不阻止升级。明确重试是控制操作，不启动交付/更改旧 method_revision；当前适配器须兼容原快照和原授权。
 
+0.12 的 waiting_external 是未结束工作，不能因无 live child 就更新；盘点宿主 wait_monitor、stop_pending 和恢复 run。单次轻量监控 inspect 不查新，实际派发恢复 child 才按本协议继续原版本。新工作/终结更新前仍须核实没有遗留活动监控。
+
 由父协调器执行，不是交付阶段，不增加业务审批或正文。默认来源为 `https://github.com/xuhongjia/aidlc-agents` 的 `refs/heads/main`；“最新”指本次从 GitHub 解析的完整 commit，不是最大 semver、缓存分支或 latest release。
 
 ## 入口与频率

@@ -1,0 +1,10 @@
+{
+  "contract_version": 1,
+  "gate_mode": "hybrid",
+  "bindings": [],
+  "wait": {
+    "mode": "native_wakeup",
+    "interval_seconds": 300,
+    "timeout_seconds": 7200
+  }
+}

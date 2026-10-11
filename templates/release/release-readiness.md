@@ -8,6 +8,8 @@ AIDLC_DRAFT — 根据已批准 Verify 和当前候选填写发布就绪建议�
 
 自动收集并链接 source-index.json：业务仓库/commit、PR/MR、pipeline/job/attempt 与状态；容器交付列 image repository@digest、digest 类型和来源，区分 CI-reported 与 registry 核实。列实际部署环境/版本/时间或明确 unknown/not_deployed，以及 Jira 验收反馈/阻塞项。候选到镜像映射必须可追溯，非容器交付写实际构建物。
 
+配置了 CD 时引用 pipeline-result，逐项列目标环境、deployment ID、实际运行构建物、部署后必需 smoke/health 与观察时间；只有真实通过才满足本阶段发布环境校验。未配置 CD 才沿用发布前就绪判据，待部署不当已验证。
+
 ## 就绪检查
 
 | 项目 | 已验证事实或缺口 | 来源/责任角色 |

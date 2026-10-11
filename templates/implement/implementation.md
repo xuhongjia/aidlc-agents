@@ -15,6 +15,11 @@ AIDLC_DRAFT — 仅在计划获明确批准后实施；根据实际修改和运�
 
 记录命令、环境、时间、退出码、执行数量和日志路径。未运行、全跳过及原有失败如实保留；开发自测不是独立 QE 验收。
 
+| Task / Requirement / AC | Oracle 引用 | RED 行为失败证据 | GREEN / 受影响回归 | REFACTOR / no_change 与复测 | 例外原因及替代验证 |
+|---|---|---|---|---|---|
+
+引用本 run 的 tdd-evidence 技术附件及最终候选回归；中间执行快照不倒填为最终 candidate。环境/runner 故障不算 RED，不改批准预期以获得通过。
+
 ## 候选清单
 
 列出本次交付及检查依赖的源码、测试、配置和依赖清单；按协议计算实际文件 SHA-256，绑定到 review 的 candidate。不能手填猜测摘要。
@@ -26,3 +31,5 @@ AIDLC_DRAFT — 仅在计划获明确批准后实施；根据实际修改和运�
 ## 交接
 
 提交可供 QE 验证的精确候选和原始证据。该交接不表示发布就绪、部署成功或业务接受。
+
+此处仅为候选提交，不是 Implement 已验证完成；独立 Architecture/Quality Reviewer、全 AC 与必要批准尚未齐全时，Implementation Verified Handoff 保持未完成。

@@ -4,6 +4,8 @@
 
 输入为批准的冻结候选及当前有效的验证证据。
 
+有固定 pipeline_requests 时执行 `.aidlc/system/workflow/pipelines.md`：读取真实 CI/CD 与目标环境观察，必需部署/构建物/smoke-health 通过才呈审；pending/manual 保存 wait_request 并 waiting_external 返回。未绑定时沿用发布前就绪语义，配置的 CD 不套用“缺部署记录不阻塞”的例外。
+
 执行 `.aidlc/system/workflow/external-evidence.md`：主动从 dispatch.external_reads 指定的业务 Git 仓库/CI/Jira 收集候选 commit、PR/MR、必需 pipeline/job、构建物及验收/阻塞反馈。容器交付提取完整 image repository@digest 和对应 job/commit；将它与批准候选核对。只读查询已有部署记录，区分 CI-reported digest、registry 核实和实际部署。先检索可用来源，缺口再返回，不默认让用户粘贴 CI 日志。
 
 1. 核对候选、检查规则和证据仍相符；漂移或未解决阻塞不能靠 Release 文档覆盖。

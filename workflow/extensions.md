@@ -43,11 +43,11 @@ kind 对保证作固定约束：implementation 才可声明 product.write，且�
 
 analysis intent 所有节点不得 product.write，终点只能 analysis_complete，delivery_status=not_implemented、business_outcome=not_evaluated。delivery intent 每个实际完成分支必须有批准的 change/plan 实施授权、产品实施、独立 verification 和同候选双 Gate，且最后一次写入之后仍有有效验证；不能仅检查图里存在这些阶段。实施节点 authority 必须是该活动路径的已批准祖先，提供 change/plan 并通过 bindings 实际消费。fix 的前红后绿与回归证据不可改名为 enhance 规避。
 
-高风险保留 profiles.md 的硬条件，risk_ceiling=any 不是降低保障。身份/权限、敏感数据、迁移、破坏性契约或跨系统等风险须人工且满足 standard 等价的需求、架构、质量、实施规划保证；它们可通过语义产物而非固定阶段名提供。某自定义图缺这些保证则停止重规划，不用 low 标记自证安全。内置 standard 保持九阶段原依赖；已有 Architecture 输入的 Quality 不可自动并行。
+高风险保留 profiles.md 的硬条件，risk_ceiling=any 不是降低保障。身份/权限、敏感数据、迁移、破坏性契约或跨系统等风险须人工且满足 standard 等价的需求、架构、质量、实施规划保证；它们可通过语义产物而非固定阶段名提供。缺这些保证则停止重规划。0.13 standard 为七阶段至 verified handoff；旧九阶段工作按原锁，已有 Architecture 输入的 Quality 不可自动并行。implementation 继承 Implement-only TDD 与证据，verification 强制两个独立 Reviewer，不因团队改内容/模板失效。
 
 ## 规范化内置配方与动态组合
 
-内置 Stage ID 为 core.原ID；role 精确构造为 `core:agents/阶段.agent.md`（不是给人类 role 标签加前缀），prompt 为 `core:` + 阶段.prompt。每个默认 output 的 template 为 `core:` + 阶段.template_directory（缺省 `templates/阶段.id`）+ `/文件名`；contract 从 stage-contracts.stages[原ID].contracts[文件名] 获取。kind/输入/capabilities/auto_eligible 来自该元数据，默认 routing_facts={}、tool_binding_ids=[]。Workflow ID 为 core.fix/core.enhance/core.standard，intent=delivery，风险上限分别 low/low/any。每阶段一个同名 step，按原列表连边；实施 authority 取 implementation_authority；每个 input 绑定最近的上游对应 contract，外部输入绑定允许的 $ 来源。保留原 output_overrides，template 原值加 core:；core.implement 的覆盖契约仍为 implementation，core.verify 的覆盖契约仍为 verification。因此实施正文即使叫 verification.md 也不是独立验证。终点分别 verified/verified/learned。
+内置 Stage ID 为 core.原ID；role 精确构造为 `core:agents/阶段.agent.md`（不是给人类 role 标签加前缀），prompt 为 `core:` + 阶段.prompt。每个默认 output 的 template 为 `core:` + 阶段.template_directory（缺省 `templates/阶段.id`）+ `/文件名`；contract 从 stage-contracts.stages[原ID].contracts[文件名] 获取。kind/输入/capabilities/auto_eligible 来自该元数据，默认 routing_facts={}、tool_binding_ids=[]。Workflow ID 为 core.fix/core.enhance/core.standard，intent=delivery，风险上限分别 low/low/any。每阶段一个同名 step，按 catalog 当前列表连边；authority 取 implementation_authority，input 绑定最近上游对应 contract 或允许的 $ 来源。保留 output_overrides 与 core: 模板；core.implement 覆盖契约仍为 implementation，core.verify 为 verification，实施正文叫 verification.md 也不是独立验证。0.13 三者终点均 verified；Release/Learn 只在明确团队 Workflow ID 启用，不改旧图。
 
 config.workflow 为 auto/显式 workflow ID，默认 auto；旧 config.profile 作为内置偏好别名保留。明确 workflow 与非 auto profile 冲突先确认，不静默覆盖用户设置。AI 只从注册 stage 组合或选配方，记录任务风险/复杂度、取舍、选择依据；新组合获得 work 专用 ID，按同一 Interface 校验。不在交付中现场创造 Prompt/模板/阶段来替代审核过的定义。
 
@@ -59,7 +59,9 @@ config.workflow 为 auto/显式 workflow ID，默认 auto；旧 config.profile �
 
 先复制并核验资产，再写锁，最后把锁原始文件 hash 写 workflow_ref；任何步骤失败不派发。首锁为 workflow.lock.json，图 revision 2 起使用新的 workflow-r2.lock.json 等路径及 g2 资产目录，旧锁保持原样。dispatch.role_path/stage_prompt_path/expected_outputs.template 解析到 assets.path，dispatch.input_refs 包含锁及本次必需资产 hash。阶段/角色/模板里再次引用的 `core:`、`team:`、`project:` 或 `.aidlc/system/相对路径`（等价 core:）也必须经同一资产表解析；准备锁时收齐所需协议/Skill/Prompt 的传递依赖，执行时缺映射就 blocked，绝不回退读取活动目录。外部 `$project` 指当前业务事实输入，不是 project: 覆盖包资源，两者不可混同。
 
-首次 entry 调查若改变路线，旧 entry 结果标 superseded，创建新 graph revision/run；不能重新哈希旧结果使其看似采用新图。图批准与 entry review 同卡，不多加审批阶段。批准后 graph/模板/目标都不可热替换；路线变更须停止相关执行、新锁及新的明确确认，保留旧批准，不跨图复用。新版工作采用 state.schema_version=4；dispatch/result/review/approval/policy 全带 workflow_ref/step_id，阶段名只描述定义。恢复时核对真实字节和固定来源。
+首次 entry 调查若改变路线，旧 entry 结果标 superseded，创建新 graph revision/run；不能重新哈希旧结果使其看似采用新图。图批准与 entry review 同卡，不多加审批阶段。批准后 graph/模板/目标都不可热替换；路线变更须停止相关执行、新锁及新的明确确认，保留旧批准，不跨图复用。0.12 起新工作采用 state.schema_version=5（0.9–0.11 为 4）；dispatch/result/review/approval/policy 全带 workflow_ref/step_id，阶段名只描述定义。恢复时核对真实字节和固定来源。
+
+0.12 起新工作 state.schema_version=5；可选 config.delivery 按 [pipeline-config](pipeline-config.md) 解析到锁内 delivery={contract_version,gate_mode,bindings,wait,steps:[{step_id,binding_ids}]}，只含此图实际采用的绑定，全部内容随 workflow_ref 摘要固定。原 Step/Tool Interface 不变；pipeline 操作只是已注册只读工具调用。无配置时 delivery=null，旧锁不补字段。内置 Verify 新增 evidence.read，读取范围仍必须由 pipeline_requests/external_reads 限定；团队 verification 没声明该能力时拒绝绑定，不静默扩权。新增状态/结果等待语义不改已批准图依赖。
 
 ## 声明式 Tool binding
 

@@ -4,10 +4,12 @@
 
 输入为批准 Spec/AC、架构和项目验证基线。
 
+QE 设计/批准测试策略、Oracle、Acceptance Verification Rules、Gate Criteria 与 Required Evidence；可交验收测试规范/草稿，但实际 TDD 测试编写、安装及 RED/GREEN/REFACTOR 由 Implement 执行，本阶段不加载执行 Skill。
+
 1. 为每个 AC 定义测试 Oracle、测试层次、数据/前置条件、正反例、边界和具体断言。Oracle 来自需求，不来自当前代码返回值。
 2. 对每个 AC 建立完整覆盖，标明自动验证与必须由人类执行的观察；人工项目指定需要什么证据和由什么角色确认，不能假定已完成。
 3. 设计回归、接口/契约及适用的安全、性能、可访问性等验证。采用仓库已有工具优先；新工具说明必要性与接入代价。
 4. 定义 Quality Fitness 的真实执行入口、运行范围、超时、阈值、成功证据、零测试/跳过/失败/未知的处理。覆盖率不能单独证明业务正确。
 5. 检查 Architect 规则与 QE 规则是否有互相冲突或遗漏；要更改批准约束时退回相应阶段。
 
-按模板交付 `quality-design.md`、`quality-fitness.json`、`coverage.json`。AC 集合与批准 Spec 一致；测试源码如需新增只写本 run artifacts 附件。可复用 `.aidlc/system/skills/aidlc-test-generation/SKILL.md`，可按独立 AC 组提议并行测试设计，由本阶段检查重复、遗漏和 Oracle 冲突。按 worker 契约返回 result，将 Oracle 与副作用交父协调器呈现给人类。
+按模板交付 `quality-design.md`、`quality-fitness.json`、`coverage.json`。AC 集合与批准 Spec 一致；新增业务验收测试只交规范/伪代码/数据设计，实际可执行 TDD 测试由 Implement 编写。可复用 `.aidlc/system/skills/aidlc-test-generation/SKILL.md` 设计模式，可按独立 AC 组提议并行，由本阶段检查遗漏和 Oracle 冲突。按 worker 返回 result，将 Oracle 与副作用交父呈现给人类。

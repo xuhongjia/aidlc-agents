@@ -43,6 +43,19 @@
       {"name": "source-index.json", "template": "templates/work/source-index.json"}
     ]
   },
+  "delivery": {
+    "contract_version": 1,
+    "setup_skill": "skills/aidlc-pipeline-setup/SKILL.md",
+    "config_protocol": "workflow/pipeline-config.md",
+    "execution_protocol": "workflow/pipelines.md",
+    "wait_protocol": "workflow/pipeline-wait.md",
+    "config_template": "templates/delivery/config.json",
+    "result_template": "templates/work/pipeline-result.json",
+    "wait_template": "templates/work/pipeline-wait-request.json",
+    "providers": {"gitlab": "adapters/delivery/gitlab.md"},
+    "access": "read-only",
+    "default_enabled": false
+  },
   "approver_resolution": {
     "precedence": ["jira_assignee", "git_config", "system_login"],
     "template": "templates/work/approver.json",
@@ -58,7 +71,11 @@
     "design_prompt": "prompts/gate-design.md",
     "design_protocol": "workflow/gate-design.md",
     "execution_protocol": "workflow/gate-execution.md",
-    "default_execution": "sequential-single-verifier",
+    "default_execution": "independent-specialists",
+    "reviewers": {
+      "architecture": "agents/architecture-gate-reviewer.md",
+      "quality": "agents/quality-gate-reviewer.md"
+    },
     "required_evidence": [
       {"kind": "architecture", "name": "architecture-gate.json", "template": "templates/work/gate-result.json"},
       {"kind": "quality", "name": "quality-gate.json", "template": "templates/work/gate-result.json"}
@@ -87,9 +104,9 @@
   },
   "profiles": {
     "standard": {
-      "stages": ["intake", "spec", "architecture", "quality", "plan", "implement", "verify", "release", "learn"],
+      "stages": ["intake", "spec", "architecture", "quality", "plan", "implement", "verify"],
       "implementation_authority": "plan",
-      "terminal_stage": "learn",
+      "terminal_stage": "verify",
       "artifact_mode": "standard",
       "output_overrides": {}
     },
@@ -130,7 +147,7 @@
     {"id":"architecture","role":"Architect","agent":"architect","prompt":"prompts/architecture.md","outputs":["architecture.md","architecture-fitness.json"],"approval":"架构责任人","product_write":false,"parallel_lanes":["dependency-review","security-performance-review"]},
     {"id":"quality","role":"QE","agent":"qe","prompt":"prompts/quality.md","outputs":["quality-design.md","quality-fitness.json","coverage.json"],"approval":"质量责任人","product_write":false,"parallel_lanes":["functional-design","nonfunctional-design"]},
     {"id":"plan","role":"PM / DEV / QE","agent":"pm","prompt":"prompts/plan.md","outputs":["plan.md"],"approval":"交付责任人","product_write":false,"parallel_lanes":["implementation-estimate","verification-estimate"]},
-    {"id":"implement","role":"DEV","agent":"engineer","prompt":"prompts/implement.md","outputs":["implementation.md"],"approval":"代码审查人","product_write":true,"parallel_lanes":["approved-independent-tasks"]},
+    {"id":"implement","role":"Software Engineer","agent":"software-engineer","prompt":"prompts/implement.md","outputs":["implementation.md"],"approval":"代码审查人","product_write":true,"parallel_lanes":["approved-independent-tasks"]},
     {"id":"verify","role":"QE / Architect","agent":"qe","prompt":"prompts/verify.md","outputs":["verification.md","acceptance-results.json"],"approval":"质量 / 架构责任人","product_write":false,"parallel_lanes":["architecture-gate","quality-gate"]},
     {"id":"release","role":"Service Owner / DEV / QE","agent":"engineer","prompt":"prompts/release.md","outputs":["release-readiness.md"],"approval":"服务责任人","product_write":false,"parallel_lanes":["rollback-review","observability-review"]},
     {"id":"learn","role":"PO / PM / Service Owner","agent":"po","prompt":"prompts/learn.md","outputs":["outcome.md","outcome.json"],"approval":"PO / 服务责任人","product_write":false,"parallel_lanes":["business-observation","delivery-retrospective"]},

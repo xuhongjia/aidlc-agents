@@ -6,6 +6,8 @@
 
 以批准 Intake 与项目上下文为输入。
 
+定义 FR/NFR、AC、Expected Behavior、Business Invariants、Edge Cases 与 Verification Criteria；只设计验收契约，不加载 TDD Skill 或执行 RED/GREEN/REFACTOR。
+
 1. 写清用户/调用者、主流程、异常、边界、权限、数据与兼容性。仅包含适用的非功能需求；不可测的“快、安全、易用”需落实成观察条件。
 2. 建立稳定 AC ID；每项包含条件、动作或输入、期望可观察结果、验证方式。正例、反例和关键边界来自业务规则，而非现有实现的偶然行为。
 3. 对每项需求建立 AC 覆盖；明确不做的内容。把无法从输入确定的业务决定留给人类，不用通用“最佳实践”替业务取舍。

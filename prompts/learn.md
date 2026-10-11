@@ -4,6 +4,8 @@
 
 完整阶段按 `.aidlc/system/workflow/knowledge-prepare.md` 追加架构、质量、反模式和经验的新知识版本，保留原批准设计/证据及适用限制，不静默覆盖。实际反馈来源与设计符合性分别写清；建议不得变成企业强制规范、Oracle、阈值或 Skill 修改。冻结可发布正文/目标/脱敏再交审批，未批准/不确定结论不直接同步。
 
+有固定 pipeline_requests 时先按 `.aidlc/system/workflow/pipelines.md` 刷新部署/环境事实；尚在执行则保存 wait_request 并 waiting_external 返回，知识准备延后到完整结果就绪。流水线通过不代替真实业务反馈。
+
 读取批准目标和发布准备，并按 `.aidlc/system/workflow/external-evidence.md` 主动从绑定 Git/CI/Jira 收集实际部署、评论、验收意见、reopen 和相关缺陷。默认利用现有连接完成只读查询，先检索后报告缺口。
 
 逐条保留 Jira 反馈作者、原文必要摘录、发生/更新时间、链接及候选/环境关联，按 AC 分类支持、反对或未确定；Done、点赞和构建机器人消息不能单独证明接受。对比 Release 的 commit/image digest 与实际观察版本；版本不清、意见冲突或分页不完整时 inconclusive。UAT 与生产目标按已批准范围分别解释，不能由 UAT 推断生产收益。

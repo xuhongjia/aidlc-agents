@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "stage": null,
   "status": "not_collected",
   "candidate": {
@@ -12,6 +12,7 @@
   "ci_runs": [],
   "images": [],
   "deployments": [],
+  "environment_checks": [],
   "feedback": [],
   "sources": [],
   "gaps": []

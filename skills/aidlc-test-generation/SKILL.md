@@ -1,6 +1,6 @@
 ---
 name: aidlc-test-generation
-description: 为 AIDLC 批准 AC 设计有独立 Oracle 的测试与覆盖映射；按当前阶段权限产生草案或实施测试。
+description: 为 AIDLC 批准 AC 设计独立 Oracle、验收测试规范与覆盖映射；可执行业务测试编写只用于 Implement，不承担独立 TDD 循环。
 ---
 
 # 需求驱动测试
@@ -12,5 +12,7 @@ description: 为 AIDLC 批准 AC 设计有独立 Oracle 的测试与覆盖映射
 - 覆盖正例、反例、边界和适用回归；说明 Mock 与真实依赖验证各自证明什么，不用全 Mock 冒充集成通过。
 - 不能自动化的 AC 明确人工观察步骤、证据和确认角色。零测试/跳过不算已验证。
 - 若生成源码，检查其测试发现规则和运行入口。只有真实执行后才能记录结果，未执行要说明原因。
+
+Spec/Architecture/Quality/Plan 只交规范、断言、数据设计或伪代码，不写/跑业务 TDD 测试。Implement 如使用本能力编写测试，仍由唯一 test-driven-development Skill 管理 RED/GREEN/REFACTOR，不能重复创建另一个 TDD Skill/Agent。
 
 输出可追踪的测试设计/源码及覆盖缺口。发现 Oracle 不明确或错误时请求澄清/回退，不自行改验收标准。
