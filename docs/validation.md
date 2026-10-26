@@ -1,5 +1,46 @@
 # 本版验证记录
 
+## 0.14.0：项目必需 Setup Gate
+
+验证日期：2026-10-26。本地方法包增加项目 setup.required、自然语言 setup 入口与父协调器新工作前置检查；已有 Confluence/GitLab 配置默认仍可选。新锁仅增加 setup_check_ref，不迁移历史工作/批准。未 commit/push，也未在业务项目执行安装或认证。
+
+| 验证 | 结果 |
+|---|---|
+| Node 内容/契约回归 | 173/173 PASS，0 fail、0 skipped；`node --test tests/*.test.mjs` |
+| 新 Setup 参考模型 | 16 项 PASS：默认/旧安装、必需/可选、多目标、未配置/认证、错误映射、授权撤销/替换、旧/重复/缺失证据、时间区间、旧工作/控制豁免、setup check 不建工作 |
+| Skill 元数据 | 新 Setup 及修改的 router/Confluence/GitLab 共 4 个 Skill，通过系统 quick_validate.py；使用环境已有解释器，无依赖安装 |
+| 独立静态审阅 | 修复授权身份未绑定与观察时间边界可省略两项问题；回归新增授权替换、缺时间/越界和 setup_check 用例 |
+| 上下文预算 | child 必读集合和阶段数量不变；fix/enhance 方法正文仍为 60,907/60,793 bytes，Setup 只在父入口按需读取 |
+| 真实接入/安装/认证/新交付 | NOT_RUN；没有访问公司系统、安装 TWG/glab、写 Confluence 或触发 GitLab/宿主监控 |
+
+模型仅检查结构、摘要和状态契约，不是宿主可执行门禁或身份认证系统。ready 不代表知识可写、CI/Gate 通过、部署或业务批准。技术收据绑定本次调用、配置、实际授权摘要与时间；真实权限和原始证据仍由宿主执行核验。完整使用方式见 [项目 Setup](project-setup.md)。
+
+## 0.13.1：敏捷指引与 Prompt 去重
+
+验证日期：2026-10-26。参考 Matt Pocock skills 固定提交 5beb35b040e3de97e54fa9e386d7e42d15c295c2，自行适配路由、领域术语、纵向切片、依赖并行和工程复盘；详见 [来源映射](agile-skills.md)。未安装上游 Skills、依赖或修改宿主配置；本节记录本地结果，不代表已发布。
+
+| 验证 | 结果 |
+|---|---|
+| Node 内容/契约回归 | 157/157 PASS，0 fail、0 skipped；命令 `node --test tests/*.test.mjs` |
+| Skill 元数据 | 13 个修改过的 Skill 通过系统 quick_validate.py；仓库默认 Python 缺 PyYAML，改用环境已有的兼容解释器验证，未安装依赖 |
+| 新增加载预算 | 3 项 PASS：UTF-8/去重、保留必读集合且较 0.13.0 少至少 20%、模板/反馈/重复 collector 分开计量 |
+| 原有控制回归 | 自定义 DAG/模板、授权/撤销、双 Gate/TDD/候选漂移、知识同步及 CI/CD 等待模型测试均保留 |
+| 独立子 Agent 路由探针 | 咨询“跨用户订单越权，是否一行 fix”时建议 standard/等价人审流程；仅读 router/profiles（另有搜索片段），未启动交付。仅验证这一次咨询行为 |
+| 独立静态审阅 | 修正 router 路径基准歧义；在所审查权限、冻结资产、TDD、Gate、CI 等待、知识发布及来源声明范围内未发现其他实质回退；不等于真实交付验证 |
+| 独立真实业务交付、模型 token A/B | NOT_RUN；上述是静态内容/参考模型测试 |
+| 真实 GitLab、宿主自动唤醒、Confluence | NOT_RUN；本次不改变其接入契约 |
+
+静态基线固定为 d075ef1（0.13.0），并在测试 fixture 保存每个资源的摘要。以下计算三个阶段和两个 Reviewer 各一次的声明 instruction_refs；不是实际端到端 run 数或 token 数。
+
+| 路线 | 方法正文 before → after | 降幅 | 含模板 before → after |
+|---|---|---|---|
+| fix | 78,280 → 60,907 bytes | 22.19% | 86,299 → 68,926 bytes（20.13%） |
+| enhance | 78,194 → 60,793 bytes | 22.25% | 86,213 → 68,812 bytes（20.18%） |
+
+9 个角色与 11 个阶段 Skill 包装共 34,509 → 19,138 bytes（44.5%）；不能将未被默认加载的包装节省重复计入阶段数字。公共执行正文 4,170 bytes。额外 collector 每 run 再计 15,870 bytes（含模板）；非零反馈另读 1,516 bytes，重跑仍按实际次数计入。业务输入、完整锁/证据、团队规则、CI/知识 Hook、宿主上下文另计，不为达标裁掉。短入口的传递依赖仍需按实际触发核对。
+
+Schema、Stage ID、默认图和必读资源集合不变；旧工作保持原方法。新版仅精简约束表述及按阶段增加敏捷指引，不迁移批准、自动发布、免除 Gate 或自动进入 Production。
+
 ## 0.13.0 / V2.1：Implement-scoped TDD 与独立 Gate Reviewer
 
 验证日期：2026-10-11；本地方法包 0.13.0，行为契约 V2.1，Node v26.10.0。保留既有未提交的 CI/CD 改动；未 commit/push，未安装外部插件或依赖。旧 work、冻结资产、批准和委托不迁移。

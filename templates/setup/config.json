@@ -16,6 +16,10 @@
   "project_overrides": null,
   "owner": null,
   "mode": "solo",
+  "setup": {
+    "required": [{"id": "aidlc", "capability": "aidlc", "target_id": null}],
+    "read_check_authorization": null
+  },
   "update_policy": {
     "mode": "before_new_work",
     "ref": "refs/heads/main",

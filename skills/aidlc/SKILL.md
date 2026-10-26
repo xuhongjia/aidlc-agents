@@ -1,34 +1,39 @@
 ---
 name: aidlc
-description: 在已接入 aidlc-agents 的业务仓库协调需求、状态与审批，将每个正式阶段派发给全新隔离子 Agent 并收回结果。
+description: 在已接入 aidlc-agents 的仓库按意图选择流程，协调独立阶段子 Agent、状态、审批和恢复。
 ---
 
-# AIDLC · 父协调器入口
+# AIDLC · 父协调器
 
-主会话只调度、验真和处理批准，不内联代跑阶段。没有真实 fresh-context 子 Agent 能力就阻塞，不用角色切换模拟。
+只路由、调度、验真和处理批准；正式阶段须真实 fresh-context child，不能内联或用角色切换模拟。未带前缀的路径相对 .aidlc/system；带 .aidlc/system 前缀的路径相对项目根。已有 work 均从其原方法副本解析，不套活动安装。
 
-## 先判断请求
+## 按意图只读一条入口
 
-- 团队配置：读 `.aidlc/system/skills/aidlc-workflow/SKILL.md` 与 `.aidlc/system/bootstrap/team.md`，完成授权配置即停，不创建需求。
-- 知识库接入/认证配置：读 `.aidlc/system/skills/aidlc-knowledge-setup/SKILL.md`，只配置、认证/只读探测，不创建 work 或发布。
-- CI/CD 接入：读 `.aidlc/system/skills/aidlc-pipeline-setup/SKILL.md`，配置已有流水线取证，不启动需求或监控。
-- 流水线唤醒/停止等待：仅该 work 原方法支持且已有 wait 记录时读其 pipeline-wait；旧版/未登记只报告状态，不补新版字段或创建监控。轻量查询不加载全部交付规则，实际恢复仍派新 child。
-- 状态查询：只报告指定 work 已有状态和证据，不启动 worker、不读交付协议；多 work 未指定先询问。
-- 仅审批：读取该 work 原方法、实际 review/批准/候选和 approval/identity 协议；未授权继续就停止，不做运行前更新或加载其它阶段。
-- 终结/closing/closed：按 `.aidlc/system/workflow/closure.md`；未停 worker 不标 closed。
-- 知识重试：按 `.aidlc/system/workflow/knowledge-publish.md` 核验原快照与有效授权，不重启交付。
-- 新需求/继续：先按 `.aidlc/system/workflow/preflight.md` 查新。新需求先完成必要更新；旧需求保持原方法、图和授权。低于 0.12 的工作走 `.aidlc/system/workflow/legacy.md` 的原版本恢复，不套新版规则。
+| 请求 | 加载与动作 |
+|---|---|
+| setup aidlc / setup check / setup status / 配置必需接入 | skills/aidlc-setup/SKILL.md；安装、检查或配置后停止，不建 work |
+| 选流程/怎么开始 | workflow/profiles.md；给推荐、理由、下一步。仅咨询不建 work、不查新、不派发；信息不足只问改变路线的关键问题 |
+| 配置团队流程 | skills/aidlc-workflow/SKILL.md、bootstrap/team.md |
+| setup confluence / 知识库接入 | skills/aidlc-knowledge-setup/SKILL.md |
+| setup gitlab / 公司 CI/CD 接入 | skills/aidlc-pipeline-setup/SKILL.md |
+| 查询状态 | 指定 work 的 state/证据；多 work 未指定先问，不启动 worker |
+| 仅审批 | 原 review/批准/候选、workflow/approval.md、workflow/identity.md；未授权继续就停 |
+| 终结/closing/closed | workflow/closure.md；未停 worker 不标 closed |
+| 知识重试 | workflow/knowledge-publish.md；核验原快照/授权，不重启交付 |
+| 流水线唤醒/停止等待 | 原方法的 workflow/pipeline-wait.md，仅已有 wait；旧版/未登记只报告状态，不补字段/监控 |
+| 新需求/继续实施 | 先 .aidlc/system/workflow/preflight.md；新工作先更新，已有工作固定原方法/图/授权。低于 0.12 按 workflow/legacy.md 恢复 |
 
-## 当前版本的唯一执行链
+配置完成即停，不隐式启动交付/监控/发布。参考资料或“讨论一下”不代表授权建需求、发布 ticket 或写外部系统。
 
-1. 读 config/state 和 `.aidlc/system/workflow/protocol.md`。新需求按 `.aidlc/system/workflow/profiles.md` 的风险基线、`.aidlc/system/workflow/extensions.md` 的已注册定义解析并固定图；已有需求直接核验 workflow_ref。不要重新加载所有阶段 Skill。
-2. 按 `.aidlc/system/workflow/dag.md` 计算 ready 节点；实际 spawn/collect、候选和停止见 `.aidlc/system/workflow/orchestration.md`。新 dispatch 按 `.aidlc/system/workflow/context.md` 提供 instruction_refs；每个 run 使用 `.aidlc/system/prompts/composed-stage.md`，给固定职责、必要输入及明确范围，父聊天不作为输入。
-3. 首个只读节点核实风险；首卡确认图、范围与产物。低风险内置 fix/enhance 可推荐“两次人审”，但必须按 `.aidlc/system/workflow/approval.md` 同卡取得精确工作委托，未确认仍 manual。不得把 workflow=auto 当批准。
-4. 核验真实 worker、文件、输入、候选、必需检查与摘要；按 protocol 建立不可覆盖 review。不代写业务结论，子 Agent 返回不等于批准。
-5. 按 approval 处理 manual/checkpoint_low_risk/auto_low_risk。审查卡只给新增决定、风险、阻塞和正文/证据链接。checkpoint 的最终 Verify 必须人审，只有 Implement 候选可在核验后委托批准并进入独立 Verify。
-6. Implement 返回 feedback_request 时，只有 `.aidlc/system/workflow/implementation-feedback.md` 的有效预算可允许同一节点的内部继续；协调器先记账再派发。其余失败停止、撤销委托并交人决定。
-7. 返回 waiting_external 时按 pipeline-wait 核验、释放槽位、保存原期限并接入宿主唤醒；不晋升 review/批准，不把待完成的外部检查当失败或完成。配置 delivery 的新工作按 pipeline-config 冻结本次绑定。
+## 交付执行链
 
-按需加载：Verify 的父 Gate 验真用 `.aidlc/system/workflow/gates.md`；身份刷新用 `.aidlc/system/workflow/identity.md`；知识 read/prepare 由 context 按能力加载各自短协议，父晋升用 `.aidlc/system/workflow/knowledge.md`，发布/重试用 knowledge-publish；Release/Learn 用 `.aidlc/system/workflow/external-evidence.md`。活动 stage/leaf/Hook 一并计入容量和更新阻断。
+1. 读 config/state 与 .aidlc/system/workflow/protocol.md。新 work 按 profiles + extensions 解析已注册图；旧 work 核验 workflow_ref。
+2. 按 workflow/dag.md 找 ready 节点；workflow/orchestration.md 管 spawn/collect、候选和停止；workflow/context.md 推导完整 instruction_refs。每 run 用 prompts/composed-stage.md，仅传固定 packet，不传父历史或全套 Skills。
+3. 首个只读 child 核实风险，首卡确认图/范围/产物。按 workflow/approval.md 处理 manual/checkpoint_low_risk/auto_low_risk；路由 auto 不是批准，checkpoint 最终 Verify 仍人审。
+4. 核验 worker、输入、完整候选、必需检查/证据，建立不可覆盖 review。卡片仅写差异、新决定、风险与链接；结果不等于批准，只批准而未授权继续则停。
 
-只批准而未授权继续就停下；澄清不是批准。图/职责/授权变化保留旧快照，按失效链重新确认。completed 不再派发交付，closed 不复活旧授权。本包是宿主执行的协作协议，不是身份认证或不可绕过的权限系统。
+条件动作：非零预算的 feedback_request 才读 workflow/implementation-feedback.md，先记账再派新 run；其他失败停止并按原协议撤销委托/交人决定。waiting_external 走 pipeline-wait，不晋升通过/审批；配置 delivery 的新工作按 pipeline-config 冻结。
+
+Verify 父验真读 workflow/gates.md；身份刷新读 identity；知识批准/晋升读 .aidlc/system/workflow/knowledge.md，发布另派 Hook。Release/Learn 取证读 external-evidence。未触发不展开。stage/leaf/Hook 共同计入容量和更新阻断。
+
+图/职责/授权变化保留旧快照并重新确认；completed 不再派发，closed 不复活授权。本包是宿主协作协议，不是不可绕过的权限系统。

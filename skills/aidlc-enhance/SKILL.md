@@ -3,12 +3,12 @@ name: aidlc-enhance
 description: 对现有边界内的小增强使用 scope、implement、verify 短流程；每阶段独立子 Agent，保留验收与审批。
 ---
 
-# Enhance
+# enhance 阶段入口
 
-若本次是 stage=scope、kind=leaf 且明确分配 gate-design 的 packet，只加载指定 Architect/QE 角色、common 与 prompts/gate-design.md，交付局部 Gate 提案，不执行完整 Scope 或覆盖其产物。
+主会话只转入 `.aidlc/system/skills/aidlc/SKILL.md`，由父派发全新隔离 child，不内联执行。
 
-主会话调用时，把用户的 enhance 意图交给 `.aidlc/system/skills/aidlc/SKILL.md` 路由；不能直接实施或在主上下文代跑。
+子 Agent 须有匹配锁定 `stage=scope`、节点 `kind=analysis` 的有效 dispatch，并核对 dispatch.kind。按 instruction_refs 读冻结 `workflow/worker.md`、角色、当前 Prompt/模板及必需依赖；无包、错配或漂移即 blocked。不读活动 system 资产、父协调/审批协议或反馈账本。
 
-独立子 Agent 只有在有效 profile=enhance、stage=scope 的 dispatch 下执行 `.aidlc/system/prompts/common.md`、`workflow/profiles.md` 和 `prompts/scope.md`。必要输入按 packet 读取，不递归派发。kind=stage 交付 compact change.md；kind=leaf 只交付已分配输出。
+按冻结 Prompt/worker 执行；kind=leaf 只交 expected_outputs，不生成整阶段产物。返回 result 给父后停止，不递归派发或推进。
 
-只写授权 run 的产物、证据和 result；返回实际 profile/身份/摘要，交父协调器核验并按 approval.md 处理审批。高风险或关键歧义返回 blocked，不越级实现。其后 Implement/Verify 使用各自新子 Agent 和对应 Skill，不复用本 child。
+界定原边界内可独立验收、回滚的小增强。gate-design leaf 按冻结 gate-design Prompt/指定 Architect 或 QE 交局部提案；完整节点交 compact change.md。高风险或关键歧义返回 blocked；后续 Implement/Verify 由父另派新 child。

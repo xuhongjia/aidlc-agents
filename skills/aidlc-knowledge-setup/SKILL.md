@@ -13,4 +13,6 @@ Confluence 使用 confluence_cloud + transport=twg_cli，按锁定 [接入步骤
 
 成功后仅保存真实目标与 transport，报告 CLI/认证/目标验证的实际状态；不创建 work 或试写页面，不改默认审批。发布另需现有 work 级 knowledge_publish 精确授权，Hook 只能投递固定获批快照；缺认证时 pending 并指回本 Skill，不在 Hook 自行修复认证。
 
+自然语言 setup confluence 使用本入口。若用户将此目标列为项目必需，按 .aidlc/system/workflow/setup.md 更新对应 required 引用及明确的持续只读检查范围，保留其它要求；不能把所有已配置目标自动设为必需。目标/连接变化使旧检查失效，真实检查结果交父保存，缺口保持 pending；完成后返回 setup 汇总，不自动接需求。
+
 安装/登录或改目标前盘点活动知识 Hook；存在或状态不明则先停止并确认，不改变在途连接。相同目标 ID 的定位/传输变化先呈交明确配置决定，保留旧快照、授权及回执；配置确认不能迁移历史发布授权。

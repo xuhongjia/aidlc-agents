@@ -30,6 +30,12 @@ AIDLC_DRAFT — 安装完成后用本次实际检查替换本标志及说明；�
 
 `ready` 仅代表包文件和这次只读子 agent 探针通过，不代表原生入口自动发现、真实阶段审批、功能验收或 CI Gate 已通过。
 
+## 项目就绪
+
+分别记录 method_ready 和 project_ready。列 config.setup.required 的每个 ID/能力/目标、实际状态、检查时间、证据及下一条 setup 指令；引用 .aidlc/setup/checks 的本次记录。方法已安装而必需 Confluence/GitLab 未就绪时，project_ready=false，新 work 不启动。可选项未检查不影响 ready；未知必需项不默认忽略。
+
+持续只读检查范围及真实授权单列；登录/目标可读不等于知识发布、CI 通过、部署或审批授权。setup status 只显示上次状态和时间，不冒称已重新验证。
+
 ## 待确认与下一步
 
 列出工具权限、来源信任及其他未解决项。用户尚未明确姓名时 `owner` 保留 `null`，在首次审批前确认；不得从 Git 配置推断签署人。

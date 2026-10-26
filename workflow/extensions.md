@@ -53,6 +53,8 @@ config.workflow 为 auto/显式 workflow ID，默认 auto；旧 config.profile �
 
 新工作先走原 preflight，再解析定义、验证各 case 组合下的活动图（只检一个样例路径不够）、输入和权限，生成不可变解析记录。用 `templates/work/workflow-lock.json` 固定核心、team、project 来源、整图、实际阶段定义、绑定和所有方法/Prompt/模板/Hook 文件的副本及真实 hash；锁本身无自引用摘要，workflow_ref={path,sha256} 指向它。主协调器仅解析声明，不在此撰写阶段业务结论。
 
+0.14 新锁另存 setup_check_ref={path,sha256}，由父按 workflow/setup.md 验真本次调用、要求/目标摘要、有效只读授权和逐项 ready。它只是前置检查的固定证据，不赋予阶段权限；不加入 child instruction_refs，不修改旧锁或历史批准。
+
 锁内 `sources.core/team/project` 各为 `{id,version,kind,revision,manifest_ref,file_hashes}`（未启用层为 null），revision 为完整 Git commit 或 null，local-unreleased 必須记录完整实际 file_hashes。`workflow` 是解析后的完整 WorkflowDefinition，`stages` 为它实际引用的完整 StageDefinition 数组，tool_bindings 为实际用到的完整定义；不得只留会变化的 catalog ID。`selection_evidence` 保存原请求类型、风险/复杂度事实及来源引用，`path_checks` 保存每个分支组合、选中 step IDs、authority/输入/最终验证保障检查结果与实际依据。
 
 `assets` 每项固定 `{ref,path,sha256}`：ref 是唯一 namespace 逻辑引用，path 是**业务项目根相对路径**，指向 `.aidlc/work/ID/definitions/gN/` 中的真实原样副本，sha256 是其原始字节摘要。例如逻辑 `team:templates/api-change-brief.md` 映射到本 work 的 `definitions/g1/team/templates/api-change-brief.md` 副本，不映射到活动 team 目录。path 不含父目录/软链接，副本禁止覆盖；复用相同 ref 只允许完全相同内容。

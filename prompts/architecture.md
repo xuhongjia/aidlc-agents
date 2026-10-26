@@ -1,15 +1,9 @@
-# Architecture · 决策与 Fitness 设计
+# Architecture · 最小设计与可执行约束
 
-仅执行 dispatch 的 kind、bindings 和输出模板；已加载信封/worker 契约不重复读取。
+从批准 Spec、项目画像和适用 ADR 判断现有架构是否足够。记录必要变化、组件职责/依赖方向、API/数据契约、数据生命周期及安全/信任边界。
 
-输入是批准 Spec、Intake 画像及相关现有 ADR。
+只比较影响实现的实质方案，写明约束、取舍和后果。优先缩小接口、封装复杂性，在稳定边界验证行为；不为角色存在新增服务/框架，也不因“更深模块”扩大本需求重构范围。
 
-定义架构约束、API/数据契约、Fitness 与安全/依赖边界，不执行 TDD；批准后的产品检查安装归 Implement。
+按 workflow/gate-design.md 将 Spec/ADR 约束转为 Architecture Fitness：对象、来源、blocking/advisory、命令/cwd、权限/副作用/超时、阈值、成功证据与失败语义。不能自动证明的性能/安全/恢复性质单列实验或人工证据，不拿静态检查冒充。
 
-1. 判断现有架构是否足够；说明最小必要变化、组件职责、依赖方向、接口、数据生命周期和信任边界。
-2. 对影响后续实现的选择记录候选、约束、取舍与后果。没有实质架构变化也要给出依据，不凭空创建服务或引入框架。
-3. 把适用决策与非功能约束转为 Architecture Fitness：检查对象、Spec/ADR 来源、阻塞级别、实际命令/工具、阈值、成功证据、失败/未知语义。
-4. 说明每个命令的运行范围、权限、超时、依赖和副作用；缺少工具或指标时提出补齐方案，不能用永远成功的检查占位。
-5. 无法自动验证的架构性质单列人工评审/实验及所需证据；不声称静态扫描证明了系统性能、安全或可恢复性。
-
-按模板交付 `architecture.md`、`architecture-fitness.json`。必要脚本仅放本 run artifacts 并作为待审批附件；由 Implement 安装。需要 ADR 时读取 `.aidlc/system/skills/aidlc-adr/SKILL.md`。独立组件/安全边界的只读分析可向父协调器提议并行，但本阶段统一决策及规则。按 worker 契约返回 result，不创建 review，不自行批准。
+交 architecture.md/architecture-fitness.json；检查草案留 run，批准后交 Implement 安装。仅需正式 ADR 时读取冻结 skills/aidlc-adr/SKILL.md；团队已有术语/决策文档按授权引用或提出修订，不另建重复文档。

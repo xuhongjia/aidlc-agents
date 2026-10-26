@@ -1,16 +1,9 @@
-# Spec · 从问题到验收契约
+# Spec · 可验证的行为契约
 
-仅执行 dispatch 的 kind、bindings 和输出模板；已加载信封/worker 契约不重复读取。
+基于批准 Intake 和项目事实定义 FR/NFR、AC、Expected Behavior、Business Invariants、Edge Cases、Verification Criteria。
 
-按已加载 worker 的来源映射契约填写现有表及 acceptance.requirements/source_refs；与原始请求逐项核对，不能只核对已经写出的 AC。
+- 沿用业务术语，覆盖主流程、异常、权限、数据、兼容性和适用非功能要求；用可观察条件替代“快、安全、易用”。接口需求写明输入/输出/错误，方案取舍留给 Architecture。
+- 每项 AC 有稳定 ID、条件/动作/预期及验证方式；正反例和边界来自业务规则。按 worker 的来源映射覆盖原始 FR/NFR，排除须明确批准，不能只核对已有 AC。
+- 只问代码/规范无法回答且影响行为的决定，给出选项和影响。业务歧义不以猜测填平；范围变化返回决定项。
 
-以批准 Intake 与项目上下文为输入。
-
-定义 FR/NFR、AC、Expected Behavior、Business Invariants、Edge Cases 与 Verification Criteria；只设计验收契约，不加载 TDD Skill 或执行 RED/GREEN/REFACTOR。
-
-1. 写清用户/调用者、主流程、异常、边界、权限、数据与兼容性。仅包含适用的非功能需求；不可测的“快、安全、易用”需落实成观察条件。
-2. 建立稳定 AC ID；每项包含条件、动作或输入、期望可观察结果、验证方式。正例、反例和关键边界来自业务规则，而非现有实现的偶然行为。
-3. 对每项需求建立 AC 覆盖；明确不做的内容。把无法从输入确定的业务决定留给人类，不用通用“最佳实践”替业务取舍。
-4. 需要接口/数据契约时给出字段、错误、版本兼容和敏感性；涉及架构选择仅陈述需求约束，把方案决定交给 Architecture。
-
-按模板交付 `spec.md` 和 `acceptance.json`，两者语义一致。可按需读取 `.aidlc/system/skills/aidlc-spec-generation/SKILL.md`。在本 run artifacts 交付，按 worker 契约返回 result 供父协调器校验及请求人类审批，不直接实现。
+按模板交 spec.md/acceptance.json，保持一致。模板覆盖的信息不重复写报告；需要细化 AC 时才读冻结 skills/aidlc-spec-generation/SKILL.md。发布 issue/ticket 需要另有明确授权，本阶段默认交本地规格。

@@ -1,16 +1,9 @@
-# Release · 发布就绪，不是自动部署
+# Release · 发布就绪与环境证据
 
-仅执行 dispatch 的 kind、bindings 和输出模板；已加载信封/worker 契约不重复读取。
+读取批准候选和有效验证。按 workflow/external-evidence.md 主动只读查询绑定 Git/CI/Jira：commit、PR/MR、必需 job、构建物及验收/阻塞反馈；先检索再报告缺口。容器用完整 repository@digest 关联 job/commit，区分 CI 声明、registry 核实与实际部署。
 
-输入为批准的冻结候选及当前有效的验证证据。
+有 pipeline_requests 时按 workflow/pipelines.md 核对真实目标环境、运行构建物和 smoke/health；未完成返回 waiting_external。绑定 CD 的必需部署证据不能按“发布前就绪”豁免。
 
-有固定 pipeline_requests 时执行 `.aidlc/system/workflow/pipelines.md`：读取真实 CI/CD 与目标环境观察，必需部署/构建物/smoke-health 通过才呈审；pending/manual 保存 wait_request 并 waiting_external 返回。未绑定时沿用发布前就绪语义，配置的 CD 不套用“缺部署记录不阻塞”的例外。
+交 release-readiness.md 及 source-index/原始快照，写实际差异、AC 结论、限制、配置/密钥来源（不写密钥）、迁移影响、操作/回滚触发、观察指标及负责人/待分配责任。未演练明确标注。
 
-执行 `.aidlc/system/workflow/external-evidence.md`：主动从 dispatch.external_reads 指定的业务 Git 仓库/CI/Jira 收集候选 commit、PR/MR、必需 pipeline/job、构建物及验收/阻塞反馈。容器交付提取完整 image repository@digest 和对应 job/commit；将它与批准候选核对。只读查询已有部署记录，区分 CI-reported digest、registry 核实和实际部署。先检索可用来源，缺口再返回，不默认让用户粘贴 CI 日志。
-
-1. 核对候选、检查规则和证据仍相符；漂移或未解决阻塞不能靠 Release 文档覆盖。
-2. 汇总变更与 AC 验证结论、已知限制、目标环境前提、配置/密钥来源要求和数据迁移影响。不得在产物中写入密钥值。
-3. 准备运行说明、发布步骤、回滚触发条件/方法、观察指标、支持与负责人或待分配责任；未演练的步骤标明未演练。
-4. 分开列明技术验证、业务/UAT 验收、发布授权、实际部署四种状态。说明还缺哪些人类或外部动作。
-
-在本 run artifacts 交付 `release-readiness.md`，evidence 中保存 source-index.json 与原始来源快照/实际摘要；kind=leaf 仅交分配的取证片段，完整阶段汇总收齐索引。按 worker 契约返回 result 给父协调器并停止。该阶段的批准仅表示本包定义的发布准备完成，不执行推送、合并、部署或生产变更。需要发布时由用户在独立授权的现有流程中执行。
+分别报告技术验证、UAT/业务接受、发布授权、实际部署。候选漂移或阻塞不被文档覆盖；该阶段批准不授权 push/merge/deploy。

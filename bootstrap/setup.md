@@ -1,5 +1,7 @@
 # AI-native setup
 
+0.14 默认只把 AIDLC 列为项目必需项。用户可通过 setup aidlc 配置 Confluence/GitLab 的必需 target/binding；[项目 Setup Gate](../workflow/setup.md) 在新 work 前核实，未完成则阻止新交付。必需不等于安装/连接授权；具体接入仍用原 Skills，普通安装不自动连接公司系统。
+
 0.13 新工作采用 V2.1：TDD 只在 Implement，冻结同名适配 Skill/可选资源与两个独立 Reviewer；Standard 在 verified handoff 结束，Release/Learn 仅团队显式扩展。无需另装第三方 Skill 插件或 TDD Agent，普通 setup 不运行 TDD、不授予生产权限。旧 work 保留原资产/方法。
 
 0.12 新安装 config.delivery=null，不自动连接 CI/CD 或注册后台监控。新 work 使用 state schema 5、dispatch schema 5、stage-result schema 4；实际配置另按 [pipelines.md](pipelines.md)。旧工作仍用原方法，不新增读取/等待授权。
@@ -43,6 +45,7 @@
 | `.aidlc/system/` | manifest 中列出的 payload 原样复制，保留目录关系 |
 | `.aidlc/config.json` | 包版本、来源 commit/摘要、当前工具、solo/standard、owner、受管文件清单 |
 | `.aidlc/setup-report.md` | 安装边界、来源、能力、冲突、验收结果和下一句使用方法 |
+| `.aidlc/setup/checks/` | 本次项目要求与真实检查记录；项目数据，不纳入 managed_files |
 | 当前工具的一个项目 bridge | 仅引用 canonical router/protocol；见 `adapters/README.md` |
 | 可选当前工具原生 Skill | 只有宿主支持且不会冲突时安装 router shortcut，不是必需项 |
 
@@ -71,6 +74,8 @@
 - 比较改动范围：仅配置文件变化，业务代码、已有指令的非受管内容、其他工作状态不变。
 - 更新 `.aidlc/setup-report.md`，状态为 `ready` 或 `blocked`，列出实际验证与未验证范围。ready 仅表示文件检查及只读隔离子 agent 的启动/返回探针通过、已可接收需求，不表示自动发现、审批行为、并行安全、实施、Gate 或需求验收完成。真实需求演练须另获用户指示，不是 setup 的必做步骤。
 
+方法安装检查后按 workflow/setup.md 单列“项目就绪”。保留用户已有必需清单；初装未指定外部必需项时仅 aidlc。外部目标未定保留 required 中 target_id=null 并明确阻塞；不可通过不保存要求把项目标 ready。允许先完成方法安装，再逐项 setup confluence/gitlab。状态报告区分 method_ready 与 project_ready，列缺口、证据时间及下一条指令；所有必需项通过前不能创建交付 work。没有外部要求不读取外部协议或调用公司服务。
+
 给用户简短结果：配置到了哪个项目、来源版本、实际工具入口、写入路径、未验证项，以及下一句：
 
 > 使用 aidlc 接收需求：……；只完成当前阶段，给我审查摘要和版本，等我明确批准后再进入下一阶段。
@@ -86,6 +91,8 @@
 卸载仅移除有记录且内容未变的受管文件/marker，必须在用户明确要求时逐项确认范围；保留需求、批准、证据和用户内容，默认不删除 `.aidlc/work/`。
 
 ## 可选接入，不是默认安装步骤
+
+项目可把具体接入声明为必需；这只改变新 work 的前置条件，不改变以下安装、认证与发布授权边界。接入 Skill 完成后回父重新核对项目要求，不自动启动工作流。
 
 默认不修改项目/全局 Codex 配置；用户明确启用时按 [精简设置](../docs/context-efficiency.md) 备份并只合并 tool_output_token_limit。知识 targets 默认空，用户明确配置 Confluence 时交 [知识 setup Skill](../skills/aidlc-knowledge-setup/SKILL.md)，按 [TWG 安装/登录](knowledge.md) 处理；普通 setup 不安装 CLI 或认证、不获得发布权限。
 

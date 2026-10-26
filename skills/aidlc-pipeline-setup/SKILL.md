@@ -10,3 +10,5 @@ description: 为已接入 aidlc-agents 的业务仓库配置 CI/CD 结果校验�
 默认 CI 绑定 verification，CD 绑定 release_readiness；用户要求短流程发布校验时，再显式绑定 core.fix/core.enhance 的 verification。保存精确配置差异，保留其它设置及旧工作锁。配置不启动需求、监控或流水线，不修改公司 CI/CD；工作级监控范围随首卡确认。
 
 GitLab 的读取细节仅按需读 `.aidlc/system/adapters/delivery/gitlab.md`。完成配置后报告只读探测结果和下一句使用方法；未取得真实结果的集成标 NOT_RUN。
+
+自然语言 setup gitlab 使用本入口。项目要求此 binding 必需时，按 .aidlc/system/workflow/setup.md 保存精确 required 引用与真实持续只读检查授权；配置变化重验映射，旧就绪记录失效。仅配置的可选 binding 不自动变必需。缺连接/报告仍报告 pending，不能仅凭 glab 可执行标 ready；完成后交父汇总 setup，不启动工作流。

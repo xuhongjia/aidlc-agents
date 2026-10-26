@@ -1,5 +1,9 @@
 # AI-native update
 
+0.13 → 0.14：新增项目 Setup Gate 和可选 config.setup；缺字段的旧安装仅要求 AIDLC，不自动将已有 Confluence/GitLab 配置设为必需，也不授予持续只读探测权。用户已有 setup 清单/授权和 .aidlc/setup/ 检查证据保留；新 work 锁带 setup_check_ref，旧 work/批准/锁不迁移。更新成功不等于外部接入 ready；按新要求检查后才启动新 work。
+
+0.14 同时包含此前本地 0.13.1 的精简批次（0.13.1 未单独发布）：精简新工作使用的角色/阶段 Prompt 与 Skill 路由，并加入敏捷切片/术语/工程复盘指引。该批次不改变图、schema、权限和审批模式，不新增外部 Skills、tracker 或宿主配置。旧 work 继续其冻结方法；团队 Prompt/模板保持三方合并，不因正文缩短覆盖团队规则。
+
 0.12 → 0.13：只对新工作启用 V2.1 Implement-only TDD、同名适配工程 Skill/按需资源、两个独立 Gate Reviewer 与 verified handoff。明确展示 Standard 从九阶段改为七阶段、默认不激活 Release/Learn；已有 config.delivery 保留，只绑定选中节点，不静默添加 CD。要继续发布/反馈，新工作选择团队扩展 ID。state/dispatch/result 原 schema 不变，只对新 work 增添空 optional refs/skill_uses/handoff；不迁移旧锁、批准、TDD 历史或旧 Gate 身份，不自动安装外部插件。团队定义/模板不兼容时按原三方冲突流程停止确认。
 
 0.11 → 0.12：只为新工作启用可选 CI/CD 绑定及 waiting_external，state/dispatch/result/review/source-index/gate 分别为 schema 5/5/4/3/2/2。缺 config.delivery 只补 null，保留已有设置；不为旧工作补绑定/监控/权限，不迁移历史批准。原需求用原资产，等待中的工作与未停宿主 monitor 阻止应用更新。新的接入 Skill 独立配置已有流水线，普通 setup/update 不认证、不启动监控、不修改 CI/CD。

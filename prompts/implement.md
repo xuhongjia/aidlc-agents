@@ -1,12 +1,9 @@
-# Implement · 按批准基线交付候选
+# Implement · 交付可验证候选
 
-只执行 dispatch 的固定 kind/bindings/输出模板及 worker 契约；读真实实施 authority、请求、AC、Oracle、约束与批准检查。短流程的 change 就是实施基线，不补造 Plan。先检查用户未提交修改及边界，禁止覆盖或混入未请求重构。
+读取批准 Plan/change、Requirement/AC/Oracle、架构边界和实施 authority；短流程不补 Plan。按冻结 workflow/tdd.md 与默认 test-driven-development/incremental-implementation 执行行为切片，保留真实 RED→GREEN→REFACTOR/例外及最终候选回归。环境失败不是 RED；不改预期换取通过。
 
-1. 仅在有效 authority、命令/路径/副作用授权与 dispatch 交集内按任务实施；固定 test-driven-development/incremental-implementation 为默认 Skill。行为/bug 逐切片真实 RED→GREEN→REFACTOR；环境错误不算 RED，纯文档/无行为配置需具体例外及验证。记录 TDD 附件和最终候选回归，按锁内 `.aidlc/system/workflow/tdd.md` 执行。影响范围、架构/数据/安全、Oracle 或权限改变时 blocked，不先改再补签。
-2. 按固定 gate-design 协议安装批准的检查附件，核对草案及实际目标摘要；执行双 Gate 自测，新检查用受控负向样例证明违约会失败。缺规则/实现/授权不能留给 Verify 补代码。
-3. 对修复任务，以同一批准 Oracle 证明修复前 RED、修复后通过及邻近回归；可用隔离旧候选或有效历史证据，不回滚用户树。缺复现/根因或前后差异则 blocked，不改预期让测试变绿。
-4. 保存真实命令/环境/候选与原始结果，区分已有失败、预期 RED/负向失败、本次意外回归和 NOT_RUN。意外失败即停；显式非零预算时才读锁内 feedback-request 并返回请求，由父核验记账后派新 run。不得先偷偷试修、删失败检查或降低阈值。
+按 workflow/gate-design.md 安装获批 Fitness，核对草案/目标摘要并用受控负向样例证明检查有效，执行双 Gate 自测；缺规则或实现不能留给 Verify。fix 须有同 Oracle 的修复前失败、修复后通过和邻近回归；引用历史证据须真实一致，不回滚用户树。
 
-交付 dispatch 模板要求的 implementation 语义：变更/AC 对照、TDD/例外、自测、完整候选、限制、回滚及未完成 QE 项。compact 模板仍只写 verification.md，独立 QE 未执行标 NOT_RUN；standard 模板为 implementation.md，不额外创造报告。leaf 只交分配内容，不替整个阶段签字；ready_for_review 是提交候选，不是 Implementation Verified Handoff。
+按批准任务依赖顺序实施，只有资源独立且有实际收益时提 parallel_requests；共同接口/锁文件和最终集成串行。debugging/self-review 仅真实需要时读固定 optional_instruction_refs 并记 skill_uses；self-review 不替代独立 Gate。意外失败遵循 worker 的停止/显式反馈边界。
 
-需要独立任务仅提 parallel_requests，声明唯一 writer、接口及资源；共享文件/锁/DB/缓存与最终集成串行。正文给差异和证据链接，不复制日志；按 worker 返回 result，候选输出不是 QE 验证、批准、部署或业务验收。
+按输出模板记录变更/AC、自测、候选、TDD 附件、限制/回滚。compact 仅 verification.md，standard 用 implementation.md；独立 Gate 未执行标 NOT_RUN。ready_for_review 是候选提交，完成条件留给独立 Verify 与有效批准。

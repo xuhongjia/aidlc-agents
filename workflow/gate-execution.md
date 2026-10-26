@@ -1,17 +1,23 @@
 # 冻结候选上的独立双 Gate
 
-0.13 verification 使用两个独立执行 leaf：父 Coordinator 分别派 architecture-gate-reviewer、quality-gate-reviewer，再派新的 Verify collector 汇总；不抄 DEV 自测。三个实际 Agent/run 均独立于所有 implementation contributors，两 Reviewer 彼此不同；每类至少一项与变更相关的非空 blocking 检查，保留全部批准必需规则。本地或固定 local/ci/hybrid 来源均须满足原规则；缺规则/实现先 blocked，回实际生产者，不在 Verify 改代码/测试/Oracle/阈值，不以人工检查或 N/A 替代。
+父分别派 architecture-gate-reviewer、quality-gate-reviewer，再派新 Verify collector；三个实际 Agent/run 均不同，且独立于所有 Implement contributors。DEV 自测不替代它们。每 Gate 至少一项相关、非空 blocking 检查，全部批准必需规则保留；缺设计/实现 blocked，回实际生产者，不在 Verify 补写或放宽规则。
 
-核对批准基线、命令入口实际摘要、权限及同一完整冻结候选，执行前后重枚举/哈希。两个专职 Reviewer 必须派发；证实独立报告/临时目录、无共享可写 DB/缓存/端口/环境时可并行，否则分别串行，不合并成同一执行者。collector 不占槽等 leaf，返回请求后结束，父收齐后派新 collector。不为每条命令创建 Agent。
+核对批准基线、命令入口摘要、权限及同一完整冻结候选，执行前后按 worker 重枚举/哈希。独立报告/临时目录、无共享可写 DB/缓存/端口/环境才并行，否则两个 Reviewer 串行。collector 提请求即结束，不占槽等待；不按检查命令创建 Agent。
 
-dispatch.gate_assignment={kind,collector_run_id} 固定种类/汇总归属，role/Prompt 从锁内 context.gate_reviewers 推导，required_evidence 只含分配 Gate。CI 原始报告由 Verify 按原绑定取证并提供精确输入/摘要；Reviewer 独立核对其规则/job/候选与断言，不复制规范化 PASS。CD/等待仍由原 Verify 节点管理；Reviewer 不新增外部绑定或后台等待。
+dispatch.gate_assignment={kind,collector_run_id} 固定种类/归属，角色和 Prompt 取锁内 context.gate_reviewers，required_evidence 仅分配 Gate。Reviewer 只写自己的 architecture-gate.json 或 quality-gate.json 及原始日志，collector 引用原文件并核验身份/摘要/lineage，不能冒称重跑。
 
-每个 Reviewer 只在自己的 run evidence 写分配的 architecture-gate.json 或 quality-gate.json，使用锁内 gate-result 模板；collector 引用原文件。填 kind、候选范围/真实文件摘要、baseline_refs、时间与环境、checks、总状态。每项含 ID、blocking/advisory、真实 command/cwd、结果/退出码、executed_count/skipped_count、成功判据、raw_evidence 路径/摘要及相关规则断言证据。stdout/stderr 与工具原始报告保留文件；聊天仅回结论/数量/失败定位/证据链接。
+按固定 gate-result 模板填写候选、baseline_refs、时间/环境、checks/状态。每项保留 ID、blocking/advisory、实际命令/cwd、退出码/结果、executed_count/skipped_count、成功判据、相关规则断言及 raw_evidence 路径/真实摘要。PASS 要求非零相关 blocking 断言且全部必需检查通过；零/全跳过、空范围、无关、工具故障/超时、缺失/截断/未知或漂移均阻塞。完整报告留文件，不能从摘要猜 PASS；CI 强制门禁仍依赖项目工具与权限保护。
 
-PASS 需要实际非零相关 blocking 检查且全部必需检查通过。FAIL、零测试、全跳过、空范围、无关检查、工具故障、超时、缺失/截断/未知输出或候选漂移都阻塞；定向读取完整原始证据，不能从短摘要猜 PASS。模型自评不是 Gate，CI 硬门禁仍依项目真实工具和权限保护。
+Quality Reviewer 核对全部 Task 的 TDD/例外、最终候选回归和逐 AC 证据，不加载 TDD 执行 Skill。修复前后差异/邻近回归与人工 AC 真实观察不可省。collector 核验两 Gate、FR/NFR 完整性、AC 与原始证据；双 Gate 不替代验收覆盖。
 
-两份报告绑定同一冻结候选和各自批准规则，包含真实 reviewer identity/dispatch 引用并纳入 result.evidence；正文链接各实际 run，不要求复制报告到 collector 目录。collector 核对原始报告、摘要和 execution lineage，不能冒称重新执行。Quality Reviewer 独立核对每个 task 的 TDD/例外、最终回归与逐 AC 证据；它不加载 TDD 执行 Skill。人工证据同样必须齐全，双 Gate 不替代需求完整性；必需项或修复前后差异/邻近回归缺失均阻塞。
+## 配置 CI 或恢复时
 
-Implement 只提交待验证候选。两 Gate、全 AC、TDD 证据和必要审批齐全且候选未漂移后，父才按 TDD 契约写 verified handoff；Gate FAIL 走既有受控修复授权、新 Implement run 与新候选重验证，不由 Reviewer 自修或自动批准。
+local/ci/hybrid 必须符合原批准规则。CI 报告由原 Verify 绑定取证，Reviewer 独立核对 job/attempt/configuration/rule/commit/source、候选与断言，不复制规范化 PASS；command 为获批 job 引用，未提供 exit_code/cwd 留 null，不编造。
 
-CI check 用 execution 记录真实 job/attempt/configuration/rule/commit/source 身份，command 指获批 job 引用，未提供 exit_code/cwd 留 null；成功判据必须同时核对真实 job success 与规则断言/报告，不能补造退出码。恢复可引用同 step/revision、同候选/图/规则/输入的完整旧执行；execution_refs 每项保存 origin_dispatch_ref、origin_result_ref、gate_ref、原 run_id/agent_id、workflow_ref/step_id/revision、candidate_ref、baseline_refs/input_refs。原始记录和全部证据 hash 实际相符后才复用，不改旧 run_id，不从缓存判断最新 CI/CD 状态。等待不标阶段 PASS，必需 CI/CD 未完不能交最终验证审查。
+CD/等待由原 Verify 管理；Reviewer 不新增绑定/监控，外部结果未就绪则返回缺口。必需 CI/CD 未完不能交最终验证审查。
+
+复用检查仅限同 step/revision、候选/图/规则/输入。execution_refs 保留 origin_dispatch_ref/origin_result_ref/gate_ref、原 run_id/agent_id、workflow_ref/step_id/revision、candidate_ref、baseline_refs/input_refs，全部原始记录及证据 hash 相符才引用；不换身份、不以缓存代查最新流水线状态。
+
+## 交接
+
+Implement 只交待验证候选。双 Gate、全 AC、TDD/证据、无漂移与必要批准齐全后，父才确认 verified handoff。FAIL 交父按既有受控修复授权派新 Implement；新候选重验证，至少受影响 Gate 真实重跑，无完整依赖不变证明不能复用旧报告，禁止改 hash 挂新候选。Reviewer 不自修/自批。

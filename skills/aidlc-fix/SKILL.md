@@ -3,12 +3,12 @@ name: aidlc-fix
 description: 对局部且可复现的既有行为缺陷使用 diagnose、implement、verify 短流程；根因与修复前后回归证据不可省略。
 ---
 
-# Fix
+# fix 阶段入口
 
-若本次是 stage=diagnose、kind=leaf 且明确分配 gate-design 的 packet，只加载指定 Architect/QE 角色、common 与 prompts/gate-design.md，交付局部 Gate 提案，不执行完整 Diagnose 或覆盖其产物。
+主会话只转入 `.aidlc/system/skills/aidlc/SKILL.md`，由父派发全新隔离 child，不内联执行。
 
-主会话调用时，把用户的 fix 意图交给 `.aidlc/system/skills/aidlc/SKILL.md` 路由；不是直接改代码的授权。
+子 Agent 须有匹配锁定 `stage=diagnose`、节点 `kind=analysis` 的有效 dispatch，并核对 dispatch.kind。按 instruction_refs 读冻结 `workflow/worker.md`、角色、当前 Prompt/模板及必需依赖；无包、错配或漂移即 blocked。不读活动 system 资产、父协调/审批协议或反馈账本。
 
-独立子 Agent 只有在有效 profile=fix、stage=diagnose 的 dispatch 下执行 `.aidlc/system/prompts/common.md`、`workflow/profiles.md` 和 `prompts/diagnose.md`。只按 packet 读取输入，不递归派发。kind=stage 交付 compact change.md；kind=leaf 只交付已分配输出。
+按冻结 Prompt/worker 执行；kind=leaf 只交 expected_outputs，不生成整阶段产物。返回 result 给父后停止，不递归派发或推进。
 
-诊断不能改项目源码/测试。无法证明复现与根因就 blocked；权限/迁移等高风险 bug 建议 standard。只写自己的 run 产物、证据和 result，返回父协调器等批准；不自行进入修复。Implement/Verify 分别新建子 Agent，必须取得对应批准并保留回归证据。
+仅调查和复现；可信预期、真实失败及已确认根因缺一则 blocked。gate-design leaf 按冻结 gate-design Prompt/指定 Architect 或 QE 交局部提案；完整节点交 compact change.md。高风险升级，修复需另派获批 Implement，保留前失败、后通过及邻近回归。

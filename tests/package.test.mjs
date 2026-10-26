@@ -288,9 +288,9 @@ test('all JSON artifacts parse, templates start without fabricated approvals or 
   assert.equal(Object.hasOwn(json('templates/work/review.json'), 'digest'), false, 'No self-referential manifest hash');
 });
 
-test('twenty-four unique skills have valid discovery metadata', () => {
+test('twenty-five unique skills have valid discovery metadata', () => {
   const skillFiles = all.filter(file => path.basename(file) === 'SKILL.md');
-  assert.equal(skillFiles.length, 24);
+  assert.equal(skillFiles.length, 25);
   const names = new Set();
   for (const file of skillFiles) {
     const text = readFileSync(file, 'utf8');

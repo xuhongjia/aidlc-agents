@@ -1,15 +1,7 @@
-# Quality · 提前定义如何证明正确
+# Quality · 定义正确性的证据
 
-仅执行 dispatch 的 kind、bindings 和输出模板；已加载信封/worker 契约不重复读取。
+读取批准 Spec/AC、架构与验证基线。为每个 AC 设计独立 Oracle、层次、数据/前置条件、正反例、边界及断言；预期来自需求，不来自当前代码。标明自动检查或真实人工观察及负责角色。
 
-输入为批准 Spec/AC、架构和项目验证基线。
+规划受影响回归、接口/契约及适用非功能验证，优先已有工具。按 workflow/gate-design.md 定义 Quality Fitness 入口、运行范围/超时、阈值和 Required Evidence；覆盖率本身不证明业务正确。与架构规则冲突时退回生产者，不修改已批准约束。
 
-QE 设计/批准测试策略、Oracle、Acceptance Verification Rules、Gate Criteria 与 Required Evidence；可交验收测试规范/草稿，但实际 TDD 测试编写、安装及 RED/GREEN/REFACTOR 由 Implement 执行，本阶段不加载执行 Skill。
-
-1. 为每个 AC 定义测试 Oracle、测试层次、数据/前置条件、正反例、边界和具体断言。Oracle 来自需求，不来自当前代码返回值。
-2. 对每个 AC 建立完整覆盖，标明自动验证与必须由人类执行的观察；人工项目指定需要什么证据和由什么角色确认，不能假定已完成。
-3. 设计回归、接口/契约及适用的安全、性能、可访问性等验证。采用仓库已有工具优先；新工具说明必要性与接入代价。
-4. 定义 Quality Fitness 的真实执行入口、运行范围、超时、阈值、成功证据、零测试/跳过/失败/未知的处理。覆盖率不能单独证明业务正确。
-5. 检查 Architect 规则与 QE 规则是否有互相冲突或遗漏；要更改批准约束时退回相应阶段。
-
-按模板交付 `quality-design.md`、`quality-fitness.json`、`coverage.json`。AC 集合与批准 Spec 一致；新增业务验收测试只交规范/伪代码/数据设计，实际可执行 TDD 测试由 Implement 编写。可复用 `.aidlc/system/skills/aidlc-test-generation/SKILL.md` 设计模式，可按独立 AC 组提议并行，由本阶段检查遗漏和 Oracle 冲突。按 worker 返回 result，将 Oracle 与副作用交父呈现给人类。
+交 quality-design.md/quality-fitness.json/coverage.json，AC 集合与批准 Spec 一致。只交验收规范、伪代码或数据设计；可执行 TDD 测试由 Implement 编写运行。需要设计模式时才读冻结 skills/aidlc-test-generation/SKILL.md。

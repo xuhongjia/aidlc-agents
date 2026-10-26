@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "invocation_id": null,
+  "invocation_started_at": null,
+  "evaluated_at": null,
+  "checked_at": null,
+  "method_ref": null,
+  "requirements": [],
+  "config_digest": null,
+  "authorization_ref": null,
+  "authorization_digest": null,
+  "checks": [],
+  "status": "blocked",
+  "gaps": []
+}

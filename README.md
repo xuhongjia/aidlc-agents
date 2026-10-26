@@ -2,7 +2,15 @@
 
 **让 AI 按需求大小选流程，每阶段独立子 Agent 执行，默认交给你批准，也支持有限自动批准。**
 
-AI-assisted、Spec-driven、Human-governed。没有 Python 安装器、额外 Agent CLI 或常驻服务。当前包版本 **0.13.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents)
+AI-assisted、Spec-driven、Human-governed。没有 Python 安装器、额外 Agent CLI 或常驻服务。当前包版本 **0.14.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents)
+
+借鉴 Matt Pocock Skills 的任务路由、业务术语、纵向切片、依赖调度与工程复盘，融入现有阶段；不用另装整套 Skills。见 [敏捷使用与来源映射](docs/agile-skills.md)。阶段 Prompt 只写阶段差异，共同约束维护一份；加载量与实测 token 分别报告，见 [上下文说明](docs/context-efficiency.md)。
+
+## 项目必需 Setup
+
+可对 AI 说 `setup aidlc`、`setup confluence`、`setup gitlab`、`setup check` 或 `setup status`；这是自然语言入口，不是终端命令。AIDLC 必需，外部接入按项目指定的 target/binding 设为必需或可选。新 work 前，必需项缺配置/认证/可读证据即阻止启动，并给出下一条 setup 指令。检查属于父协调器，不增加业务阶段或 child Prompt。
+
+[配置与示例](docs/project-setup.md) · [Setup Skill](skills/aidlc-setup/SKILL.md)。首次未安装时仍使用下方“一句话接入”；已有 work 保持原锁，控制操作不因新要求被阻塞。可读就绪不等于可发布、CI PASS 或业务批准。
 
 ## 团队可组合工作流
 

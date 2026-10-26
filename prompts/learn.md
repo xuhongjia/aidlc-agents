@@ -1,18 +1,9 @@
-# Learn · 用真实结果闭环
+# Learn · 业务观察与工程复盘
 
-仅执行 dispatch 的 kind、bindings 和输出模板；已加载信封/worker 契约不重复读取。
+按 workflow/external-evidence.md 从绑定 Git/CI/Jira 收集实际部署、评论、验收、reopen 和缺陷；有 pipeline_requests 先按 workflow/pipelines.md 刷新，未完返回 waiting_external，延后知识准备。流水线通过不代表业务反馈。
 
-完整阶段按 `.aidlc/system/workflow/knowledge-prepare.md` 追加架构、质量、反模式和经验的新知识版本，保留原批准设计/证据及适用限制，不静默覆盖。实际反馈来源与设计符合性分别写清；建议不得变成企业强制规范、Oracle、阈值或 Skill 修改。冻结可发布正文/目标/脱敏再交审批，未批准/不确定结论不直接同步。
+对照批准目标/AC 与 Release commit/digest、实际环境、观察窗口。保留来源/作者、必要原文、发生/更新时间及候选关联，记录支持、反对和未知；Done、点赞、机器人构建消息不能证明接受。版本不明、意见冲突、分页不全或证据不足则 inconclusive，不能从 UAT 推断生产收益。
 
-有固定 pipeline_requests 时先按 `.aidlc/system/workflow/pipelines.md` 刷新部署/环境事实；尚在执行则保存 wait_request 并 waiting_external 返回，知识准备延后到完整结果就绪。流水线通过不代替真实业务反馈。
+按影响列有证据的改进：需求/架构/实现/质量/运行问题，以及导航、工具输出、重复规则、无效检查等工程摩擦。每项说明发生事实、影响、最小建议及验证方法；机械规则优先建议自动检查，不因一次事件向常驻 Prompt 追加规则。无证据不造收益或复盘条目。
 
-读取批准目标和发布准备，并按 `.aidlc/system/workflow/external-evidence.md` 主动从绑定 Git/CI/Jira 收集实际部署、评论、验收意见、reopen 和相关缺陷。默认利用现有连接完成只读查询，先检索后报告缺口。
-
-逐条保留 Jira 反馈作者、原文必要摘录、发生/更新时间、链接及候选/环境关联，按 AC 分类支持、反对或未确定；Done、点赞和构建机器人消息不能单独证明接受。对比 Release 的 commit/image digest 与实际观察版本；版本不清、意见冲突或分页不完整时 inconclusive。UAT 与生产目标按已批准范围分别解释，不能由 UAT 推断生产收益。
-
-1. 确认实际发生了什么：发布、试用、反馈、事故或尚未发布。没有部署证据不要推断已经上线。
-2. 对照最初目标与 AC 解释真实观察；注明时间窗口、样本、数据来源和局限，不从代码完成度推断业务收益。
-3. 将问题归类为需求理解、架构、实现、质量、发布或运行，并提出可验证的后续工作。
-4. 涉及需求变更应建立新的候选 work/回退建议，不直接改写已批准的历史。将可能复用的规则改进作为 COE 建议，不能未经授权修改系统 Skills。
-
-在本 run artifacts 交付 `outcome.md`、`outcome.json`，evidence 保存 source-index.json 和来源快照；outcome.source_index_ref、feedback 和 evidence 引用实际收集结果。kind=leaf 仅交分配片段，由阶段汇总 child 合并。按 worker 契约返回 result 给父协调器。若没有足够真实结果则 blocked/inconclusive 并明确缺口；审批人也可依 closure.md 直接终结，由父协调器处理，保留实际结果。
+按 workflow/knowledge-prepare.md 追加知识版本，保留原设计/批准和适用限制；建议只是 proposed，不自动改企业规范、Oracle、阈值或 Skills。交 outcome.md/outcome.json 与 source-index/快照，分开业务结果和工程建议。证据不足明确缺口并 blocked；人类直接终结由父处理，不补造反馈。

@@ -1,13 +1,7 @@
-# Scope · 小增强的实施前说明
+# Scope · 小增强的实施基线
 
-仅执行 dispatch 的 kind、bindings 和输出模板；已加载信封/worker 契约不重复读取。
+按 workflow/profiles.md 核实风险，路线取锁定图。读请求、相关代码和规范；按 workflow/knowledge-read.md 核对经验。先查事实，再问影响范围/行为的关键歧义，不重开已确认问题。
 
-按 `.aidlc/system/workflow/knowledge-read.md` 检索相关获批知识并核实现状；在 change 的现有 AC 表记录来源 FR/NFR 映射与明确排除理由，不新增追踪报告。
+用 compact change.md 交目标/非目标、最小影响、来源 FR/NFR→AC/批准排除、Oracle、写路径/命令、可验证的小切片及回滚。沿用团队术语，歧义就地说明，不补 Spec/Plan/术语报告。
 
-按 workflow/profiles.md 核对小增强的风险与实施前说明语义；实际路线取锁定图，不要求团队流程名为 enhance。不要改业务文件。
-
-读取请求与相关现状，用 `templates/compact/change.md` 交付一页左右说明：目标/非目标、最小影响、稳定 AC 和 Oracle、具体检查、待改路径、最小步骤、回滚。复用已有项目规范，不另建 Spec/Plan/Fitness 报告。
-
-按 workflow/gate-design.md 盘点 Architecture / Quality 双 Gate；任一缺失或不足，就向父协调器请求对应 Architect/QE gate-design leaf，汇合其规则与可执行草案，纳入 change 的实施范围并等批准。没有两类有效设计不能提交成已就绪；不以人工检查或短流程免除 Gate。
-
-关键行为不清就提问；出现强制升级因素，返回 blocked 和 standard 建议，不把风险藏在“很小”的描述里。架构边界与适用质量规则应可核对，不能空写不适用。审查通过前不写源码/项目测试。只返回父协调器，由其按 approval.md 处理审批。
+按 workflow/gate-design.md 盘点双 Gate；缺失/不足则请求对应 Architect/QE leaf，将规则、安装草案和负向样例合入 change 后再呈审。两类有效设计未齐或出现升级风险则 blocked，返回缺口/standard 建议。此阶段不写业务源码/项目测试。

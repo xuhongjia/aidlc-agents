@@ -1,28 +1,12 @@
 ---
 name: aidlc-fitness-check
-description: 执行 AIDLC 已批准的 Architecture 和 Quality Fitness，记录冻结候选上的真实证据与未知状态，不自动批准。
+description: 执行获批 Architecture/Quality Fitness，保留真实候选和原始证据；用于 DEV 自测或指定独立 Gate，不授予批准权。
 ---
 
-# Fitness 执行与证据
+# Fitness 执行
 
-在主会话的正式 AIDLC 请求先交 `.aidlc/system/skills/aidlc/SKILL.md` 派发；有效 dispatch 子 Agent 读取 dispatch.instruction_refs 中的 worker 契约、批准候选和本任务 Fitness。由协议区分 Implement 自测与正式 Verify；本 Skill 不修改批准规则，不推进/批准阶段，不递归派发。证据仅写父协调器分配的本 run 路径，结论汇入调用阶段 result，不写状态/审批/review。
+主会话正式 AIDLC 请求交 .aidlc/system/skills/aidlc/SKILL.md；有效 child 使用冻结 instruction_refs 和 workflow/gate-execution.md。单 Gate leaf 只执行指定种类，collector 只汇总；Implement 自测不冒用 Reviewer 身份。
 
-## 执行前
+逐规则核对批准入口/摘要、作用范围、命令/cwd、权限/副作用/超时、阈值及成功判据。用已授权本地工具执行；固定 CI 来源核对真实 job/attempt 与完整断言，不伪造本地执行或远端退出码，也不临时编写“等价”规则。
 
-先读 `.aidlc/system/workflow/gate-execution.md`。所有路线均要求 Architecture 与 Quality；缺规则或实现时阻塞并按该协议回退补建，不在 Verify 自造替代规则，不用人工观察/N/A 替代执行。
-
-1. 核对规则来源、revision、真实 SHA-256 和候选文件摘要；查看每条命令、范围、运行目录、依赖、超时、阈值及副作用。缺少 hash 工具或必要权限时阻塞。
-2. 默认使用宿主工具实际执行项目已批准的检查入口；有固定 pipeline_requests 时按 pipelines 的 local/ci/hybrid 核对真实 CI 运行及完整规则断言。不伪称本地执行，不编造远端未提供的退出码；没有真实证据仍 UNKNOWN，不自行编写“等价”检查替代批准规则。
-3. 未获授权不联网、安装工具、访问外部系统或改变文件权限；不把 shell 包装或环境变量隐藏在不透明命令中。
-
-正式 Gate 必须由两个专职 Reviewer 分别执行；本 Skill 在单 Gate leaf 中只跑分配种类，collector 只核对来源与汇总。证实同候选、独立证据/临时目录且无共享可写资源时可并行，否则两个 Reviewer 串行。父协调器分配容量/唯一路径，本 Skill 不自行派发。Implement 调用只作 DEV 自测，不能套用正式 Reviewer 身份签 Gate。
-
-## 结果判断
-
-- 记录准确命令/工具、环境、时间、候选、规则摘要、退出码、超时及原始日志/报告位置。
-- PASS 需要真实执行、明确断言/成功证据和有效作用范围；零测试、全部跳过、空范围、缺失报告、工具故障或无法确认的输出为 UNKNOWN，不能绿灯。
-- 非零结果区分检查发现与工具运行失败，但两者都不能作为阻塞规则通过。Advisory 的失败也必须保留，不隐藏风险。
-- 检查后重新核对候选；检查改变了相关源码/配置/测试时，证据失效并报告，不在 Verify 自动修复。
-- 证据文件保留来源并按协议纳入 review 清单。摘要必须由工具实际计算，不能根据内容猜造。
-
-按 gate-result 模板分别写 architecture-gate.json、quality-gate.json，记录非零 blocking 检查和原始输出，并总结逐 AC 结论、限制及阻塞。单 Gate leaf 只写分配种类，Verify 汇总 child 收齐两类并核验同一候选。AI 汇总不是确定性 Gate 引擎；生产 CI 必须用项目工具的退出码、明确阈值与权限保护来强制执行。
+按固定 gate-result 模板保存检查数量、blocking/advisory 结果与原始证据；非零退出区分业务失败与工具故障，均不能当必需规则通过。Advisory 失败同样保留。前后候选核验、PASS 条件和执行身份以 gate-execution 为唯一规则来源；缺证据/漂移即阻塞。真实 CI 硬门禁仍由项目工具退出码、阈值和权限保护执行。

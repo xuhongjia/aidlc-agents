@@ -4,6 +4,12 @@
 
 0.11 的父协调器按意图加载控制协议；子 Agent 仅读 instruction_refs、当前角色/Stage/模板及必要批准输入。完整冻结与摘要核验仍保留；自定义 Stage.instructions 的团队必读规则另计，不被 token 预算删掉。详见 [上下文契约](../workflow/context.md)。
 
+0.13.1 进一步去掉角色/Prompt/阶段 Skill 中重复的协调规则，修正子 Agent 被引向父协议的旧包装。新增敏捷指引直接放入对应阶段；[参考映射](agile-skills.md) 供人阅读，不加入默认 child 上下文。
+
+当前回归另固定 d075ef1（0.13.0）为基线：用 tests/support/context-budget.mjs 的 measureCompactWorkflow(profile) 推导五次加载——首阶段、Implement、Verify collector、Architecture Reviewer、Quality Reviewer；每 run 内去重，跨 run 重复计费。方法正文和模板分列。每多一个初始/恢复 collector 都按完整 Verify 另加，不能把五次加载说成实际端到端 Agent 数。这统计声明 instruction_refs，不自动递归所有 Markdown 链接；条件资源、业务输入及真实使用日志需另核对。
+
+维护者可运行 `node --test tests/context-budget.test.mjs`；基线文件含固定 SHA、资源摘要及各 run 的必读集合。测试保护必读集合不被删减来“省 token”，并检查模板、重复 collector 和反馈的独立计量。它不发送模型请求。
+
 ## 可选 Codex 项目设置
 
 普通 setup/update 不修改宿主配置。在受信任项目中可以对 AI 说：
