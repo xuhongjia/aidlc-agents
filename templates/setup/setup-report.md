@@ -1,43 +1,39 @@
 # Setup Report
 
-AIDLC_DRAFT — 安装完成后用本次实际检查替换本标志及说明；此模板不是安装成功证据。
+AIDLC_DRAFT — record actual checks, not template-based success.
 
-## 安装身份
+## Installation identity
 
-记录目标仓库路径、AI 工具、源仓库、实际完整 commit、安装时间及 `config.json` 路径。无法读取完整源版本时如实报告，不把分支名写成已固定 commit。
+Target path, AI tool, source repository/full commit, time and config.json path. Report source gaps; branches are not commits. Record update_policy mode/ref/authorization: new work updates first, old work stays pinned; fixed sources do not follow latest.
 
-记录 update_policy 的模式、追踪 ref 与真实授权引用：新需求先检查/更新，已有需求保持原版本；固定来源安装标 pinned，不声称跟随 GitHub 最新。
+## Installed and preserved content
 
-## 已安装与保留内容
-
-| 项目相对路径 | 新增/合并/保留 | 实际动作与验证依据 |
+| Project-relative path | Added/merged/preserved | Actual action/evidence |
 |---|---|---|
 
-覆盖 `.aidlc/system/`、工具发现入口及配置；已有项目规则和用户修改不得被覆盖。`managed_files` 只列本包实际管理的文件。
+Cover system, bridge and config; managed_files includes only actually managed files. Preserve project/user content.
 
-## 本地接入检查
+## Local integration checks
 
-| 检查 | 实际结果 | 文件/命令输出/观察来源 |
+| Check | Actual result | File/command output/observation |
 |---|---|---|
 
-确认入口能解析到已安装指令、模板和角色，且未把示例需求、模板或历史通过记录当成真实活动需求。未验证工具自动发现时明确写未验证。
+Verify installed router/templates/roles resolve. Examples/history are not active work; automatic discovery is unverified unless observed.
 
-## 隔离子 agent 探针
+## Isolated child-agent probe
 
-记录实际宿主及接口、子 agent ID、fresh-context 参数/语义证据、给入的明确文件列表、收回的结果及核对依据、探针时间。任务仅只读解析 intake 文件，不创建工作或批准。分别记录 spawn、isolated_context、collect_results 是否实际验证；未知不能填 true。失败就 blocked，不在父会话补跑以冒充成功。
+Actual host/API, child ID, fresh-context parameters/semantics, input files, result/check evidence and time. Read Intake files only; create no work/approval. Report spawn/isolated_context/collect_results separately; unknown is not true. Failure blocks, without inline substitution.
 
-记录 `execution.mode=isolated-subagents`、`context_policy=fresh-minimal`、实际并发上限。默认 2 只是上限，不表示已经验证了业务并行执行或并行写安全。
+Record execution.mode=isolated-subagents, context_policy=fresh-minimal and actual concurrency limit. Default 2 is a limit, not proof of parallel safety.
 
-`ready` 仅代表包文件和这次只读子 agent 探针通过，不代表原生入口自动发现、真实阶段审批、功能验收或 CI Gate 已通过。
+ready means files and read-only probe passed, not native discovery, real approval, acceptance or CI success.
 
-## 项目就绪
+## Project readiness
 
-分别记录 method_ready 和 project_ready。列 config.setup.required 的每个 ID/能力/目标、实际状态、检查时间、证据及下一条 setup 指令；引用 .aidlc/setup/checks 的本次记录。方法已安装而必需 Confluence/GitLab 未就绪时，project_ready=false，新 work 不启动。可选项未检查不影响 ready；未知必需项不默认忽略。
+Separate method_ready/project_ready. For every config.setup.required ID/capability/target: state, check time, evidence, next setup action and .aidlc/setup/checks reference. Missing/unknown required items block new work; unchecked optional items do not.
 
-持续只读检查范围及真实授权单列；登录/目标可读不等于知识发布、CI 通过、部署或审批授权。setup status 只显示上次状态和时间，不冒称已重新验证。
+Record continuing read scope/authorization. Login/readability grants no publishing/deployment/approval and proves no CI result. setup status is dated history, not a fresh check.
 
-## 待确认与下一步
+## Open items and next steps
 
-列出工具权限、来源信任及其他未解决项。用户尚未明确姓名时 `owner` 保留 `null`，在首次审批前确认；不得从 Git 配置推断签署人。
-
-交付开始需求的自然语言入口。安装不等于批准需求、安装项目依赖、执行测试、开启付费服务、推送或部署。
+Permissions, trust and gaps; owner=null until explicitly named, confirmed before first approval, never inferred from Git. Provide the requirement-entry prompt. Setup grants no requirement approval, dependency/test execution, paid service, push or deployment.

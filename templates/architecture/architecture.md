@@ -1,28 +1,28 @@
 # Architecture & Fitness
 
-AIDLC_DRAFT — 使用已批准 Spec 和当前项目证据完成设计，再替换本标志。Agent 提建议，人类批准规则。
+AIDLC_DRAFT — approved Spec/current evidence informs design; humans approve rules.
 
-## 输入与约束
+## Inputs and constraints
 
-引用批准的规格、适用架构规范、已有 ADR 和关键 NFR。明确哪些是约束，哪些是待批准选择。
+Approved Spec, standards, ADRs and NFRs; distinguish constraints from pending choices.
 
-## 设计与备选方案
+## Design and alternatives
 
-说明组件职责、依赖方向、接口/数据流、状态归属和部署假设；比较合理备选及主要取舍。只有需要留存的关键选择才增加 ADR。
+Component responsibilities, dependencies, interfaces/data flow, state ownership, deployment assumptions and alternatives/tradeoffs. Add ADRs only for durable decisions.
 
-## 变更影响
+## Impact
 
-覆盖安全、隐私、兼容性、数据迁移、可观测性、韧性和回滚；不适用项需理由。
+Security, privacy, compatibility, migration, observability, resilience and rollback; justify inapplicability.
 
-## Architecture Fitness 审核预览
+## Architecture Fitness review preview
 
-| Check ID | 约束/NFR 来源 | 实际命令或扫描范围 | 成功判据 | Blocking/Advisory | 副作用与限制 |
+| Check ID | Constraint/NFR source | Actual command/scan scope | Success criteria | Blocking/Advisory | Effects/limits |
 |---|---|---|---|---|---|
 
-填充 `architecture-fitness.json` 的真实 `id` 和 `checks`。每个检查有 `id`、`type`、`mode`（`blocking`/`advisory`）、`description`；命令型给完整 `argv`、工作目录/前提、超时和明确成功判据，模式扫描给 `paths`、`pattern` 及应满足的结果。命令不得暗含安装、外部写入或改变候选。
+Populate architecture-fitness.json id/checks: each has id/type/mode (blocking/advisory)/description. Commands need full argv, cwd/prerequisites, timeout and success criteria; scans need paths/pattern/expected result. Disclose installation/external writes/candidate effects, never hide them.
 
-空规则包表示尚未配置，不表示通过。缺依赖、零匹配文件、未运行或无法判定时不能 PASS；自然语言审查意见不能冒充可执行 Fitness 结果。
+Empty rules are unconfigured. Missing dependencies, zero matches or unexecuted/indeterminate checks cannot PASS; prose is not executable Fitness evidence.
 
-## 人类决定与风险
+## Human decisions and risk
 
-列出待批准方案、规则、阈值及残余风险。架构审核通过不等于代码已符合约束，后续须在实际候选上运行 Gate。
+Designs, rules, thresholds and residual risks awaiting approval. Design approval is not code conformity; Gates later verify the actual candidate.

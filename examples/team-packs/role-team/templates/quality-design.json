@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "source_spec_ref": null,
+  "test_design_ref": null,
+  "strategy": [],
+  "oracles": [],
+  "case_check_mapping": [],
+  "data_and_environment": [],
+  "required_evidence": [],
+  "coverage_ref": null,
+  "quality_fitness_ref": null,
+  "source_approval_refs": [],
+  "blockers": ["Define quality design against the approved shared case baseline before implementation"]
+}

@@ -1,6 +1,6 @@
 # Implement the approved API change
 
-Follow `core:prompts/common.md` and the core implementation, gates and approval protocols. Consume the approved `change` through its binding; this is the authority named by the workflow node. Verify its approval, artifact digest and exact authorized paths, commands and side effects before product writes. Preserve existing user changes.
+Follow `core:prompts/common.md` and this node's frozen implementation instructions; do not load parent approval protocols. Consume the approved `change` through its binding; this is the authority named by the workflow node. Verify its approval, artifact digest and exact authorized paths, commands and side effects before product writes. Preserve existing user changes.
 
 If review-depth selected `review`, consume both approved `analysis` inputs before implementation. They are independent advisory evidence; neither may expand the approved scope. If review-depth selected `direct`, both review steps are skipped and no analysis input is required. Never treat a selected but unfinished or blocked review as an absent optional input.
 

@@ -1,0 +1,14 @@
+{
+  "contract_version": 1,
+  "approval_id": null,
+  "project_id": null,
+  "story_id": null,
+  "role": null,
+  "actor_id": null,
+  "decision": "pending",
+  "artifact_ref": null,
+  "method_ref": null,
+  "decision_ref": null,
+  "decided_at": null,
+  "revoked_at": null
+}

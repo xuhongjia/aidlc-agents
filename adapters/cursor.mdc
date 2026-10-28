@@ -1,20 +1,20 @@
 ---
-description: Route AIDLC delivery requests through the repository's approved workflow.
+description: Route AIDLC requests through the repository workflow.
 alwaysApply: true
 ---
 
 <!-- AIDLC-AGENTS:START -->
 ## AIDLC Agents
 
-For AIDLC requests, first read only `.aidlc/system/skills/aidlc/SKILL.md`. Route the intent before loading `.aidlc/system/workflow/protocol.md` or orchestration.md; valid children use their frozen instruction_refs instead of re-routing.
+For AIDLC requests, read only `.aidlc/system/skills/orchestration/aidlc/SKILL.md` first. Route intent before loading protocol.md/orchestration.md; valid dispatched children use frozen instruction_refs, not parent routing.
 
-Before parent delivery execution, follow `.aidlc/system/workflow/preflight.md`: check GitHub, update before creating new work, and keep existing work pinned. After an update, reload the installed router and contracts before dispatch. Status-only, approval-only, and closure controls do not require this check. Dispatched children never check for updates or install method files.
+Before parent delivery, follow `.aidlc/system/workflow/preflight.md`: check GitHub, update new work first, keep existing work pinned, reload router/contracts after updates. Status/approval/closure controls skip this check; children never update/install methods.
 
-The parent conversation is orchestration-only: read the work record, validate dependencies, dispatch, collect results, and handle approval using the project's approval policy. For EVERY stage execution or rework, start a NEW child agent with fresh context using the current client's supported tools. Pass only the dispatch contract and required approved artifact references, not the parent conversation history. Do not execute stages inline or reuse a previous stage's child. A role name or skill invocation is not delegation.
+The parent only coordinates dependencies, dispatch, results and approvals. EVERY stage/rework needs a NEW fresh-context child given dispatch and required approved references, never parent history, inline execution or a reused worker. Require actual spawn/isolation/collection probe evidence; unavailable/unknown blocks. A dispatched child executes only its assignment, without recursively delegating the whole stage. Follow `.aidlc/system/workflow/protocol.md` and orchestration.md on the delivery route for parallelism/result checks.
 
-Require the setup capability probe to demonstrate child creation, fresh context, and result collection. If any capability is unavailable or unverified, block stage execution and ask for a supported client; never fall back to inline execution. Follow orchestration.md for safe parallelism and result validation. By default the parent presents the exact revision for human approval. For a work-scoped checkpoint_low_risk or auto_low_risk delegation, use `.aidlc/system/workflow/approval.md`; delegated decisions are never user sign-offs. Checkpoint keeps the entry and final Verify human-approved. Internal Implement correction needs its own explicit budget; approval mode alone never enables it. Children never approve or advance stages.
+Approval is manual unless an exact work-scoped checkpoint_low_risk/auto_low_risk delegation is valid under `.aidlc/system/workflow/approval.md`; delegated decisions are not human sign-offs. Checkpoint keeps entry/final Verify human-approved. Implement correction needs a separate explicit budget. Children cannot approve/advance.
 
-If you are already the child named in a valid dispatch, execute only that bounded assignment and return its result; do not re-route yourself as the parent or recursively delegate the whole stage.
+Preserve project instructions, user edits and host permissions. Missing/conflicting files or evidence block; never fabricate execution, approval or PASS. This bridge grants no extra permissions and installs no runtime, hooks or global settings.
 
-Preserve all applicable project rules and tool permissions. This rule does not grant additional authority, install background services, or change global settings. If required files cannot be read or instructions conflict, report the issue before proceeding. Do not invent child execution, approval, test, or gate evidence.
+A role/Skill invocation is not delegation. Preserve existing Cursor rules.
 <!-- AIDLC-AGENTS:END -->

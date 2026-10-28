@@ -1,26 +1,26 @@
 # Release Readiness
 
-AIDLC_DRAFT — 根据已批准 Verify 和当前候选填写发布就绪建议，完成后替换本标志。
+AIDLC_DRAFT — advice from approved Verify/current candidate.
 
-## 候选与证据
+## Candidate and evidence
 
-引用精确候选、验收结果、双 Gate 原始证据和批准版本；确认自验证以来没有漂移。
+Exact candidate, acceptance, dual Gate raw evidence and approved versions; confirm no drift.
 
-自动收集并链接 source-index.json：业务仓库/commit、PR/MR、pipeline/job/attempt 与状态；容器交付列 image repository@digest、digest 类型和来源，区分 CI-reported 与 registry 核实。列实际部署环境/版本/时间或明确 unknown/not_deployed，以及 Jira 验收反馈/阻塞项。候选到镜像映射必须可追溯，非容器交付写实际构建物。
+Collect source-index.json: repository/commit, PR/MR, pipeline/job/attempt/status, Jira feedback/blockers. Containers: repository@digest, digest type/source and CI-reported versus registry-verified identity; other deliveries name actual artifacts. Trace candidate→artifact and deployed environment/version/time, or unknown/not_deployed.
 
-配置了 CD 时引用 pipeline-result，逐项列目标环境、deployment ID、实际运行构建物、部署后必需 smoke/health 与观察时间；只有真实通过才满足本阶段发布环境校验。未配置 CD 才沿用发布前就绪判据，待部署不当已验证。
+With CD bindings, link pipeline-result, target environment/deployment ID, running artifact, required smoke/health and observation time. Actual success is required; pending deployment is not verified. Pre-deployment readiness criteria apply only without CD.
 
-## 就绪检查
+## Readiness checks
 
-| 项目 | 已验证事实或缺口 | 来源/责任角色 |
+| Item | Verified fact/gap | Source/responsible role |
 |---|---|---|
 
-覆盖发布产物、配置/秘密管理、迁移、回滚、监控、运行手册及支持安排。不适用项写依据，未验证项不预填通过。
+Artifacts, config/secrets, migration, rollback, monitoring, runbooks/support. Justify inapplicability; never prefill PASS.
 
-## 发布与观测建议
+## Release and observation advice
 
-列出目标环境、上线前提、回滚触发条件、观察窗口和需要单独批准的动作。不得编造生产环境、人员承诺、日期或业务指标。
+Environment, prerequisites, rollback triggers, window and separately approved actions. No invented environments, staffing, dates or business metrics.
 
-## 决策边界
+## Decision boundaries
 
-给出可供人类审核的 ready/blocked 建议及理由。发布就绪批准不是部署授权；未得到明确外部动作授权，不 push、merge、发布、迁移或部署。没有实际发布与业务观察，后续 Outcome 保持未知。
+Recommend ready/blocked for human review. Readiness approval is not authority to push/merge/publish/migrate/deploy. Without actual release/business observations, subsequent Outcome stays unknown.

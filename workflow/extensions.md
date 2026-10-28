@@ -1,78 +1,80 @@
-# 团队扩展 Interface · contract 1
+# Team extension Interface: contract 1
 
-0.10 新工作统一按本协议解析，再按 [DAG](dag.md) 执行；沿用 0.9 的 contract_version=1。仍是 instruction-package/runtime=none：宿主 AI 负责实际读取、计算摘要、核验和派发；维护者参考模型不是安装器、状态机运行器或权限系统。旧 work 按 [原方法](legacy.md) 处理，绝不补造新锁、迁移批准或授予新预算。
+Optional 0.15 [role-team](../examples/team-packs/role-team/README.md) adds no kinds/capabilities. Explicit role-graph selection alone snapshots actual nonsecret config.collaboration into new-lock collaboration; external authority stays outside the lock/bound to original graph. [role-delivery](role-delivery.md) resolves roles/handoffs. Disabled=null; never backfill. QA analysis is execution evidence; final Verify alone declares verified.
 
-## 三层定义，不修改核心
+New 0.10 work resolves here/executes under [DAG](dag.md), retaining 0.9 contract_version=1. runtime=none: host AI reads/hashes/validates/dispatches; maintainer models are not installers/runtimes/permission systems. Existing work retains [original method](legacy.md), never invented locks/migrated approvals/new budgets.
 
-- Core：`workflow/stages.json` 的内置定义，经 [stage-contracts](stage-contracts.json) 规范化为同一 Stage/Workflow Interface；内置 fix/enhance/standard 不换顺序、不放宽门禁。
-- Team：一个活动 `.aidlc/team/pack.json` 及其 Prompt/模板。可本地维护，也可从用户指定团队 Git 仓库的固定 commit 接入。
-- Project：可选 `.aidlc/overrides/pack.json` 及项目差异，仅显式替换，不修改 team/core 文件。
+## Three definition layers without core edits
 
-按 core → team → project 解析。`stages`/`workflows` 新增 ID 必须唯一；同 ID 必须在 `overrides` 显式写 `{kind:"stage"|"workflow", id, replacement:完整定义}`，禁止深度合并、靠文件名覆盖或静默挑一个。replacement.id 与目标一致。阶段替换不可改 kind、扩大 capability、移除必需 input/output 语义；要不同职责新增 namespaced stage，由新工作流明确采用。整个有效图仍必须满足核心保证。
+- Core: `workflow/stages.json`, normalized by [stage-contracts](stage-contracts.json) into Stage/Workflow Interface. Built-in fix/enhance/standard preserve order/Gates.
+- Team: one active `.aidlc/team/pack.json` plus Prompts/templates, local or fixed-commit import from user-specified team Git repository.
+- Project: optional `.aidlc/overrides/pack.json`/explicit replacements, never modifying team/core.
 
-替换阶段也不可新增工具操作或把 auto_eligible 从 false 改 true；需要不同审批职责时新增 stage，重新校验工作流并在配置差异卡说明。workflow 替换不能改变 intent、扩大允许的风险/副作用或工具操作；core.standard 始终 risk_ceiling=any 且人审，不允许通过覆盖风险字段变成自动短流程。内置配方的原顺序与产物保证作为兼容基线；改成另一条路线使用新的 team workflow ID，不冒用内置名称。
+Resolve core → team → project. New stages/workflows need unique IDs; same IDs require explicit overrides `{kind:"stage"|"workflow", id, replacement:complete_definition}` with matching replacement.id. No deep merge/filename override/silent selection. Stage replacement cannot change kind, expand capabilities or remove required input/output semantics. New responsibilities need new namespaced stages/explicitly selected workflow. Effective graph retains core guarantees.
 
-资源引用只接受 `core:包内相对路径`、`team:团队包相对路径`、`project:覆盖包相对路径`；解析实际目录后拒绝绝对路径、`..`、软链接和包外引用，不取当前工作目录猜来源。ID 为字母/数字/下划线/短横线及命名空间点号，不能作为未经校验的文件路径。宿主项目规则优先；包内文案不是新权限。
+Stage replacements cannot add operations/change auto_eligible false→true. Different approval duties need new stages/revalidated workflow/config-difference disclosure. Workflow replacements cannot change intent/expand risk, effects or operations. core.standard retains risk_ceiling=any/human review, never automatic compact via overrides. Built-in order/output guarantees are compatibility baselines; different routes need new team IDs.
 
-## 最小数据 Interface
+Resource refs: `core:package-relative-path`, `team:team-package-relative-path`, `project:override-package-relative-path` only. Resolve actual directories; reject absolute paths/`..`/symlinks/escapes, never infer cwd sources. IDs allow letters/digits/underscores/hyphens/namespace dots, never unchecked paths. Host project rules prevail; package text grants no authority.
 
-模板在 `templates/extensions/`；空模板不是可执行定义。pack.json 包含 `contract_version:1`、id、version、`core_contract:1`、stages、workflows、overrides、tool_bindings。版本号仅供显示，内容身份由完整来源 commit/实际文件摘要确定。未知契约/能力/字段语义必须先解释或阻塞，不忽略后执行。
+## Minimal data Interface
 
-**StageDefinition**：id、kind、role、prompt、inputs、optional_inputs、outputs、capabilities、auto_eligible、routing_facts，可加 tool_binding_ids。role 可为固定职责名称或上述 namespace 文件引用；前者作为定义字节冻结，后者连同文件内容锁定。kind 为 analysis/specification/design/quality_design/planning/implementation/verification/release_readiness/learning。inputs/optional_inputs 是语义契约名；outputs 每项 `{name,contract,template}`，name 为安全相对产物路径。多个文件可共同提供一个语义契约，读取它必须包含全部对应文件。模板/文件名可换，字段含义与批准来源不可丢。
+`templates/extensions/` empty templates are not executable. pack.json: contract_version:1, id, version, core_contract:1, stages, workflows, overrides, tool_bindings. Versions are labels; full commits/actual digests establish identity. Unknown contract/capability/field semantics need explanation or blocking, never silent execution.
 
-**WorkflowDefinition**：id、intent（delivery/analysis）、risk_ceiling（low/any）、entry、nodes、edges、switches、terminals。nodes 每项 `{step_id,stage_id,bindings,authority? ,outputs?}`；step_id 唯一但 stage_id 可重复。bindings 为 `{输入契约:[producer_step_id...]}`，外部来源只允许 `$request/$project/$knowledge` 且分别对应同名契约。多个生产者代表汇集已选中的产物，不是随便取一个；必需输入至少有一个选中生产者，optional_inputs 无选中生产者时显式缺省，不读旧版本补齐。输出覆盖是完整列表且保留阶段所有输出契约，不能影响必需 evidence。
+**StageDefinition**: id, kind, role, prompt, inputs, optional_inputs, outputs, capabilities, auto_eligible, routing_facts, optional tool_binding_ids. role is fixed name or namespace file ref; freeze definition bytes/named file bytes respectively. kind: analysis/specification/design/quality_design/planning/implementation/verification/release_readiness/learning. inputs/optional_inputs are semantic contract names. outputs: `{name,contract,template}`, safe relative artifact names. Multiple files per contract require all files on consumption. Templates/names may change; field meanings/provenance cannot.
 
-edges 每项 `{from,to,when?:{switch,case}}`；无 when 表示依赖/并行扇出。switches 每项 `{id,after,fact,cases:[{id,op:"eq",value} 或 {id,default:true}]}`；fact 为 after 阶段 routing_facts 声明的 boolean/string/number 字段。比较严格同类型，只在普通 case 零命中时选择唯一 default，缺字段不落 default。每个 switch 的条件边必须从 after 出发，每个 case 有去向；一阶段最多一个 switch，使用 switch 时所有出边都明确标 case。并行是同一 case 多条边或普通多条出边，不是多个 case 同时命中。
+**WorkflowDefinition**: id, intent (delivery/analysis), risk_ceiling (low/any), entry, nodes, edges, switches, terminals. nodes: `{step_id,stage_id,bindings,authority?,outputs?}`; step_id unique, stage_id repeatable. bindings: `{input_contract:[producer_step_id...]}`; external `$request/$project/$knowledge` match namesake contracts only. Aggregate selected producers, never choose arbitrarily. Required inputs need ≥1 selected producer; absent optional producers explicitly default without old-version reads. Output overrides replace full lists/preserve every contract/required evidence.
 
-terminals 每项 `{step_id,outcome}`；outcome 为 verified/analysis_complete/learned。所有可达终点必须声明，所有节点必须从唯一 entry 可达；entry 无入边，且为不写产品的 analysis/specification/design/planning 调查入口。首次审批前只允许 entry，不预跑其它节点。
+edges: `{from,to,when?:{switch,case}}`; no when means dependency/parallel fan-out. switches: `{id,after,fact,cases:[{id,op:"eq",value} or {id,default:true}]}`. fact is after-stage-declared routing_facts boolean/string/number; compare types strictly. Use unique default only with no ordinary match, never missing facts. Conditional edges originate at after; every case has a destination. At most one switch/stage; label every outgoing switched edge. Parallelism uses multiple same-case/ordinary edges, never multiple matching cases.
 
-## 输出语义与固定保证
+terminals: `{step_id,outcome}`; outcome verified/analysis_complete/learned. Declare every reachable endpoint; all nodes reachable from unique entry. Entry has no incoming edges and is non-product-writing analysis/specification/design/planning investigation. Only entry executes before initial approval.
 
-| 契约 | 最少保留的语义 |
+## Output semantics and fixed guarantees
+
+| Contract | Minimum semantics |
 |---|---|
-| request/project/knowledge | 原始来源与范围、当前项目事实、知识适用性和批准引用（不是历史 PASS 即当前事实） |
-| intake/change/spec | 原需求 FR/NFR→AC 或明确批准排除、范围/非目标、Oracle、风险；change 另有实施计划/写入命令范围，fix 有复现根因 |
-| architecture/quality/plan | 设计约束/取舍及规则；AC→测试/Oracle→Gate；实施范围、依赖、授权与回滚 |
-| implementation/verification | 实际候选、改动/自测；独立逐 AC 结果与双 Gate 原始证据，不混淆 DEV/QE |
-| release/outcome | 发布准备≠部署；真实来源、候选、观察窗口及业务结果，inconclusive 不算学习验收完成 |
-| analysis | 有证据的分析、假设、风险、局限和待决事项，不产生产品写入或已交付声明 |
+| request/project/knowledge | Original sources/scope, current facts, knowledge applicability/approvals; historical PASS is not current fact |
+| intake/change/spec | Original FR/NFR→AC/approved exclusions, scope/non-goals/Oracle/risk; change adds implementation plan/write-command scope, fix reproduction/cause |
+| architecture/quality/plan | Constraints/tradeoffs/rules; AC→tests/Oracle→Gates; implementation scope/dependencies/authority/rollback |
+| implementation/verification | Actual candidate/changes/self-tests; independent per-AC results/dual-Gate raw evidence; distinct DEV/QE |
+| release/outcome | Readiness ≠ deployment; actual sources/candidate/window/business outcomes; inconclusive is incomplete learning acceptance |
+| analysis | Evidenced analysis/assumptions/risks/limits/pending decisions; no product writes/delivery claims |
 
-kind 对保证作固定约束：implementation 才可声明 product.write，且必须声明；verification 只读并强制两 Gate；release_readiness/learning 必须有真实外部证据能力。capabilities 仅 product.write、knowledge.read、knowledge.prepare、evidence.read，未知值拒绝。读取项目及写本 run 产物仍由 dispatch 范围限定；没有“任意命令”能力。
+kind fixes guarantees: implementation alone declares product.write and must do so. verification is read-only/dual-Gate mandatory. release_readiness/learning require actual external-evidence capability. Only capabilities: product.write, knowledge.read, knowledge.prepare, evidence.read; reject others. Dispatch bounds project reads/run outputs; no arbitrary-command capability.
 
-非 analysis kind 必须提供其对应输出 contract：specification→spec、design→architecture、quality_design→quality、planning→plan、implementation→implementation、verification→verification、release_readiness→release、learning→outcome。不能只改 kind 标签而交另一类产物。analysis 可提供 intake/change/analysis 等分析语义；change 即使含实施计划也不授予产品写权，仍须真实批准。
+Non-analysis kinds must supply matching contracts: specification→spec, design→architecture, quality_design→quality, planning→plan, implementation→implementation, verification→verification, release_readiness→release, learning→outcome. Relabeling cannot substitute outputs. analysis may supply intake/change/analysis; embedded implementation plans still need real approval/product-write authority.
 
-analysis intent 所有节点不得 product.write，终点只能 analysis_complete，delivery_status=not_implemented、business_outcome=not_evaluated。delivery intent 每个实际完成分支必须有批准的 change/plan 实施授权、产品实施、独立 verification 和同候选双 Gate，且最后一次写入之后仍有有效验证；不能仅检查图里存在这些阶段。实施节点 authority 必须是该活动路径的已批准祖先，提供 change/plan 并通过 bindings 实际消费。fix 的前红后绿与回归证据不可改名为 enhance 规避。
+analysis intent forbids product.write throughout; endpoints only analysis_complete with delivery_status=not_implemented/business_outcome=not_evaluated. Every delivery branch needs approved change/plan authority, implementation, independent same-candidate dual-Gate verification after its final write; stages elsewhere in graph do not suffice. Implementation authority must be approved active-path ancestor/change or plan actually consumed by bindings. Renaming fix→enhance never waives pre-fix red/post-fix green/regressions.
 
-高风险保留 profiles.md 的硬条件，risk_ceiling=any 不是降低保障。身份/权限、敏感数据、迁移、破坏性契约或跨系统等风险须人工且满足 standard 等价的需求、架构、质量、实施规划保证；它们可通过语义产物而非固定阶段名提供。缺这些保证则停止重规划。0.13 standard 为七阶段至 verified handoff；旧九阶段工作按原锁，已有 Architecture 输入的 Quality 不可自动并行。implementation 继承 Implement-only TDD 与证据，verification 强制两个独立 Reviewer，不因团队改内容/模板失效。
+High risk retains profiles.md hard conditions; risk_ceiling=any weakens nothing. Identity/permissions, sensitive data, migrations, breaking contracts/cross-system risks need human review and standard-equivalent requirements/architecture/quality/planning guarantees. Semantic outputs may supply these without fixed names; gaps stop for replanning. 0.13 Standard has seven stages through verified handoff; old nine-stage work keeps locks. Architecture-consuming Quality cannot automatically parallelize. Implement-only TDD/evidence and two independent verification Reviewers survive team/template changes.
 
-## 规范化内置配方与动态组合
+## Normalize built-ins and compose dynamically
 
-内置 Stage ID 为 core.原ID；role 精确构造为 `core:agents/阶段.agent.md`（不是给人类 role 标签加前缀），prompt 为 `core:` + 阶段.prompt。每个默认 output 的 template 为 `core:` + 阶段.template_directory（缺省 `templates/阶段.id`）+ `/文件名`；contract 从 stage-contracts.stages[原ID].contracts[文件名] 获取。kind/输入/capabilities/auto_eligible 来自该元数据，默认 routing_facts={}、tool_binding_ids=[]。Workflow ID 为 core.fix/core.enhance/core.standard，intent=delivery，风险上限分别 low/low/any。每阶段一个同名 step，按 catalog 当前列表连边；authority 取 implementation_authority，input 绑定最近上游对应 contract 或允许的 $ 来源。保留 output_overrides 与 core: 模板；core.implement 覆盖契约仍为 implementation，core.verify 为 verification，实施正文叫 verification.md 也不是独立验证。0.13 三者终点均 verified；Release/Learn 只在明确团队 Workflow ID 启用，不改旧图。
+Built-in IDs: core.originalID. role=`core:agents/stage.agent.md`, never prefixed human labels; prompt=`core:` + stage.prompt. Template=`core:` + stage.template_directory (default `templates/stage.id`) + `/filename`. Contract=stage-contracts.stages[originalID].contracts[filename]; kind/inputs/capabilities/auto_eligible from metadata; defaults routing_facts={}, tool_binding_ids=[]. Workflows core.fix/core.enhance/core.standard have delivery intent/low/low/any ceilings. Same-named steps follow current catalog order; authority=implementation_authority; inputs bind nearest upstream matching contract/allowed $ source. Preserve output_overrides/core: templates. core.implement override remains implementation, core.verify verification; Implement's verification.md is not independent verification. All three 0.13 endpoints are verified. Release/Learn requires explicit team IDs; never alter old graphs.
 
-config.workflow 为 auto/显式 workflow ID，默认 auto；旧 config.profile 作为内置偏好别名保留。明确 workflow 与非 auto profile 冲突先确认，不静默覆盖用户设置。AI 只从注册 stage 组合或选配方，记录任务风险/复杂度、取舍、选择依据；新组合获得 work 专用 ID，按同一 Interface 校验。不在交付中现场创造 Prompt/模板/阶段来替代审核过的定义。
+config.workflow defaults auto or explicit ID; legacy config.profile remains built-in preference alias. Conflicting explicit workflow/non-auto profile needs confirmation. AI selects recipes/composes registered stages only, recording risk/complexity facts/tradeoffs/selection evidence. Compositions get work-specific IDs/same validation; never invent replacement Prompts/templates/stages mid-delivery.
 
-新工作先走原 preflight，再解析定义、验证各 case 组合下的活动图（只检一个样例路径不够）、输入和权限，生成不可变解析记录。用 `templates/work/workflow-lock.json` 固定核心、team、project 来源、整图、实际阶段定义、绑定和所有方法/Prompt/模板/Hook 文件的副本及真实 hash；锁本身无自引用摘要，workflow_ref={path,sha256} 指向它。主协调器仅解析声明，不在此撰写阶段业务结论。
+New work runs original preflight, resolves definitions, then validates every case combination/input/authority, not one sample path. Save immutable resolution. `templates/work/workflow-lock.json` freezes core/team/project sources/full graph/actual definitions/bindings/copied method/Prompt/template/Hook files/hashes. No lock self-digest; workflow_ref={path,sha256}. Parent resolves declarations, never authors stage conclusions.
 
-0.14 新锁另存 setup_check_ref={path,sha256}，由父按 workflow/setup.md 验真本次调用、要求/目标摘要、有效只读授权和逐项 ready。它只是前置检查的固定证据，不赋予阶段权限；不加入 child instruction_refs，不修改旧锁或历史批准。
+New 0.14 locks retain setup_check_ref={path,sha256}. workflow/setup.md checks current invocation/requirement-target digests/valid read-only authority/itemized readiness. This prerequisite grants no stage authority; exclude from child instruction_refs/never edit old locks/approvals.
 
-锁内 `sources.core/team/project` 各为 `{id,version,kind,revision,manifest_ref,file_hashes}`（未启用层为 null），revision 为完整 Git commit 或 null，local-unreleased 必須记录完整实际 file_hashes。`workflow` 是解析后的完整 WorkflowDefinition，`stages` 为它实际引用的完整 StageDefinition 数组，tool_bindings 为实际用到的完整定义；不得只留会变化的 catalog ID。`selection_evidence` 保存原请求类型、风险/复杂度事实及来源引用，`path_checks` 保存每个分支组合、选中 step IDs、authority/输入/最终验证保障检查结果与实际依据。
+Locked sources.core/team/project: `{id,version,kind,revision,manifest_ref,file_hashes}` or null when disabled. revision=full commit/null; local-unreleased needs complete real file_hashes. workflow/stages/tool_bindings contain complete resolved graph/referenced definitions/used bindings; mutable IDs alone are insufficient. selection_evidence records request type/risk-complexity facts/source refs. path_checks records every branch combination/selected steps/authority-input-final-verification checks/actual evidence.
 
-`assets` 每项固定 `{ref,path,sha256}`：ref 是唯一 namespace 逻辑引用，path 是**业务项目根相对路径**，指向 `.aidlc/work/ID/definitions/gN/` 中的真实原样副本，sha256 是其原始字节摘要。例如逻辑 `team:templates/api-change-brief.md` 映射到本 work 的 `definitions/g1/team/templates/api-change-brief.md` 副本，不映射到活动 team 目录。path 不含父目录/软链接，副本禁止覆盖；复用相同 ref 只允许完全相同内容。
+assets: unique `{ref,path,sha256}` namespace ref, **business-project-relative** unchanged copy in `.aidlc/work/ID/definitions/gN/`, raw-byte SHA-256. E.g. team:templates/api-change-brief.md maps to definitions/g1/team/templates/api-change-brief.md in this work, never active team files. No traversal/symlinks/overwrite; reused refs require identical content.
 
-先复制并核验资产，再写锁，最后把锁原始文件 hash 写 workflow_ref；任何步骤失败不派发。首锁为 workflow.lock.json，图 revision 2 起使用新的 workflow-r2.lock.json 等路径及 g2 资产目录，旧锁保持原样。dispatch.role_path/stage_prompt_path/expected_outputs.template 解析到 assets.path，dispatch.input_refs 包含锁及本次必需资产 hash。阶段/角色/模板里再次引用的 `core:`、`team:`、`project:` 或 `.aidlc/system/相对路径`（等价 core:）也必须经同一资产表解析；准备锁时收齐所需协议/Skill/Prompt 的传递依赖，执行时缺映射就 blocked，绝不回退读取活动目录。外部 `$project` 指当前业务事实输入，不是 project: 覆盖包资源，两者不可混同。
+Copy/verify assets → write lock → hash raw lock into workflow_ref; failure prevents dispatch. Initial workflow.lock.json; later workflow-r2.lock.json/g2 etc., preserving old locks. dispatch.role_path/stage_prompt_path/expected_outputs.template resolve assets.path; input_refs includes lock/required asset hashes. Nested core:/team:/project: and .aidlc/system/relative-path (=core:) refs use same table. Collect all mandatory protocol/Skill/Prompt dependencies when locking. Missing mappings block, never active-directory fallback. External $project is current business facts, not project: overrides.
 
-首次 entry 调查若改变路线，旧 entry 结果标 superseded，创建新 graph revision/run；不能重新哈希旧结果使其看似采用新图。图批准与 entry review 同卡，不多加审批阶段。批准后 graph/模板/目标都不可热替换；路线变更须停止相关执行、新锁及新的明确确认，保留旧批准，不跨图复用。0.12 起新工作采用 state.schema_version=5（0.9–0.11 为 4）；dispatch/result/review/approval/policy 全带 workflow_ref/step_id，阶段名只描述定义。恢复时核对真实字节和固定来源。
+Entry route changes supersede old results/create new graph revision/run; never rehash old results as newly produced. Entry review card approves graph without extra stage. Approved graphs/templates/targets cannot hot-swap: route changes stop related execution, require new locks/explicit confirmation, preserve approvals without cross-graph reuse. Since 0.12, state.schema_version=5 (0.9–0.11 used 4); dispatch/result/review/approval/policy carry workflow_ref/step_id. Stage names identify definitions only. Resume checks real bytes/frozen sources.
 
-0.12 起新工作 state.schema_version=5；可选 config.delivery 按 [pipeline-config](pipeline-config.md) 解析到锁内 delivery={contract_version,gate_mode,bindings,wait,steps:[{step_id,binding_ids}]}，只含此图实际采用的绑定，全部内容随 workflow_ref 摘要固定。原 Step/Tool Interface 不变；pipeline 操作只是已注册只读工具调用。无配置时 delivery=null，旧锁不补字段。内置 Verify 新增 evidence.read，读取范围仍必须由 pipeline_requests/external_reads 限定；团队 verification 没声明该能力时拒绝绑定，不静默扩权。新增状态/结果等待语义不改已批准图依赖。
+Since 0.12, optional config.delivery resolves under [pipeline-config](pipeline-config.md) into locked delivery={contract_version,gate_mode,bindings,wait,steps:[{step_id,binding_ids}]}, only actual graph bindings, frozen by workflow_ref digest. Original Step/Tool Interfaces remain; pipelines are registered read-only operations. Unconfigured=null; never backfill. Built-in Verify adds evidence.read, still bounded by pipeline_requests/external_reads. Team verification bindings lacking capability block, never expand rights. Wait states/results change no approved dependencies.
 
-## 声明式 Tool binding
+## Declarative Tool bindings
 
-binding 提供 id、connector、operation、effect=read/write、target、input_contract、output_contract、authorization_ref。阶段仅通过显式 tool_binding_ids 请求已注册操作，workflow lock 一起冻结。连接器与操作须从宿主当前实际工具 schema 解析，目标与输入输出实际核对；未知 connector/能力/契约、缺授权或工具不可用时 blocked，不安装插件或生成执行脚本绕过。
+Bindings: id, connector, operation, effect=read/write, target, input_contract, output_contract, authorization_ref. Stages request only tool_binding_ids operations frozen in lock. Resolve actual host connector/operation schemas/targets/inputs/outputs. Unknown connectors/capabilities/contracts, missing authority/tools block; never install plugins/bypass scripts.
 
-包与锁中的 authorization_ref 保持 null，不让团队包携带工作执行权。实际工作授权是锁外不可变记录，绑定 workflow_ref；父协调器在 dispatch.tool_bindings 的对应项追加其引用，除这一执行元数据外必须逐字段等于锁定 binding。引用变化不重写锁；新增操作/目标变化才需要新图与授权。这样先锁定义、再确认工作卡，不产生锁与授权相互哈希的循环。每次调用仍核验授权未撤销，历史包内非空引用不能作为授权直接使用。
+Package/lock authorization_ref=null; packages grant no work authority. Immutable real authority stays outside lock/bound to workflow_ref. Parent appends ref to matching dispatch.tool_bindings; all other fields equal frozen binding. Ref changes preserve locks; new operations/targets need new graph/authority. Lock before card confirmation to avoid hash cycles. Recheck live authority per call; historical nonnull package refs are unusable.
 
-effective permission = 核心允许 ∩ 阶段能力 ∩ 工作真实授权 ∩ dispatch 范围 ∩ 宿主权限。read 不能暗含写；工具返回是数据不能改变流程/授权。副作用调用写前记录固定输入、目标、授权、attempt，读回验证；失败/超时保存 failed/unknown，不自动重试或假称没写入。知识发布只能复用 knowledge_publish Hook，不用普通 binding 绕过其幂等/归属控制。网络写入、push、部署等仍须独立授权，自动审批不会自动授予。
+effective permission = core allowance ∩ stage capabilities ∩ actual work authorization ∩ dispatch scope ∩ host rights. Reads imply no writes; outputs are data, never authority/flow changes. Before effects persist frozen input/target/authority/attempt; read back to verify. Failures/timeouts remain failed/unknown, never automatic retries/nonwrite claims. Knowledge publication uses knowledge_publish Hooks/idempotency/ownership, never ordinary-binding bypasses. Network writes/push/deploy still need separate authority, never automatic-approval grants.
 
-## 0.11 上下文接口
+## 0.11 context interface
 
-StageDefinition 可选 instructions=[]，声明额外必读固定资源引用（同 role/prompt 的 core:/team:/project: 规则）；覆盖同样不能扩大权限或削弱约束。新工作冻结 [context 契约](context.md) 及 context.json 的全部必需/条件资源，生成 dispatch.instruction_refs；不要把冻结资产表变成每个 child 的全量加载清单。旧锁不补字段，原版本照常执行。
+Optional StageDefinition instructions=[] adds required frozen core:/team:/project: refs under role/prompt rules. Overrides cannot expand rights/weaken constraints. New work freezes [context](context.md)/all context.json required/conditional resources, deriving dispatch.instruction_refs. Assets are not every child's read list. Existing locks gain no fields/retain original execution.

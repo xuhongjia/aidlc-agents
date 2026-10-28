@@ -1,48 +1,48 @@
-# Fitness 与 CI：无安装器，不等于无工程门禁
+# Fitness and CI: engineering Gates without an installer
 
-本包让现有 AI 工具完成工作编排，检查仍调用**项目本来使用的工具**。Java 项目可以使用其架构测试/构建测试，前端项目使用其测试/静态检查，其他语言同理。不引入统一 Python Gate 服务，也不把 LLM 判断当流水线退出码。
+The host orchestrates; **existing project tools** execute language-appropriate architecture/build/test/static checks. No universal Python Gate service exists; LLM judgment is not an exit code.
 
-## 规则契约
+## Rule contract
 
-所有 profile 必须遵守 [双 Gate 契约](../workflow/gates.md)。standard 的 Architect / QE 阶段交付 fitness JSON 与说明；enhance/fix 在 change.md 定义两类 Gate，已有可复用规则就引用，缺少就由对应角色 leaf 设计、Implement 补建，不因短流程跳过或仅人工看过。两种形式都应能确定每个 check 的以下信息：
+Every profile follows [dual Gates](../workflow/gates.md). Standard Architect/QE produce fitness JSON/explanations; enhance/fix define both in change.md, reusing rules or having role leaves design checks for Implement to build. Human inspection cannot replace Gates. Each check needs:
 
-| 字段 | 含义 |
+| Field | Meaning |
 |---|---|
-| id / kind / version | 稳定规则标识、architecture/quality、版本 |
-| source | 约束来自哪个 Spec、ADR、AC/NFR |
-| mode | blocking 或明确的 advisory；必要检查不能全改 advisory |
-| argv 或项目原生 job | 完整可审阅调用、cwd、前置条件、副作用 |
-| expected | 判定方式、测试计数/跳过策略、阈值、成功与失败信号 |
-| scope | 文件、服务、契约和环境范围；空范围不得通过 |
-| timeout / evidence | 时间边界、原始结果文件、候选和规则身份 |
+| id / kind / version | Stable rule ID, architecture/quality, version |
+| source | Source Spec, ADR, AC/NFR constraint |
+| mode | blocking or explicitly advisory; mandatory checks cannot all become advisory |
+| argv or native project job | Complete reviewable invocation, cwd, prerequisites, side effects |
+| expected | Evaluation method, test counts/skip policy, thresholds, success/failure signals |
+| scope | Files, services, contracts, and environments; an empty scope cannot pass |
+| timeout / evidence | Time limit, raw result files, candidate and rule identity |
 
-模板中的空 checks 是**未配置**，不是允许全绿。JSON 只是跨阶段的数据格式；实际执行器与阈值解析由项目原生工具实现。本包没有一个会自动解释所有 JSON 字段的执行引擎。
+Empty checks mean **unconfigured**. JSON transfers data; native tools execute/evaluate it. This package has no generic JSON execution engine.
 
-## 本地过程
+## Local procedure
 
-1. 有效批准当前路线的验收与检查基线（standard 的 Spec/Pack，或短流程的 change.md），明确允许的命令；不把网络安装、删除、部署隐藏进测试命令。短流程可合并文档，不能取消任一 Gate；没有现成检查时先补建，至少每类一项相关、可执行的 blocking 检查。
-2. 实施完成后固定候选文件集合和摘要，独立核对测试 Oracle 与已批准设计。
-3. 父分别派 Architecture/Quality Gate Reviewer，执行/核对批准命令及真实 CI；保存 stdout/stderr、退出码、报告、数量、跳过项和时间。Verify collector 只核对来源/AC/TDD 后汇总，主 Agent 调度与验真。命令未运行即 NOT_RUN/UNKNOWN。
-4. 比较运行前后候选；变化则结果失效。逐项 AC 核对真实证据，不能仅看总体进程 exit 0。
-5. 保存 architecture-gate.json / quality-gate.json 与原始证据，再按审批策略处理审查卡。无法运行的集成/性能/人工验收如实 blocked 或保持未验证，不能伪造生产结果。
+1. Approve standard Spec/Pack or short-route change.md acceptance/check baseline. Declare commands without hidden installs/deletion/deployment. Build missing checks: at least one relevant executable blocking check per Gate.
+2. Freeze the candidate file set and digests after implementation; independently compare the test Oracle with the approved design.
+3. Parent separately dispatches Reviewers for approved commands/real CI. Retain stdout/stderr, exit codes, reports, counts/skips/time. Collector checks provenance/AC/TDD; parent authenticates evidence. Unexecuted stays NOT_RUN/UNKNOWN.
+4. Compare the candidate before and after execution; changes invalidate results. Check real evidence for every AC, not just overall process exit 0.
+5. Save architecture-gate.json / quality-gate.json and raw evidence, then process the review card under the approval policy. Unavailable integration/performance/manual acceptance stays blocked or unverified; never invent production results.
 
-Architecture Gate 与 Quality Gate 可以由主 Agent 派发独立 leaf 子 Agent 并行执行，但必须绑定同一冻结 candidate 与已批准规则，并隔离报告目录、生成物、数据库、端口等可写资源；不能证明无冲突时串行子 Agent。等待所有必需检查后，由 Verify 汇总 child 合成 AC 结果，主 Agent 验真再呈交人审。Gate 期间不允许开发 worker 继续改候选。详见 [调度协议](../workflow/orchestration.md)。
+Parallel Reviewers require the same frozen candidate/rules and isolated writable reports/files/databases/ports; otherwise serialize. After required checks, collector assembles AC results and parent verifies before human review. No development writes during Gates. See [orchestration](../workflow/orchestration.md).
 
-## 在业务仓库 CI 中实施硬门禁
+## Enforce Gates in business-repository CI
 
-已有公司的 GitLab pipeline 可以通过 [配置与认证](../bootstrap/pipelines.md) 只读接入，不必本地重跑每项有效检查。0.12 支持 local/ci/hybrid：独立 Verify 核对同候选、批准规则/有效配置、最新 job attempt、非零检查与完整报告，符合条件的 CI 才能成为 Gate 证据；不能把缺 Gate、缺报告或远端失败改成本地放行。部署后校验还需目标环境的实际运行身份和 smoke/health；详见 [使用说明](ci-cd-validation.md)。等待释放阶段槽位，恢复保留旧检查的原执行者，不能补造本地退出码。
+[Configure/authenticate](../bootstrap/pipelines.md) read-only GitLab to reuse valid checks. local/ci/hybrid requires independent verification of candidate, rules/effective config, latest job attempt, nonzero checks, and full reports. Missing reports/Gates or remote failure cannot become local PASS. CD also needs runtime identity/smoke/health; see [usage](ci-cd-validation.md). Waiting releases slots; recovery preserves executor provenance without fabricated local exit codes.
 
-需要平台/项目负责人另行批准并配置，本包 setup 不修改这些设置：
+Platform/project owners must separately approve and configure the following; package setup does not change them:
 
-- 用受保护的规则版本与流水线定义运行 Architecture、Quality 两个检查；PR 不能自行取消必需检查或削弱规则。
-- 每次提交运行真实检查，绑定 candidate commit/构建物、Spec 与 Pack 版本。不能拿工作区里 AI 写的 `PASS` 文件直接放行。
-- 失败、没执行、零测试、全部跳过、作用范围为空、超时、报告缺失都阻断；不同工具要写对应的报告判定。
-- 平台 required status checks / 分支保护负责强制门禁，MR/PR 审批和保护环境负责身份与授权。Agent 编写的 approval JSON 仅是记录，不替代平台批准。
-- 最小权限和隔离执行，不给不可信 PR 生产 secrets。完整输出作为受控 artifacts，避免泄露源代码、客户数据或凭据。
-- 部署是独立作业和批准动作；绑定不可变构建物、回滚与观测。Release 文档并不授权发布。
+- Run Architecture and Quality checks using protected rule versions and pipeline definitions. PRs cannot remove required checks or weaken rules.
+- Run real checks for each commit, bound to the candidate commit/artifact and Spec/Pack versions. An AI-written `PASS` file in a workspace cannot authorize merging.
+- Block on failure, no execution, zero tests, all skipped, empty scope, timeout, or missing reports. Define report evaluation for each tool.
+- Platform required status checks / branch protection enforce Gates; MR/PR approvals and protected environments enforce identity and authorization. Agent-written approval JSON is a record, not a platform approval.
+- Apply least privilege and isolated execution; never expose production secrets to untrusted PRs. Store full output as controlled artifacts to avoid leaking source code, customer data, or credentials.
+- Deployment is a separate job and approval action, bound to immutable artifacts, rollback, and observations. A Release document does not authorize deployment.
 
-仓库根 `.github/workflows/` 的校验仅服务 **aidlc-agents 包本身**，不是可以原封不动复制到业务项目的质量门禁。
+Validation under repository-root `.github/workflows/` serves **the aidlc-agents package itself**. It is not a business-project quality Gate ready to copy unchanged.
 
-## 无法自动保证的部分
+## Limits of automation
 
-检查是否与需求有关、Oracle 是否正确、未建模的边界是否遗漏、人工观察是否真实，仍须业务和技术审核。需要新的例外/waiver 机制时单独设计其负责人、时效、候选范围和平台实现；不允许通过删除规则或改 advisory 冒充批准。
+Humans still assess check relevance, Oracle correctness, uncovered boundaries, and real manual observations. Waivers need owner, expiry, candidate scope, and platform enforcement. Deleting/downgrading rules is not approval.

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "source_spec_ref": null,
+  "technical_spec_ref": null,
+  "test_design_ref": null,
+  "quality_design_ref": null,
+  "tasks": [],
+  "allowed_write_paths": [],
+  "forbidden_paths": [],
+  "allowed_commands": [],
+  "integration_checks": [],
+  "rollback": null,
+  "source_approval_refs": [],
+  "blockers": ["Plan independently verifiable tasks and obtain actual implementation authorization"]
+}

@@ -1,35 +1,33 @@
 # Delivery Plan
 
-AIDLC_DRAFT — 基于已批准规格、架构和质量设计制定本次可执行切片，完成后替换本标志。
+AIDLC_DRAFT — executable slices from approved Spec, architecture and quality design.
 
-## 批准输入
+## Approved inputs
 
-引用当前有效的 review 版本与摘要。确认关键问题已解决、工具权限和依赖满足；无法执行的部分明确阻断。
+Review versions/hashes, decisions, permissions and dependencies. Block nonexecutable scope.
 
-## 实施任务与验证
+## Implementation tasks and verification
 
-| Task ID | Requirement/AC | 批准 Oracle | 源码/测试路径与范围 | 依赖 | 完成判据与检查 | 回滚方式 |
+| Task ID | Requirement/AC | Approved Oracle | Source/test paths and scope | Dependencies | Completion criteria/checks | Rollback |
 |---|---|---|---|---|---|---|
 
-每项任务是一段可独立验收的纵向行为切片；先贯通最小端到端路径，再扩展，不按全部数据库/后端/前端分层堆积。保护既有用户修改，没有依据不承诺日期、工时或资源。缺少阻塞决定的任务先标待决定，不列为 ready。
+Use independently acceptable behavior slices: smallest end-to-end path first, not technical-layer batches. Preserve user edits; unsupported dates/resources are assumptions. Blocking decisions stay pending. Plan designs tests; only Implement executes TDD.
 
-本阶段仅规划；Implement 按适用任务执行 TDD，不在 Plan 运行 RED/GREEN/REFACTOR。
+## Dependencies and parallel ownership
 
-## 子任务依赖与并行所有权
-
-| Task ID | 前置任务 ID | 独占写入路径 | 读取路径 | 共享资源/锁 | 可并行组 | 集成验证 |
+| Task ID | Prerequisite IDs | Exclusive writes | Read paths | Shared resources/locks | Parallel group | Integration checks |
 |---|---|---|---|---|---|---|
 
-依赖图必须无环；只有前置任务已完成且没有读写/共享资源冲突的 ready 任务可并行。明确公共接口、配置和锁文件的唯一写者及最终集成检查。父协调器负责派发，阶段子 Agent 负责汇总；默认最多两个 live worker，无槽位或无实际收益时顺序实施，不为每个 Task 自动创建 Agent。
+Require an acyclic graph, completed prerequisites and no read/write/shared-resource conflicts. Name sole writers for interfaces/config/lockfiles and integration checks. Parent dispatches; child consolidates. Default maximum two live workers; run sequentially without slots/benefit, not one Agent per Task automatically.
 
-## 实施授权边界
+## Implementation authority
 
-列出允许修改路径、禁止路径、允许的本地命令和需要另行批准的动作。阶段批准只授权约定的本地实现，不自动授权安装依赖、数据迁移、外部写入、推送或部署。
+Allowed/prohibited paths, commands and separately authorized actions. Approval covers agreed local implementation, not dependency installation, migration, external writes, push or deployment.
 
-## 候选与检查范围
+## Candidate and check scope
 
-明确交付源码、测试、配置、依赖清单及必要构建输入，供后续候选清单和摘要使用。不能通过排除相关文件使检查失真。
+Inventory delivery source, tests, config, manifests and required build inputs; do not exclude relevant files to distort checks.
 
-## 风险与验收路径
+## Risk and acceptance route
 
-列出可执行检查、人工验证、关键风险及失败应退回的阶段。
+Executable checks, human verification, risks and failure return stages.

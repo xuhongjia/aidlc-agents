@@ -1,23 +1,23 @@
 # Intake
 
-AIDLC_DRAFT — 基于真实需求填写并替换本标志；AI 建议不能代替用户批准。
+AIDLC_DRAFT — sourced request, not AI approval.
 
-## 需求来源与目标
+## Source and goals
 
-引用 `request.md` 及可信来源；说明用户、问题、预期变化、成功信号及为什么要做。
+request.md/trusted sources, users, problem, desired change, success signals and rationale.
 
-## 范围与非目标
+## Scope and exclusions
 
-列出本次包含、明确不包含、依赖、约束和待用户决定事项。不能把未确认推断写成承诺。
+Inclusions, exclusions, dependencies, constraints and user decisions. Inferences are not commitments.
 
-## 当前项目与风险
+## Project and risk
 
-引用 `project-context.md`，评估影响面、数据敏感性、可逆性、外部系统和权限需求。说明 standard 路线是否适用；不通过随意省略验收来降低流程成本。
+Link project-context.md; assess impact, sensitivity, reversibility, external systems/permissions and standard-route suitability. Do not omit acceptance to reduce process cost.
 
-## 推荐交付切片
+## Recommended slices
 
-给出能够独立验证的最小需求切片、主要依赖与合理边界。未确认的日期、成本或资源标为假设。
+Small independently verifiable slices, dependencies and boundaries. Unconfirmed dates/cost/resources are assumptions.
 
-## 澄清与审核焦点
+## Clarification and review focus
 
-有问题时引用 `questions.md`；无问题不为占位创建文件。列出实际阻断项和待批准范围，关键问题未答复则 result 保持 blocked。
+Create/link questions.md only for actual questions. List blockers and approval scope; critical unanswered questions block.

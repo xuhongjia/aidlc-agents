@@ -14,7 +14,7 @@ test('trace counters distinguish cached/uncached input without summing duplicate
 });
 test('trace tool text and images remain different measures; missing usage is not zero or bytes/4', () => {
   const result = summarizeUsage([{ type: 'response_item', payload: { type: 'custom_tool_call_output',
-    output: [{ type: 'input_text', text: '中文' }, { type: 'input_image', image_url: 'data:huge-not-text' }] } }]);
+    output: [{ type: 'input_text', text: '\u4e2d\u6587' }, { type: 'input_image', image_url: 'data:huge-not-text' }] } }]);
   assert.deepEqual(result, { status: 'unavailable', text_bytes: 6, image_count: 1 });
   assert.equal(compareUsage(result, result).status, 'NOT_RUN_OR_UNAVAILABLE');
   assert.equal(summarizeUsage([usage('03', 100, 20, 10)], { after: '02' }).status, 'unavailable');

@@ -1,86 +1,62 @@
-# 按团队接入 AIDLC
+# Configure AIDLC for your team
 
-核心负责批准、候选与 Gate；团队包负责阶段业务内容、工作流和模板；项目覆盖只描述本项目差异。配置包不是新的 Agent CLI，也不会自动获得外部操作权。
+Core owns approval/candidate/Gate rules; team packs own stage content/workflows/templates; project overrides hold local differences. Packs grant no external authority or new runtime.
 
-如果是使用已配置的流程接需求，先看 [DAG 使用与 AI 动态选阶段](dag-usage.md)：从首个需求、分支/并行到审批都有可复制指令。本页面向配置团队包及维护版本的人。
+For execution prompts/branches/approval, see [DAG usage](dag-usage.md). This page covers configuration/version maintenance.
 
-## 一句话接入
+## Setup prompts
 
-本地团队目录：
+For a local team directory:
 
-> 读取当前仓库 `.aidlc/system/bootstrap/team.md`，检查我指定的团队包目录，给出阶段、模板、工作流和权限差异；保留现有内容及批准记录，完成确认后的接入与静态检查即停止，不接真实需求。
+> Read `.aidlc/system/bootstrap/team.md` in this repository and inspect my specified team-pack directory. Show stage, template, workflow, and permission differences. Preserve existing content and approvals. After confirmation, complete setup and static checks, then stop without taking a real request.
 
-团队 Git 仓库：
+For a team Git repository:
 
-> 按当前仓库 `.aidlc/system/bootstrap/team.md` 接入我提供的团队 Git 仓库及包子目录，先解析固定 commit，展示差异供我确认；默认固定版本，不启用自动审批或外部写权限。
+> Follow `.aidlc/system/bootstrap/team.md` to connect my supplied team Git repository and package subdirectory. Resolve a pinned commit first and show the differences for confirmation. Pin the version by default; do not enable automatic approvals or external writes.
 
-需提供真实仓库 URL/子目录，不把这里的描述当可下载地址。尚未发布的新核心包需明确从本地未发布副本安装，不能用 main 冒充本版。
+Supply real source URL/subdirectory. Explicitly select local unpublished core changes; `main` may not contain them.
 
-接入后：
+After setup:
 
-> 使用 aidlc 接收需求：……。根据已注册阶段及任务风险推荐组合流程，先在独立 entry 子 Agent 核实，给出阶段取舍、条件分支和审批卡；等我确认后继续。
+> Use aidlc for this request: …. Recommend a composed workflow from registered stages and request risk. First validate it with an independent entry child, then show stage choices, conditional branches, and the approval card. Wait for my confirmation before continuing.
 
-修改团队定义：
+To change team definitions:
 
-> 为当前团队增加一个只读兼容性审查阶段，替换架构文档模板，并给 API 流程加入条件分支；写入团队/项目扩展，不改核心，先给精确差异，已有需求继续锁定版本。
+> Add a read-only compatibility review stage, replace the architecture template, and add a conditional branch to the API workflow. Write team/project extensions without changing core. Show exact differences first; existing requests retain their pinned versions.
 
-## 完整示例
+## Complete examples
 
-| 示例 | 流程与用途 |
+| Example | Workflow and purpose |
 |---|---|
-| [API 团队](../examples/team-packs/api-team/README.md) | Scope → 按获批 needs_review 分支 → 两个独立审查并行或直接实施 → Implement → Verify；正文改名但语义不变 |
-| [设计团队](../examples/team-packs/design-team/README.md) | Brief → Options 与 Security 并行 → 设计汇总；只读分析，结束为 analysis_complete，不冒充已验证交付 |
-| [发布团队](../examples/team-packs/release-team/README.md) | 显式在 verified handoff 后加入 Release/Learn；manual 审批及独立生产授权，非 Standard 默认路径 |
+| [API team](../examples/team-packs/api-team/README.md) | Scope → approved needs_review branch → two independent parallel reviews or direct implementation → Implement → Verify; renamed main documents retain their semantics |
+| [Design team](../examples/team-packs/design-team/README.md) | Brief → parallel Options and Security → design synthesis; read-only analysis ends at analysis_complete without claiming verified delivery |
+| [Release team](../examples/team-packs/release-team/README.md) | Explicit Release/Learn after verified handoff; manual approvals and separate production authority; outside default Standard |
 
-示例在 `.aidlc/system/examples/team-packs/` 可读取；选择一个复制到 team 的行为需要团队接入授权，不是 setup 默认动作。它们不是企业强制规范，尚未执行真实交付。
+`.aidlc/system/examples/team-packs/` examples need team-setup authorization; they are neither defaults, enterprise mandates, nor tested real deliveries.
 
-## 实际可以改什么
+## Customization scope
 
-- 新增已定义的阶段，或显式替换阶段 Prompt、角色指导和模板；注册输入输出契约不变时可以更换文件名和正文结构。
-- 使用有唯一 step_id 的阶段实例拼图；一个 stage 可出现多次。可声明条件、并行、汇合、明确终点和工具需求。
-- 配置工作流偏好：config.workflow=auto 或 workflow ID；原 profile 继续作为内置偏好别名，冲突先确认。
-- 项目级 overrides 只替换明确 ID 的完整定义，不暗中合并两个不同流程。首版一个活动团队包，不支持多包依赖链或动态执行脚本。
+- Add stages or explicitly replace Prompts/roles/templates; renamed/restructured artifacts must preserve input/output contracts.
+- Compose reusable stage instances with unique step_id, conditions, parallelism, joins, endpoints, and tools.
+- Set config.workflow=auto/ID; profiles remain built-in aliases. Confirm preference conflicts.
+- Project overrides replace complete explicit-ID definitions. One active pack is supported, without multi-pack dependencies/dynamic scripts.
 
-不能通过改名、模板删除章节或节点裁剪来去掉批准、AC/Oracle、独立验证和两 Gate。非实施分析流不用产品 Gate，但它也不能写业务源码/配置。核心流程标准详见 [Interface](../workflow/extensions.md)；节点调度详见 [DAG](../workflow/dag.md)。
+Renaming/trimming cannot remove approval, AC/Oracle, independent verification, or Gates. Analysis-only needs no product Gates but cannot write product source/configuration. See [Interface](../workflow/extensions.md) and [DAG](../workflow/dag.md).
 
-0.13 自定义 implementation-kind 自动继承 Implement-only TDD/任务例外与证据；角色/模板可改，不能把 RED/GREEN/REFACTOR 挪到 Quality/Plan 或让实施者代签 Gate。固定可选 Skill 元数据不默认加载正文。Standard 默认只交 verified handoff，发布/反馈必须使用明确的新团队 Workflow ID。见 [V2.1](engineering-skills.md)。
+Custom implementation nodes inherit [V2.1](engineering-skills.md) TDD/exceptions/evidence. Never move RED/GREEN/REFACTOR into Quality/Plan or let implementers sign Gates. Freeze optional Skill metadata without default text loading. Standard ends at verified handoff; release/feedback needs a new explicit team Workflow ID.
 
-## 工作级固定与运维
+## Work-level pinning and maintenance
 
-0.12 可在 config.delivery 通过 kind/workflow_ids/step_ids 将公司 CI/CD 绑定到团队节点，节点须有 evidence.read；实际绑定、报告映射和等待策略随 work 冻结。未绑定的阶段不加载流水线协议；CD 若依赖最终 Verify 批准，必须放在后置 release_readiness 节点，不能让 Verify 等自身批准。使用与示例见 [CI/CD 校验](ci-cd-validation.md)。这不是新阶段或新的外部写权限。
+Since 0.12, config.delivery can bind company CI/CD to team nodes through kind/workflow_ids/step_ids. Nodes require evidence.read. Actual bindings, report mappings, and wait policies freeze with the work. Unbound stages do not load pipeline protocols. CD depending on final Verify approval must use a subsequent release_readiness node, so Verify never waits for its own approval. See [CI/CD validation](ci-cd-validation.md) for usage/examples. This adds neither a stage nor external-write authority.
 
-每个新 work 保存解析图、团队来源、实际 Prompt/模板副本和哈希。首张审批卡包含图与范围；之后分支只使用已批准的事实。团队改动不热加载到旧 work；图需要改变就新 revision、新确认，旧授权不跨图继承。
+Freeze graph, team source, Prompt/template copies, and hashes per work. First approval binds graph/scope; branches use approved facts. No hot-loading: graph changes require a new revision/confirmation, without carrying old authority.
 
-锁定资产与派发的对应示意（不是可执行快照，摘要必须实际计算）：
+A lock’s `assets` maps each resource ref to its frozen path and real SHA-256, e.g. `team:templates/api-change-brief.md` → `.aidlc/work/REQ-001/definitions/g1/team/templates/api-change-brief.md`. Dispatch identifies the lock via `workflow_ref {path, sha256}`, plus `step_id=scope`, `stage_id=team.scope`, `stage_kind=analysis`, and `expected_outputs` binding `api-change-brief.md` to contract `change` and that frozen template. Calculate actual digests; this example is not an executable snapshot.
 
-```json
-{
-  "assets": [{
-    "ref": "team:templates/api-change-brief.md",
-    "path": ".aidlc/work/REQ-001/definitions/g1/team/templates/api-change-brief.md",
-    "sha256": "ACTUAL_COPY_SHA256"
-  }]
-}
-```
+Freeze complete sources/workflow/stages/tool_bindings, validation records, Prompts/roles/core protocols, and transitive asset mappings. Dispatch `instruction_refs` declares mandatory method resources; `input_refs` holds business inputs and pinned digests. References such as `core:prompts/common.md` resolve within the same graph, never to a later installation. Runtime loads only current-node resources. Declare mandatory team rules in `StageDefinition.instructions`, budgeting them separately under the [context contract](../workflow/context.md). Missing mappings block; budgets cannot remove rules.
 
-```json
-{
-  "workflow_ref": {"path": ".aidlc/work/REQ-001/workflow.lock.json", "sha256": "ACTUAL_LOCK_SHA256"},
-  "step_id": "scope",
-  "stage_id": "team.scope",
-  "stage_kind": "analysis",
-  "expected_outputs": [{
-    "name": "api-change-brief.md",
-    "contract": "change",
-    "template": ".aidlc/work/REQ-001/definitions/g1/team/templates/api-change-brief.md"
-  }]
-}
-```
+Approve stages independently. One card may confirm several explicit objects, with each record bound separately. Low-risk custom delivery graphs preserving original fix/enhance safeguards may explicitly authorize auto. standard, high-risk work, and pure research retain human review. `checkpoint_low_risk` accepts only unchanged built-in fix/enhance, excluding team overrides of graphs, stages, Prompts, or templates. Low-risk non-standard implementation may separately request bounded internal feedback, defaulting to zero rounds; it cannot change the graph or automatically start formal rework. Tool permissions and knowledge publishing still need their own authorization.
 
-实际锁还必须包含完整 sources/workflow/stages/tool_bindings、校验记录、Prompt/角色/核心协议及它们所需传递引用的资产映射。0.11 新 dispatch 以 instruction_refs 声明必读方法资源，input_refs 保留业务来源及固定资源摘要；模板引用 `core:prompts/common.md` 时解析到同图固定副本，不读取后来变更的安装目录。冻结完整、运行时仅定向读本节点；额外必读团队规则可在 StageDefinition.instructions 声明并单列预算，参见 [上下文契约](../workflow/context.md)。缺映射仍停止，不因预算删减约束。
+Team updates follow bootstrap/team.md: pin target, three-way diff, confirmed switch. Core preserves team/overrides; incompatibility blocks automatic rewriting. Finish old work/active Hooks before switching.
 
-阶段独立审批；多个明确对象可以一张卡确认，记录仍逐项绑定。低风险、满足原 fix/enhance 保证的定制交付图可以明确授权 auto；standard、高风险和纯研究保持人审。`checkpoint_low_risk` 仅接受未改写的内置 fix/enhance，不适用于团队覆盖的图、阶段、Prompt 或模板。低风险非 standard 实施可单独申请有界内部反馈，默认零轮，不得借此改图或自动正式返工。工具权限和知识发布仍需其专项授权。
-
-更新团队：让 AI 按 bootstrap/team.md 检查固定目标版本、给三方差异，再确认切换。核心升级不会覆盖 team/overrides；不兼容时暂停，不自动改团队定义。待更新时若有未结束 work/活动 Hook，继续旧版完成后再升级。
-
-验收分开报告：定义/内容检查、参考模型契约、真实宿主 DAG 行为、真实连接器。通过模型测试不能声称真实批准流程已跑通。
+Report content, reference-model, real-host DAG, and connector checks separately. Model tests prove no real approval workflow.

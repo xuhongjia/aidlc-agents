@@ -4,7 +4,7 @@
   "by_kind": {
     "design": ["workflow/gate-design.md"],
     "quality_design": ["workflow/gate-design.md"],
-    "implementation": ["workflow/gate-design.md", "workflow/tdd.md", "skills/test-driven-development/SKILL.md", "skills/incremental-implementation/SKILL.md", "templates/work/tdd-evidence.json"],
+    "implementation": ["workflow/gate-design.md", "workflow/tdd.md", "skills/reusable-capability/test-driven-development/SKILL.md", "skills/reusable-capability/incremental-implementation/SKILL.md", "templates/work/tdd-evidence.json"],
     "verification": ["workflow/gate-execution.md", "templates/work/gate-result.json"],
     "release_readiness": ["workflow/external-evidence.md"],
     "learning": ["workflow/external-evidence.md"]
@@ -18,10 +18,10 @@
   },
   "implementation_feedback": ["workflow/feedback-request.md"],
   "gate_design_leaf": ["workflow/gate-design.md"],
-  "gate_execution_leaf": ["workflow/gate-execution.md", "skills/aidlc-fitness-check/SKILL.md", "templates/work/gate-result.json"],
+  "gate_execution_leaf": ["workflow/gate-execution.md", "skills/reusable-capability/aidlc-fitness-check/SKILL.md", "templates/work/gate-result.json"],
   "implementation_optional": {
-    "debugging-and-error-recovery": "skills/debugging-and-error-recovery/SKILL.md",
-    "code-review-and-quality": "skills/code-review-and-quality/SKILL.md"
+    "debugging-and-error-recovery": "skills/reusable-capability/debugging-and-error-recovery/SKILL.md",
+    "code-review-and-quality": "skills/reusable-capability/code-review-and-quality/SKILL.md"
   },
   "engineering_sources": ["docs/engineering-skills.md", "skills/UPSTREAM-LICENSE.txt"],
   "gate_reviewers": {

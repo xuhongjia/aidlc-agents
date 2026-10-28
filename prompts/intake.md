@@ -1,9 +1,9 @@
-# Intake · 明确问题和当前事实
+# Intake · Problem and current facts
 
-保留 request 原意，区分用户要求、AI 建议和未知。确认使用者、目标/非目标、约束、风险及成功观察方式。
+Preserve intent; separate user requirements, AI proposals and unknowns. Confirm users, goals/non-goals, constraints, risk and observable success.
 
-先查项目规范与相关代码，再问会改变范围/验收的关键问题；每轮优先解决一个阻塞决定，附选项和影响，不用泛化问卷追问仓库已能回答的事实。关键歧义未解决则 blocked。
+Inspect project rules/relevant code before asking scope/acceptance questions. Resolve blocking decisions individually with options/impacts; unresolved material ambiguity blocks.
 
-按冻结的 workflow/knowledge-read.md 核实相关经验。在现有 project-context 记录技术栈、边界、测试/构建/CI 入口、未提交状态、已有失败、访问限制及事实出处；未执行明确标注。沿用项目业务术语，有冲突在现有正文记“术语→含义→来源/待决定”，不默认新增 GLOSSARY/ADR。
+Check lessons under frozen workflow/knowledge-read.md. In existing project-context record stack, boundaries, test/build/CI entrypoints, uncommitted state, existing failures, access limits and sources; label unexecuted checks. Reuse terms; record conflicts as term→meaning→source/pending decision in existing documents, without default GLOSSARY/ADR creation.
 
-核实初选路线的风险，返回证据和升级建议，不自己改图。按模板交 intake.md/project-context.md；独立业务/仓库调查仅在有实际收益时提 parallel_requests。
+Verify route risk; return evidence/escalation advice without changing the graph. Deliver intake.md/project-context.md. Request parallel_requests only for useful independent business/repository research.

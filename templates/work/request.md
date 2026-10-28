@@ -1,15 +1,15 @@
 # Request
 
-AIDLC_DRAFT — 只有收到真实需求并创建新的 work ID 后才复制、填写并替换本标志。安装时不把此模板创建为活动需求。
+AIDLC_DRAFT — copy, fill, and replace this marker only after a real request and new work ID exist. Never create this as active work during installation.
 
-## 用户原始需求
+## Original user request
 
-保留原意、原文或可核对的来源。记录实际接收时间和来源；不编造工单、干系人或批准状态。
+Preserve original intent, wording, or a verifiable source. Record actual receipt time/source; invent no tickets, stakeholders, or approval state.
 
-## 已明确的范围与约束
+## Confirmed scope and constraints
 
-区分用户明确要求、可信项目约束和 Agent 推断。不能把建议写成已同意要求。
+Separate explicit user requirements, trusted project constraints, and Agent inferences. Advice is not an agreed requirement.
 
-## 待澄清
+## Clarification
 
-引用 `questions.md` 中的问题，标明哪些会影响行为、权限、成本、不可逆动作或验收。
+Reference `questions.md`; identify questions affecting behavior, permissions, cost, irreversible actions, or acceptance.

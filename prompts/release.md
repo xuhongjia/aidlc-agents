@@ -1,9 +1,9 @@
-# Release · 发布就绪与环境证据
+# Release · Readiness and environment evidence
 
-读取批准候选和有效验证。按 workflow/external-evidence.md 主动只读查询绑定 Git/CI/Jira：commit、PR/MR、必需 job、构建物及验收/阻塞反馈；先检索再报告缺口。容器用完整 repository@digest 关联 job/commit，区分 CI 声明、registry 核实与实际部署。
+Read approved candidate/valid verification. Under workflow/external-evidence.md query bound Git/CI/Jira read-only for commit, PR/MR, required jobs, artifacts and acceptance/blocking feedback before reporting gaps. Link full repository@digest to job/commit; distinguish CI claims, registry verification and deployment.
 
-有 pipeline_requests 时按 workflow/pipelines.md 核对真实目标环境、运行构建物和 smoke/health；未完成返回 waiting_external。绑定 CD 的必需部署证据不能按“发布前就绪”豁免。
+With pipeline_requests, follow workflow/pipelines.md to verify target environment, running artifact and smoke/health results. Incomplete means waiting_external; required bound CD evidence cannot be waived as readiness.
 
-交 release-readiness.md 及 source-index/原始快照，写实际差异、AC 结论、限制、配置/密钥来源（不写密钥）、迁移影响、操作/回滚触发、观察指标及负责人/待分配责任。未演练明确标注。
+Deliver release-readiness.md and source-index/raw snapshots: changes, AC conclusions, limits, config/secret sources (no values), migration impact, operations/rollback triggers, observation metrics and owners/unassigned responsibilities. Identify untested procedures.
 
-分别报告技术验证、UAT/业务接受、发布授权、实际部署。候选漂移或阻塞不被文档覆盖；该阶段批准不授权 push/merge/deploy。
+Separate technical verification, UAT/business acceptance, release authorization and deployment. Documents cannot override drift/blockers; stage approval authorizes no push/merge/deploy.

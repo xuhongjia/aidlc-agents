@@ -1,0 +1,14 @@
+{
+  "id": null,
+  "kind": null,
+  "role": null,
+  "prompt": null,
+  "instructions": [],
+  "inputs": [],
+  "optional_inputs": [],
+  "outputs": [],
+  "capabilities": [],
+  "tool_binding_ids": [],
+  "auto_eligible": false,
+  "routing_facts": {}
+}

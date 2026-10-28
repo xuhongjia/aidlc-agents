@@ -1,28 +1,31 @@
-# 项目必需 Setup
+# Required project Setup
 
-0.14 支持项目自己声明必需接入。AIDLC 始终必需；Confluence/GitLab 只对清单内的具体目标强制检查。方法包是宿主 AI 执行的协议，不是全局 CLI，也不替代平台权限或 CI 硬门禁。
+Since 0.14, projects declare required integrations: always AIDLC, Confluence/GitLab only for listed targets. This host-AI protocol replaces neither permissions nor enforced CI Gates.
 
-## 对 AI 怎么说
+## Prompts for AI
 
-首次安装仍按 README 的 bootstrap URL 取得方法包。接入后的自然语言入口：
+See [installation](getting-started.md#install) and [role handoffs](role-delivery.md). Send these prompts to AI after installation; they are not terminal commands:
 
-| 指令 | 做什么 |
+| Instruction | Action |
 |---|---|
-| setup aidlc | 安装/核验方法、子 Agent 能力，并设置项目必需项；不启动需求 |
-| setup confluence | 复用 TWG，按既有权限安装/引导登录，确认站点、空间和父页面 |
-| setup gitlab | 复用宿主连接或已认证 glab，配置精确项目、CI/CD binding 与报告映射 |
-| setup check | 主动检查所有项目必需项，报告缺口 |
-| setup status | 仅显示上次检查及时间，不联网、不把旧 ready 当新检查 |
+| setup aidlc | Install/verify the method and child-agent capability; configure project requirements without starting work |
+| setup confluence | Reuse TWG; install/guide login under existing permissions; confirm site, space, and parent page |
+| setup gitlab | Reuse the host connection or authenticated glab; configure exact projects, CI/CD bindings, and report mappings |
+| setup role delivery | Configure the optional role team pack, Jira/GitLab sources, PO/QA/technical/final responsibility, and handoffs; does not automatically enable CI/CD validation |
+| setup check | Actively check all project requirements and report gaps |
+| setup status | Show the previous check and timestamp only; no network access or treating stale ready as a fresh check |
 
-例如：
+Solo/local delivery may require AIDLC alone. Check role read/publication separately under the [role protocol](../workflow/role-delivery.md): Jira is outside this Setup list; readable GitLab material proves no CI/CD readiness. Lower existing requirements only by explicit decision.
 
-> setup aidlc。这个项目必须接 Confluence 的 engineering-kb 和 GitLab 的 app-ci；其它接入可选。先核实真实目标，记录范围，允许以后每次新需求前只读检查这两个目标。不启动需求、不发布页面、不触发流水线。
+Example:
 
-已有配置时复用真实 ID；目标未确定就向用户索取链接/绑定选择，保留待配置要求。缺 TWG 的安装和登录步骤仍按 [Confluence 接入](../bootstrap/knowledge.md)；GitLab 认证见 [流水线接入](../bootstrap/pipelines.md)。不要把密码/token 放进聊天或 Git。
+> setup aidlc. This project requires Confluence engineering-kb and GitLab app-ci; other integrations are optional. Verify the real targets and record their scope. Allow read-only checks of these two targets before each future new request. Do not start work, publish pages, or trigger pipelines.
 
-## 最小配置
+Reuse real configured IDs; unresolved links/bindings remain pending. Follow [Confluence](../bootstrap/knowledge.md) / [GitLab authentication](../bootstrap/pipelines.md); keep credentials out of chat/Git.
 
-在 .aidlc/config.json 合并以下片段，ID 必须对应项目现有配置：
+## Minimal configuration
+
+Merge this into .aidlc/config.json, using IDs from the project's existing configuration:
 
 ```json
 {
@@ -37,20 +40,20 @@
 }
 ```
 
-Confluence 引用 knowledge.targets[].id，GitLab 引用 delivery.bindings[].id；原配置仍是目标的唯一来源。未列出的已配置集成为可选，不因它们未就绪阻塞，也不主动探测。需要两个知识目标或 CI/CD 两个项目时分别列项。
+Use configured knowledge.targets[].id / delivery.bindings[].id; no duplicate target source. Unlisted integrations are optional: neither proactively probe nor block on them. Separate targets/projects need separate entries.
 
-授权 null 是待确认状态，示例不能直接作为已获授权运行。父根据真实用户指示记录 user_statement/source/at 和解析目标范围的 scope_digest；新工作只读探测受该范围限制。目标、连接、映射改变或授权撤销后旧记录不能通行。外部 target_id=null 表示“必需但尚未选定”，不会被自动降级为可选。
+null authority is pending, not permission. Record genuine user_statement/source/at and resolved-target scope_digest. Probes stay scoped; target/connection/mapping changes or revocation invalidate records. External target_id=null remains required/unselected.
 
-## 何时阻止、何时继续
+## When to block or continue
 
-新需求先查版本/完成必要更新，再检查项目必需项；全部 ready 才创建 work。检查绑定当前调用和实际配置，保留技术证据，失败只提示具体修复入口，不循环安装/登录。setup 后不自动执行需求。
+Before new work, run version/update preflight, then requirement checks bound to this invocation/configuration with evidence. Create work only when all pass. Failures report a repair entry point without install/login loops. Setup starts no work.
 
-- AIDLC：文件/bridge 完整，隔离子 Agent 探针有效。宿主未变且证据完整时复用原探针，不每阶段重新派 Agent。
-- Confluence：当前认证与指定目标读取实际成功；仅装好 CLI 不算就绪，可读也不保证可写。
-- GitLab：连接、精确项目及必需报告/映射真实可用。历史 pipeline 红灯不自动表示 setup 失败；就绪检查与本次候选的双 Gate/部署验证分开。
+- AIDLC: complete files/bridge and a valid isolated child-agent probe. Reuse complete probe evidence while the host is unchanged; do not spawn a new probe at every stage.
+- Confluence: actual authenticated reads of the specified target succeed. An installed CLI alone is not ready; readable does not guarantee writable.
+- GitLab: the connection, exact project, and required reports/mappings are actually available. A historical red pipeline does not automatically fail Setup. Readiness checks are separate from this candidate's dual Gates/deployment validation.
 
-报告区分方法安装成功与项目就绪。可出现“method_ready=true，project_ready=false：缺 Confluence 认证”，方法包可以安装完成，但新工作仍阻塞。技术记录保存于 .aidlc/setup/checks/，新 work 的锁只引用其摘要，不给每个阶段追加整份 setup 文档。
+Report method_ready/project_ready separately: installed method plus missing Confluence authentication still blocks new work. Store evidence in .aidlc/setup/checks/; new locks reference digests rather than load the full Setup document per stage.
 
-已有工作继续原版本/锁和授权，不套新项目要求；实际操作照常核对真实权限。查看状态、审批、撤销和终结仍可执行。旧安装没 setup 字段时只要求 AIDLC，不自动强制已有集成；损坏的显式配置不能按旧安装跳过。
+Existing work keeps version/lock/authority, without new requirements; operations still verify permissions. Status/approval/revocation/closure remain available. Missing legacy setup means AIDLC-only; invalid explicit config cannot use that fallback.
 
-“必需”不会授予页面写入、CI 启动/重试、监控、发布或阶段审批权。知识投递失败仍按原同步机制记录待办，不能回改已经有效的交付结果。移除/降低必需项须用户明确配置决定。
+Required grants no page write, CI trigger/retry, monitor, publication, or approval authority. Failed knowledge sync stays pending without rewriting valid delivery results. Lower/remove requirements only by explicit configuration decision.

@@ -38,6 +38,7 @@
   },
   "knowledge": {"targets": []},
   "delivery": null,
+  "collaboration": null,
   "installed_at": null,
   "managed_files": []
 }

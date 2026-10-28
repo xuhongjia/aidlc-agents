@@ -1,0 +1,12 @@
+{
+  "id": null,
+  "revision": null,
+  "title": null,
+  "ac_ids": [],
+  "required": true,
+  "execution_mode": null,
+  "preconditions": [],
+  "data": {"dataset_ref": null, "prepare": null, "cleanup": null},
+  "steps": [{"id": null, "action": null, "expected": null, "oracle_ref": null}],
+  "limitations": []
+}

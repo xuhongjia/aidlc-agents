@@ -1,0 +1,12 @@
+.DS_Store
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.aidlc/
+.agents/
+.claude/
+coverage/
+
+# Product work records, model logs and local setup state do not belong in this package.

@@ -1,11 +1,11 @@
-# Gate 设计与安装
+# Gate design and installation
 
-交付路径都需 Architecture/Quality 两类相关、非空、可执行 blocking 检查，保留项目现有必需规则；不能用人工看过、N/A、文件存在、关键词或恒真脚本替代。纯只读 analysis 不声称已验证产品交付。
+Delivery needs relevant, nonempty executable Architecture/Quality blocking checks/all mandatory project rules. Human inspection, N/A, existence/keyword checks/always-true scripts cannot substitute. Read-only analysis is not verified delivery.
 
-盘点规则来源、版本、入口、作用范围、命令/cwd/副作用/超时、阈值、失败语义和原始报告。缺规则或覆盖不足时，Scope/Diagnose 向父协调器请求对应 Architect/QE gate-design leaf，使用锁内 gate-design Prompt；不追加完整设计阶段。Architect 基于真实模块依赖/接口/ADR 约束，QE 基于 AC、边界和回归的独立 Oracle。草案只写 leaf 的 run，供阶段汇总 child 合入 change 或不可变附件；草案不是实施批准。
+Inventory source/version/entry/scope, command/cwd/effects/timeout, threshold/failure semantics/raw reports. Missing rules/coverage: Scope/Diagnose requests parent-dispatched Architect/QE gate-design leaves with locked Prompts, not full stages. Architect uses dependencies/interfaces/ADRs; QE uses AC/boundaries/independent regression Oracles. Leaf-run drafts feed change/immutable collector attachments, granting no implementation rights.
 
-两类均有可实现方案才可提交实施前审批。缺工具、权限或可信约束则 blocked 并提出补建问题。完整设计阶段交相应已声明输出；短流程不补两份设计报告/Fitness JSON。每个新检查给出目标安装路径、负向样例、证据格式和依赖。新增依赖或架构风险交父协调器升级/单独授权。
+Pre-implementation approval needs both implementable Gate designs. Missing tools/rights/credible constraints block with remediation questions. Full stages return declared outputs; compact adds no design reports/Fitness JSON. New checks declare install path/negative case/evidence format/dependencies. New dependencies/architecture risk need separate authority.
 
-只有 implementation 在有效 authority/dispatch 的交集内安装已批准检查，纳入业务变更和自测；不能把缺 Gate 留给 Verify 补代码。为新检查用受控负向样例证明违约会 FAIL，再验证真实候选，保留原始负向证据；不污染用户树或修改真实 Oracle。授权 entrypoint_refs 的 {path,sha256,install_path} 绑定获批草案与目标，首次执行前核对实际安装字节一致。草案、入口或副作用改变需要新授权，不能自动运行未知脚本。
+Only Implement installs approved checks under authority ∩ dispatch with product changes/self-tests. Verify fills no code gaps. Prove controlled violations FAIL before candidate tests; retain raw evidence without altering user trees/Oracles. entrypoint_refs {path,sha256,install_path} binds draft/target; verify installed bytes before execution. Changed drafts/entries/effects need new authority; never autorun unknown scripts.
 
-所有审批模式均不免 Gate。检查未实际安装、无有效设计、无授权或无法证明负向有效性时 blocked；不能提交“已补建”。Verify 发现缺规则回实际设计生产者，缺实现回 writer，保持证据并请求新批准/候选，不发明宽松替代规则。
+No Gate waivers. Uninstalled/invalid/unauthorized checks/unproven negative effectiveness block, never count as remediation. Verify returns missing rules to designers/code to writers with evidence/new approval/candidate requests, never permissive substitutes.

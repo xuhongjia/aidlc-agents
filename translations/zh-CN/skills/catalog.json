@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "purpose": "navigation-only",
+  "categories": [
+    {"id": "orchestration", "label": "流程编排", "description": "选择路线、协调阶段、定制工作流"},
+    {"id": "setup", "label": "接入配置", "description": "安装就绪、连接与项目配置，不是交付阶段"},
+    {"id": "stage-entry", "label": "阶段入口", "description": "进入内置生命周期阶段或短流程首阶段"},
+    {"id": "role-collaboration", "label": "角色协作", "description": "PO、DEV、QA 独立会话的准备与交接入口"},
+    {"id": "reusable-capability", "label": "可复用能力", "description": "阶段按需调用的规格、设计、工程和检查方法"},
+    {"id": "sync-publication", "label": "同步发布", "description": "显式同步固定内容，不是新的交付阶段"}
+  ],
+  "stage_groups": [
+    {"id": "requirements", "label": "需求准备与准入", "optional": false, "stages": ["core.intake", "core.spec", "core.scope", "core.diagnose", "team.prd", "team.story", "team.role-intake"]},
+    {"id": "design-plan", "label": "架构、质量设计与计划", "optional": false, "stages": ["core.architecture", "core.quality", "core.plan", "team.test-design", "team.role-design"]},
+    {"id": "implementation", "label": "实现与 TDD", "optional": false, "stages": ["core.implement", "team.role-implement"]},
+    {"id": "verification", "label": "QA 执行与独立验证", "optional": false, "stages": ["team.role-qa", "core.verify", "team.role-verify"]},
+    {"id": "release-learn", "label": "发布与学习扩展", "optional": true, "stages": ["core.release", "core.learn"]}
+  ],
+  "stage_sources": {"core": "workflow/stages.json", "role_team": "examples/team-packs/role-team/pack.json"},
+  "skills": [
+    {"name": "aidlc", "path": "skills/orchestration/aidlc/SKILL.md", "category": "orchestration", "stages": [], "scope": "父协调器：路由、派发、状态与审批"},
+    {"name": "aidlc-workflow", "path": "skills/orchestration/aidlc-workflow/SKILL.md", "category": "orchestration", "stages": [], "scope": "团队 DAG、阶段和模板配置；不运行交付"},
+    {"name": "aidlc-setup", "path": "skills/setup/aidlc-setup/SKILL.md", "category": "setup", "stages": [], "scope": "AIDLC 安装与项目必需项检查"},
+    {"name": "aidlc-knowledge-setup", "path": "skills/setup/aidlc-knowledge-setup/SKILL.md", "category": "setup", "stages": [], "scope": "Confluence / TWG 知识接入"},
+    {"name": "aidlc-pipeline-setup", "path": "skills/setup/aidlc-pipeline-setup/SKILL.md", "category": "setup", "stages": [], "scope": "GitLab CI/CD 绑定与等待配置"},
+    {"name": "aidlc-role-setup", "path": "skills/setup/aidlc-role-setup/SKILL.md", "category": "setup", "stages": [], "scope": "Jira＋GitLab、角色审批与浏览器交接配置"},
+    {"name": "aidlc-intake", "path": "skills/stage-entry/aidlc-intake/SKILL.md", "category": "stage-entry", "stages": ["core.intake"], "scope": "需求来源、目标、范围与风险"},
+    {"name": "aidlc-spec", "path": "skills/stage-entry/aidlc-spec/SKILL.md", "category": "stage-entry", "stages": ["core.spec"], "scope": "行为规格、FR/NFR 与 AC"},
+    {"name": "aidlc-enhance", "path": "skills/stage-entry/aidlc-enhance/SKILL.md", "category": "stage-entry", "stages": ["core.scope"], "scope": "enhance 路线的 Scope 入口；随后 Implement / Verify"},
+    {"name": "aidlc-fix", "path": "skills/stage-entry/aidlc-fix/SKILL.md", "category": "stage-entry", "stages": ["core.diagnose"], "scope": "fix 路线的 Diagnose 入口；随后 Implement / Verify"},
+    {"name": "aidlc-architecture", "path": "skills/stage-entry/aidlc-architecture/SKILL.md", "category": "stage-entry", "stages": ["core.architecture"], "scope": "架构约束、契约与 Architecture Fitness"},
+    {"name": "aidlc-quality", "path": "skills/stage-entry/aidlc-quality/SKILL.md", "category": "stage-entry", "stages": ["core.quality"], "scope": "测试策略、Oracle、覆盖与 Quality Fitness；不执行 TDD"},
+    {"name": "aidlc-plan", "path": "skills/stage-entry/aidlc-plan/SKILL.md", "category": "stage-entry", "stages": ["core.plan"], "scope": "可验收切片、依赖与实施授权范围"},
+    {"name": "aidlc-implement", "path": "skills/stage-entry/aidlc-implement/SKILL.md", "category": "stage-entry", "stages": ["core.implement", "team.role-implement"], "scope": "软件工程师实现、TDD、自测与候选交接"},
+    {"name": "aidlc-verify", "path": "skills/stage-entry/aidlc-verify/SKILL.md", "category": "stage-entry", "stages": ["core.verify", "team.role-verify"], "scope": "独立 collector 汇总真实双 Gate / AC 证据"},
+    {"name": "aidlc-release", "path": "skills/stage-entry/aidlc-release/SKILL.md", "category": "stage-entry", "stages": ["core.release"], "scope": "显式团队扩展的发布就绪校验，不自动生产发布"},
+    {"name": "aidlc-learn", "path": "skills/stage-entry/aidlc-learn/SKILL.md", "category": "stage-entry", "stages": ["core.learn"], "scope": "显式团队扩展的真实反馈与经验修订"},
+    {"name": "aidlc-prd", "path": "skills/role-collaboration/aidlc-prd/SKILL.md", "category": "role-collaboration", "stages": ["team.prd"], "scope": "PO：BRD → PRD；独立分析流"},
+    {"name": "aidlc-story", "path": "skills/role-collaboration/aidlc-story/SKILL.md", "category": "role-collaboration", "stages": ["team.story"], "scope": "PO：PRD / 原始需求 → 标准 Jira Story＋AC"},
+    {"name": "aidlc-test-design", "path": "skills/role-collaboration/aidlc-test-design/SKILL.md", "category": "role-collaboration", "stages": ["team.test-design"], "scope": "QA：开发前确认共享业务用例；只设计"},
+    {"name": "aidlc-qa", "path": "skills/role-collaboration/aidlc-qa/SKILL.md", "category": "role-collaboration", "stages": ["team.role-qa"], "scope": "QA：冻结候选的浏览器测试与人工观察，不替代最终 Gate"},
+    {"name": "aidlc-spec-generation", "path": "skills/reusable-capability/aidlc-spec-generation/SKILL.md", "category": "reusable-capability", "stages": ["core.spec", "core.scope", "core.diagnose", "team.story", "team.role-intake"], "scope": "细化可验证规格与需求来源映射"},
+    {"name": "aidlc-adr", "path": "skills/reusable-capability/aidlc-adr/SKILL.md", "category": "reusable-capability", "stages": ["core.architecture", "team.role-design"], "scope": "架构决策草案与取舍，不代行批准"},
+    {"name": "aidlc-test-generation", "path": "skills/reusable-capability/aidlc-test-generation/SKILL.md", "category": "reusable-capability", "stages": ["core.quality", "core.scope", "core.diagnose", "core.implement", "team.test-design", "team.role-design", "team.role-implement"], "scope": "设计 Oracle/场景；仅批准的 Implement 中可写测试源码"},
+    {"name": "aidlc-fitness-check", "path": "skills/reusable-capability/aidlc-fitness-check/SKILL.md", "category": "reusable-capability", "stages": ["core.implement", "core.verify", "team.role-implement", "team.role-verify"], "scope": "Implement 自测或 Verify Reviewer 检查；自测不算独立 Gate"},
+    {"name": "test-driven-development", "path": "skills/reusable-capability/test-driven-development/SKILL.md", "category": "reusable-capability", "stages": ["core.implement", "team.role-implement"], "scope": "仅 Implement：RED → GREEN → REFACTOR"},
+    {"name": "incremental-implementation", "path": "skills/reusable-capability/incremental-implementation/SKILL.md", "category": "reusable-capability", "stages": ["core.implement", "team.role-implement"], "scope": "仅 Implement：按独立行为切片实现"},
+    {"name": "debugging-and-error-recovery", "path": "skills/reusable-capability/debugging-and-error-recovery/SKILL.md", "category": "reusable-capability", "stages": ["core.implement", "team.role-implement"], "scope": "Implement 失败触发时按需诊断；不增加纠错授权"},
+    {"name": "code-review-and-quality", "path": "skills/reusable-capability/code-review-and-quality/SKILL.md", "category": "reusable-capability", "stages": ["core.implement", "team.role-implement"], "scope": "Implement 按需自审；不替代独立 Reviewer"},
+    {"name": "aidlc-knowledge-sync", "path": "skills/sync-publication/aidlc-knowledge-sync/SKILL.md", "category": "sync-publication", "stages": [], "scope": "Verify/Learn 批准后的独立知识发布 Hook 或明确重试"},
+    {"name": "aidlc-test-sync", "path": "skills/sync-publication/aidlc-test-sync/SKILL.md", "category": "sync-publication", "stages": [], "scope": "显式同步用例/结果或 DEV 恢复检查；脚本修改交回 Implement"}
+  ]
+}

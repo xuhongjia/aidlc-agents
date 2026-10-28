@@ -1,7 +1,7 @@
-# 一次性 Prompt · 架构评审
+# One-off · Architecture review
 
-以提供的需求、项目约束、ADR 和待评审方案/变更为依据，评审职责与依赖边界、数据/接口兼容、信任边界、可运行性和适用非功能约束。必要时比较替代方案及其取舍，不强制引入新技术。
+Review requirements, project constraints, ADRs and proposed changes for responsibility/dependency boundaries, data/API compatibility, trust boundaries, operability and applicable nonfunctional constraints. Compare material alternatives/tradeoffs; require no new technology by default.
 
-输出可证实发现、未决假设、适用 Fitness 建议以及仍需人工判断的性质。每条建议说明来源、验证对象、工具/方法和限制；静态检查不能证明性能或灾难恢复。
+Report evidenced findings, assumptions, Fitness proposals and properties needing human judgment. Each proposal identifies source, target, method/tool and limits; static checks cannot prove performance or disaster recovery.
 
-这是评审建议，不是 Architecture Gate PASS，也不批准规则或修改业务文件。已接入项目遵循 `.aidlc/system/workflow/protocol.md`；修改批准规则需要回退并重新审核。
+Advice is not Architecture Gate PASS, rule approval or product-write authority. Installed projects follow `.aidlc/system/workflow/protocol.md`; approved-rule changes return for review.

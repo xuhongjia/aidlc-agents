@@ -1,0 +1,121 @@
+{
+  "contract_version": 1,
+  "id": "role-team",
+  "version": "1.0.0",
+  "core_contract": 1,
+  "stages": [
+    {
+      "id": "team.prd", "kind": "analysis", "role": "core:agents/po.md",
+      "prompt": "team:prompts/prd.md", "instructions": ["core:workflow/role-worker.md"],
+      "inputs": ["request"], "optional_inputs": ["project"],
+      "outputs": [{"name": "prd.md", "contract": "analysis", "template": "core:templates/collaboration/prd.md"}],
+      "capabilities": ["evidence.read"], "tool_binding_ids": [], "auto_eligible": false, "routing_facts": {}
+    },
+    {
+      "id": "team.story", "kind": "specification", "role": "core:agents/po.md",
+      "prompt": "team:prompts/story.md", "instructions": ["core:workflow/role-worker.md"],
+      "inputs": ["request"], "optional_inputs": ["project"],
+      "outputs": [
+        {"name": "story.md", "contract": "spec", "template": "core:templates/collaboration/story.md"},
+        {"name": "acceptance.json", "contract": "spec", "template": "core:templates/spec/acceptance.json"}
+      ],
+      "capabilities": ["evidence.read"], "tool_binding_ids": [], "auto_eligible": false, "routing_facts": {}
+    },
+    {
+      "id": "team.test-design", "kind": "analysis", "role": "core:agents/qe.md",
+      "prompt": "team:prompts/test-design.md",
+      "instructions": ["core:workflow/role-worker.md", "core:skills/reusable-capability/aidlc-test-generation/SKILL.md", "core:templates/collaboration/test-case.json"],
+      "inputs": ["request"], "optional_inputs": ["project"],
+      "outputs": [{"name": "test-design.json", "contract": "quality", "template": "core:templates/collaboration/test-design.json"}],
+      "capabilities": ["evidence.read"], "tool_binding_ids": [], "auto_eligible": false, "routing_facts": {}
+    },
+    {
+      "id": "team.role-intake", "kind": "analysis", "role": "core:agents/po.md",
+      "prompt": "team:prompts/intake.md", "instructions": ["core:workflow/role-worker.md"],
+      "inputs": ["request", "project"], "optional_inputs": [],
+      "outputs": [
+        {"name": "source-spec.md", "contract": "spec", "template": "core:templates/spec/spec.md"},
+        {"name": "acceptance.json", "contract": "spec", "template": "core:templates/spec/acceptance.json"},
+        {"name": "test-design.json", "contract": "analysis", "template": "core:templates/collaboration/test-design.json"}
+      ],
+      "capabilities": ["evidence.read"], "tool_binding_ids": [], "auto_eligible": false, "routing_facts": {}
+    },
+    {
+      "id": "team.role-design", "kind": "design", "role": "core:agents/architect.md",
+      "prompt": "team:prompts/design.md", "instructions": ["core:workflow/role-worker.md"],
+      "inputs": ["spec", "analysis", "project"], "optional_inputs": [],
+      "outputs": [
+        {"name": "technical-spec.md", "contract": "architecture", "template": "team:templates/technical-spec.md"},
+        {"name": "architecture-fitness.json", "contract": "architecture", "template": "core:templates/architecture/architecture-fitness.json"},
+        {"name": "quality-design.json", "contract": "quality", "template": "team:templates/quality-design.json"},
+        {"name": "quality-fitness.json", "contract": "quality", "template": "core:templates/quality/quality-fitness.json"},
+        {"name": "coverage.json", "contract": "quality", "template": "core:templates/quality/coverage.json"},
+        {"name": "implementation-plan.json", "contract": "plan", "template": "team:templates/implementation-plan.json"}
+      ],
+      "capabilities": [], "tool_binding_ids": [], "auto_eligible": false, "routing_facts": {}
+    },
+    {
+      "id": "team.role-implement", "kind": "implementation", "role": "core:agents/software-engineer.md",
+      "prompt": "core:prompts/implement.md",
+      "instructions": ["core:workflow/role-worker.md", "team:prompts/implement-handoff.md"],
+      "inputs": ["spec", "architecture", "quality", "plan", "analysis"], "optional_inputs": [],
+      "outputs": [
+        {"name": "implementation.md", "contract": "implementation", "template": "core:templates/implement/implementation.md"},
+        {"name": "script-mapping.json", "contract": "implementation", "template": "core:templates/collaboration/script-mapping.json"}
+      ],
+      "capabilities": ["product.write"], "tool_binding_ids": [], "auto_eligible": false, "routing_facts": {}
+    },
+    {
+      "id": "team.role-qa", "kind": "analysis", "role": "core:agents/qe.md",
+      "prompt": "team:prompts/qa.md", "instructions": ["core:workflow/role-worker.md", "core:templates/collaboration/test-result.json"],
+      "inputs": ["spec", "quality", "implementation", "analysis"], "optional_inputs": [],
+      "outputs": [{"name": "test-run.json", "contract": "analysis", "template": "core:templates/collaboration/test-run.json"}],
+      "capabilities": ["evidence.read"], "tool_binding_ids": [], "auto_eligible": false, "routing_facts": {}
+    },
+    {
+      "id": "team.role-verify", "kind": "verification", "role": "core:agents/qe.md",
+      "prompt": "core:prompts/verify.md",
+      "instructions": ["core:workflow/role-worker.md", "team:prompts/verify-handoff.md"],
+      "inputs": ["spec", "architecture", "quality", "implementation", "analysis"], "optional_inputs": [],
+      "outputs": [
+        {"name": "verification.md", "contract": "verification", "template": "core:templates/verify/verification.md"},
+        {"name": "acceptance-results.json", "contract": "verification", "template": "core:templates/verify/acceptance-results.json"}
+      ],
+      "capabilities": ["knowledge.prepare", "evidence.read"], "tool_binding_ids": [], "auto_eligible": false, "routing_facts": {}
+    }
+  ],
+  "workflows": [
+    {
+      "id": "team.prd", "intent": "analysis", "risk_ceiling": "any", "entry": "prd",
+      "nodes": [{"step_id": "prd", "stage_id": "team.prd", "bindings": {"request": ["$request"], "project": ["$project"]}}],
+      "edges": [], "switches": [], "terminals": [{"step_id": "prd", "outcome": "analysis_complete"}]
+    },
+    {
+      "id": "team.story", "intent": "analysis", "risk_ceiling": "any", "entry": "story",
+      "nodes": [{"step_id": "story", "stage_id": "team.story", "bindings": {"request": ["$request"], "project": ["$project"]}}],
+      "edges": [], "switches": [], "terminals": [{"step_id": "story", "outcome": "analysis_complete"}]
+    },
+    {
+      "id": "team.test-design", "intent": "analysis", "risk_ceiling": "any", "entry": "test-design",
+      "nodes": [{"step_id": "test-design", "stage_id": "team.test-design", "bindings": {"request": ["$request"], "project": ["$project"]}}],
+      "edges": [], "switches": [], "terminals": [{"step_id": "test-design", "outcome": "analysis_complete"}]
+    },
+    {
+      "id": "team.role-delivery", "intent": "delivery", "risk_ceiling": "any", "entry": "intake",
+      "nodes": [
+        {"step_id": "intake", "stage_id": "team.role-intake", "bindings": {"request": ["$request"], "project": ["$project"]}},
+        {"step_id": "design", "stage_id": "team.role-design", "bindings": {"spec": ["intake"], "analysis": ["intake"], "project": ["$project"]}},
+        {"step_id": "implement", "stage_id": "team.role-implement", "authority": "design", "bindings": {"spec": ["intake"], "architecture": ["design"], "quality": ["design"], "plan": ["design"], "analysis": ["intake"]}},
+        {"step_id": "qa", "stage_id": "team.role-qa", "bindings": {"spec": ["intake"], "quality": ["design"], "implementation": ["implement"], "analysis": ["intake"]}},
+        {"step_id": "verify", "stage_id": "team.role-verify", "bindings": {"spec": ["intake"], "architecture": ["design"], "quality": ["design"], "implementation": ["implement"], "analysis": ["qa"]}}
+      ],
+      "edges": [
+        {"from": "intake", "to": "design"}, {"from": "design", "to": "implement"},
+        {"from": "implement", "to": "qa"}, {"from": "qa", "to": "verify"}
+      ],
+      "switches": [], "terminals": [{"step_id": "verify", "outcome": "verified"}]
+    }
+  ],
+  "overrides": [],
+  "tool_bindings": []
+}

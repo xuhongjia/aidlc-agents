@@ -1,0 +1,157 @@
+{
+  "schema_version": 3,
+  "default_profile": "auto",
+  "composition": {
+    "contract_version": 1,
+    "protocol": "workflow/extensions.md",
+    "scheduler": "workflow/dag.md",
+    "stage_contracts": "workflow/stage-contracts.json",
+    "skill": "skills/orchestration/aidlc-workflow/SKILL.md",
+    "dispatch_prompt": "prompts/composed-stage.md",
+    "lock_template": "templates/work/workflow-lock.json",
+    "context_contract": "workflow/context.json"
+  },
+  "knowledge": {
+    "contract_version": 1,
+    "protocol": "workflow/knowledge.md",
+    "read_protocol": "workflow/knowledge-read.md",
+    "prepare_protocol": "workflow/knowledge-prepare.md",
+    "publish_protocol": "workflow/knowledge-publish.md",
+    "setup_skill": "skills/setup/aidlc-knowledge-setup/SKILL.md",
+    "read_stages": ["intake", "scope", "diagnose"],
+    "prepare_stages": ["verify", "learn"],
+    "hook_skill": "skills/sync-publication/aidlc-knowledge-sync/SKILL.md",
+    "dispatch_template": "templates/knowledge/dispatch.json",
+    "types": ["architecture", "quality", "anti_pattern", "lesson"],
+    "providers": ["confluence_cloud"],
+    "default_publish_authorization": null
+  },
+  "closure": {
+    "protocol": "workflow/closure.md",
+    "template": "templates/work/closure.json",
+    "confirmation": "explicit-approver",
+    "pending_status": "closing",
+    "terminal_status": "closed",
+    "requires_remaining_stage_approval": false,
+    "requires_stopped_workers": true
+  },
+  "external_evidence": {
+    "stages": ["release", "learn"],
+    "access": "read-only",
+    "protocol": "workflow/external-evidence.md",
+    "required_evidence": [
+      {"name": "source-index.json", "template": "templates/work/source-index.json"}
+    ]
+  },
+  "delivery": {
+    "contract_version": 1,
+    "setup_skill": "skills/setup/aidlc-pipeline-setup/SKILL.md",
+    "config_protocol": "workflow/pipeline-config.md",
+    "execution_protocol": "workflow/pipelines.md",
+    "wait_protocol": "workflow/pipeline-wait.md",
+    "config_template": "templates/delivery/config.json",
+    "result_template": "templates/work/pipeline-result.json",
+    "wait_template": "templates/work/pipeline-wait-request.json",
+    "providers": {"gitlab": "adapters/delivery/gitlab.md"},
+    "access": "read-only",
+    "default_enabled": false
+  },
+  "approver_resolution": {
+    "precedence": ["jira_assignee", "git_config", "system_login"],
+    "template": "templates/work/approver.json",
+    "missing_email": null,
+    "refresh_before_approval": true
+  },
+  "gates": {
+    "required_profiles": ["standard", "enhance", "fix"],
+    "required_stage": "verify",
+    "minimum_blocking_checks_per_kind": 1,
+    "on_missing": "define_then_implement",
+    "allow_manual_substitute": false,
+    "design_prompt": "prompts/gate-design.md",
+    "design_protocol": "workflow/gate-design.md",
+    "execution_protocol": "workflow/gate-execution.md",
+    "default_execution": "independent-specialists",
+    "reviewers": {
+      "architecture": "agents/architecture-gate-reviewer.md",
+      "quality": "agents/quality-gate-reviewer.md"
+    },
+    "required_evidence": [
+      {"kind": "architecture", "name": "architecture-gate.json", "template": "templates/work/gate-result.json"},
+      {"kind": "quality", "name": "quality-gate.json", "template": "templates/work/gate-result.json"}
+    ]
+  },
+  "approval": {
+    "default_mode": "manual",
+    "checkpoint_low_risk": {
+      "workflows": ["core.fix", "core.enhance"],
+      "stages": ["implement"],
+      "requires_unmodified_builtin": true,
+      "requires_manual_entry_and_terminal": true,
+      "policy_template": "templates/work/approval-policy.json"
+    },
+    "implementation_feedback": {
+      "protocol": "workflow/implementation-feedback.md",
+      "default_max_correction_rounds": 0,
+      "maximum_correction_rounds": 2,
+      "attempt_template": "templates/work/feedback-attempt.json"
+    },
+    "auto_low_risk": {
+      "profiles": ["enhance", "fix"],
+      "stages": ["scope", "diagnose", "implement", "verify"],
+      "policy_template": "templates/work/approval-policy.json"
+    }
+  },
+  "profiles": {
+    "standard": {
+      "stages": ["intake", "spec", "architecture", "quality", "plan", "implement", "verify"],
+      "implementation_authority": "plan",
+      "terminal_stage": "verify",
+      "artifact_mode": "standard",
+      "output_overrides": {}
+    },
+    "enhance": {
+      "stages": ["scope", "implement", "verify"],
+      "implementation_authority": "scope",
+      "terminal_stage": "verify",
+      "artifact_mode": "compact",
+      "output_overrides": {
+        "implement": [{"name":"verification.md","template":"templates/compact/verification.md"}],
+        "verify": [{"name":"verification.md","template":"templates/compact/verification.md"}]
+      }
+    },
+    "fix": {
+      "stages": ["diagnose", "implement", "verify"],
+      "implementation_authority": "diagnose",
+      "terminal_stage": "verify",
+      "artifact_mode": "compact",
+      "output_overrides": {
+        "implement": [{"name":"verification.md","template":"templates/compact/verification.md"}],
+        "verify": [{"name":"verification.md","template":"templates/compact/verification.md"}]
+      }
+    }
+  },
+  "execution": {
+    "mode": "isolated-subagents",
+    "context_policy": "fresh-minimal",
+    "coordinator": "parent",
+    "inline_fallback": false,
+    "new_agent_per_stage": true,
+    "max_parallel_workers": 2,
+    "dispatch_template": "templates/work/dispatch.json",
+    "result_template": "templates/work/stage-result.json"
+  },
+  "stages": [
+    {"id":"intake","skill":"skills/stage-entry/aidlc-intake/SKILL.md","role":"BA / PO","agent":"ba","prompt":"prompts/intake.md","outputs":["intake.md","project-context.md"],"approval":"需求人 / PO","product_write":false,"parallel_lanes":["business-context","repository-context"]},
+    {"id":"spec","skill":"skills/stage-entry/aidlc-spec/SKILL.md","role":"BA / PO","agent":"po","prompt":"prompts/spec.md","outputs":["spec.md","acceptance.json"],"approval":"PO","product_write":false,"parallel_lanes":["ac-review","nfr-review"]},
+    {"id":"architecture","skill":"skills/stage-entry/aidlc-architecture/SKILL.md","role":"Architect","agent":"architect","prompt":"prompts/architecture.md","outputs":["architecture.md","architecture-fitness.json"],"approval":"架构责任人","product_write":false,"parallel_lanes":["dependency-review","security-performance-review"]},
+    {"id":"quality","skill":"skills/stage-entry/aidlc-quality/SKILL.md","role":"QE","agent":"qe","prompt":"prompts/quality.md","outputs":["quality-design.md","quality-fitness.json","coverage.json"],"approval":"质量责任人","product_write":false,"parallel_lanes":["functional-design","nonfunctional-design"]},
+    {"id":"plan","skill":"skills/stage-entry/aidlc-plan/SKILL.md","role":"PM / DEV / QE","agent":"pm","prompt":"prompts/plan.md","outputs":["plan.md"],"approval":"交付责任人","product_write":false,"parallel_lanes":["implementation-estimate","verification-estimate"]},
+    {"id":"implement","skill":"skills/stage-entry/aidlc-implement/SKILL.md","role":"Software Engineer","agent":"software-engineer","prompt":"prompts/implement.md","outputs":["implementation.md"],"approval":"代码审查人","product_write":true,"parallel_lanes":["approved-independent-tasks"]},
+    {"id":"verify","skill":"skills/stage-entry/aidlc-verify/SKILL.md","role":"QE / Architect","agent":"qe","prompt":"prompts/verify.md","outputs":["verification.md","acceptance-results.json"],"approval":"质量 / 架构责任人","product_write":false,"parallel_lanes":["architecture-gate","quality-gate"]},
+    {"id":"release","skill":"skills/stage-entry/aidlc-release/SKILL.md","role":"Service Owner / DEV / QE","agent":"engineer","prompt":"prompts/release.md","outputs":["release-readiness.md"],"approval":"服务责任人","product_write":false,"parallel_lanes":["rollback-review","observability-review"]},
+    {"id":"learn","skill":"skills/stage-entry/aidlc-learn/SKILL.md","role":"PO / PM / Service Owner","agent":"po","prompt":"prompts/learn.md","outputs":["outcome.md","outcome.json"],"approval":"PO / 服务责任人","product_write":false,"parallel_lanes":["business-observation","delivery-retrospective"]},
+    {"id":"scope","role":"BA / DEV","agent":"engineer","skill":"skills/stage-entry/aidlc-enhance/SKILL.md","prompt":"prompts/scope.md","outputs":["change.md"],"template_directory":"templates/compact","approval":"需求人 / 技术责任人","product_write":false,"parallel_lanes":["impact-review","acceptance-review"]},
+    {"id":"diagnose","role":"DEV / QE","agent":"engineer","skill":"skills/stage-entry/aidlc-fix/SKILL.md","prompt":"prompts/diagnose.md","outputs":["change.md"],"template_directory":"templates/compact","approval":"缺陷责任人 / 技术责任人","product_write":false,"parallel_lanes":["reproduction","cause-analysis"]}
+  ]
+}

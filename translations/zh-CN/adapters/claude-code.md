@@ -1,0 +1,15 @@
+<!-- AIDLC-AGENTS:START -->
+## AIDLC Agents
+
+For AIDLC requests, first read only `.aidlc/system/skills/orchestration/aidlc/SKILL.md`. Route the intent before loading `.aidlc/system/workflow/protocol.md` or orchestration.md; valid children use their frozen instruction_refs instead of re-routing.
+
+Before parent delivery execution, follow `.aidlc/system/workflow/preflight.md`: check GitHub, update before creating new work, and keep existing work pinned. After an update, reload the installed router and contracts before dispatch. Status-only, approval-only, and closure controls do not require this check. Dispatched children never check for updates or install method files.
+
+The parent conversation is orchestration-only: read the work record, validate dependencies, dispatch, collect results, and handle approval using the project's approval policy. For EVERY stage execution or rework, start a NEW non-fork child agent with fresh context using the current client's supported tools. Pass only the dispatch contract and required approved artifact references, not the parent conversation history. Do not execute stages inline, resume a previous stage's child, or treat loading a skill as delegation.
+
+Require the setup capability probe to demonstrate child creation, fresh context, and result collection. If any capability is unavailable or unverified, block stage execution and ask for a supported client; never fall back to inline execution. Follow orchestration.md for safe parallelism and result validation. By default the parent presents the exact revision for human approval. For a work-scoped checkpoint_low_risk or auto_low_risk delegation, use `.aidlc/system/workflow/approval.md`; delegated decisions are never user sign-offs. Checkpoint keeps the entry and final Verify human-approved. Internal Implement correction needs its own explicit budget; approval mode alone never enables it. Children never approve or advance stages.
+
+If you are already the child named in a valid dispatch, execute only that bounded assignment and return its result; do not re-route yourself as the parent or recursively delegate the whole stage.
+
+Keep existing CLAUDE.md instructions, rules, and permissions in effect. This bridge uses available native delegation; it does not install custom subagent definitions, hooks, global settings, or permissions. If canonical files are unavailable or instructions conflict, report the issue before proceeding. Do not claim a child, command, test, or gate ran without execution evidence.
+<!-- AIDLC-AGENTS:END -->

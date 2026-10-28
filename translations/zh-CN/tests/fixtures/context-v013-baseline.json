@@ -1,0 +1,329 @@
+{
+  "source_commit": "d075ef1abcc1b1757c0cab7a93903fdb190cceaa",
+  "unit": "utf8_bytes",
+  "measurement": "Static declared instruction_refs for three compact stages plus two independent Gate Reviewer runs, feedback=0, CI unconfigured. Per-run references are unique; the same file is counted again for each fresh run. Templates are included and separately reported. Additional collector/rework/wait runs must be counted explicitly. Business inputs, lock projections, evidence, parent/host context, optional engineering skills and conditional Gate design leaves are outside this baseline. Not model tokens, costs or an actual Agent run.",
+  "profiles": {
+    "fix": {
+      "profile": "fix",
+      "feedback": 0,
+      "extra_verify_runs": 0,
+      "stages": {
+        "method_bytes": 49911,
+        "template_bytes": 7385,
+        "total_bytes": 57296
+      },
+      "reviewers": {
+        "method_bytes": 28369,
+        "template_bytes": 634,
+        "total_bytes": 29003
+      },
+      "totals": {
+        "method_bytes": 78280,
+        "template_bytes": 8019,
+        "total_bytes": 86299
+      },
+      "runs": [
+        {
+          "id": "diagnose",
+          "kind": "stage",
+          "method_bytes": 14310,
+          "template_bytes": 1660,
+          "total_bytes": 15970,
+          "refs": [
+            "core:prompts/composed-stage.md",
+            "core:workflow/worker.md",
+            "core:agents/engineer.md",
+            "core:prompts/diagnose.md",
+            "core:templates/compact/change.md",
+            "core:workflow/knowledge-read.md",
+            "core:workflow/profiles.md",
+            "core:workflow/gate-design.md"
+          ]
+        },
+        {
+          "id": "implement",
+          "kind": "stage",
+          "method_bytes": 19101,
+          "template_bytes": 2571,
+          "total_bytes": 21672,
+          "refs": [
+            "core:prompts/composed-stage.md",
+            "core:workflow/worker.md",
+            "core:agents/software-engineer.md",
+            "core:prompts/implement.md",
+            "core:templates/compact/verification.md",
+            "core:workflow/gate-design.md",
+            "core:workflow/tdd.md",
+            "core:skills/test-driven-development/SKILL.md",
+            "core:skills/incremental-implementation/SKILL.md",
+            "core:templates/work/tdd-evidence.json"
+          ]
+        },
+        {
+          "id": "verify",
+          "kind": "stage",
+          "method_bytes": 16500,
+          "template_bytes": 3154,
+          "total_bytes": 19654,
+          "refs": [
+            "core:prompts/composed-stage.md",
+            "core:workflow/worker.md",
+            "core:agents/qe.md",
+            "core:prompts/verify.md",
+            "core:templates/compact/verification.md",
+            "core:workflow/gate-execution.md",
+            "core:templates/work/gate-result.json",
+            "core:workflow/knowledge-prepare.md",
+            "core:templates/knowledge/snapshot.json"
+          ]
+        },
+        {
+          "id": "architecture-reviewer",
+          "kind": "gate-execution",
+          "method_bytes": 14117,
+          "template_bytes": 317,
+          "total_bytes": 14434,
+          "refs": [
+            "core:prompts/composed-stage.md",
+            "core:workflow/worker.md",
+            "core:agents/architecture-gate-reviewer.md",
+            "core:prompts/gate-review.md",
+            "core:workflow/gate-execution.md",
+            "core:skills/aidlc-fitness-check/SKILL.md",
+            "core:templates/work/gate-result.json"
+          ]
+        },
+        {
+          "id": "quality-reviewer",
+          "kind": "gate-execution",
+          "method_bytes": 14252,
+          "template_bytes": 317,
+          "total_bytes": 14569,
+          "refs": [
+            "core:prompts/composed-stage.md",
+            "core:workflow/worker.md",
+            "core:agents/quality-gate-reviewer.md",
+            "core:prompts/gate-review.md",
+            "core:workflow/gate-execution.md",
+            "core:skills/aidlc-fitness-check/SKILL.md",
+            "core:templates/work/gate-result.json"
+          ]
+        }
+      ]
+    },
+    "enhance": {
+      "profile": "enhance",
+      "feedback": 0,
+      "extra_verify_runs": 0,
+      "stages": {
+        "method_bytes": 49825,
+        "template_bytes": 7385,
+        "total_bytes": 57210
+      },
+      "reviewers": {
+        "method_bytes": 28369,
+        "template_bytes": 634,
+        "total_bytes": 29003
+      },
+      "totals": {
+        "method_bytes": 78194,
+        "template_bytes": 8019,
+        "total_bytes": 86213
+      },
+      "runs": [
+        {
+          "id": "scope",
+          "kind": "stage",
+          "method_bytes": 14224,
+          "template_bytes": 1660,
+          "total_bytes": 15884,
+          "refs": [
+            "core:prompts/composed-stage.md",
+            "core:workflow/worker.md",
+            "core:agents/engineer.md",
+            "core:prompts/scope.md",
+            "core:templates/compact/change.md",
+            "core:workflow/knowledge-read.md",
+            "core:workflow/profiles.md",
+            "core:workflow/gate-design.md"
+          ]
+        },
+        {
+          "id": "implement",
+          "kind": "stage",
+          "method_bytes": 19101,
+          "template_bytes": 2571,
+          "total_bytes": 21672,
+          "refs": [
+            "core:prompts/composed-stage.md",
+            "core:workflow/worker.md",
+            "core:agents/software-engineer.md",
+            "core:prompts/implement.md",
+            "core:templates/compact/verification.md",
+            "core:workflow/gate-design.md",
+            "core:workflow/tdd.md",
+            "core:skills/test-driven-development/SKILL.md",
+            "core:skills/incremental-implementation/SKILL.md",
+            "core:templates/work/tdd-evidence.json"
+          ]
+        },
+        {
+          "id": "verify",
+          "kind": "stage",
+          "method_bytes": 16500,
+          "template_bytes": 3154,
+          "total_bytes": 19654,
+          "refs": [
+            "core:prompts/composed-stage.md",
+            "core:workflow/worker.md",
+            "core:agents/qe.md",
+            "core:prompts/verify.md",
+            "core:templates/compact/verification.md",
+            "core:workflow/gate-execution.md",
+            "core:templates/work/gate-result.json",
+            "core:workflow/knowledge-prepare.md",
+            "core:templates/knowledge/snapshot.json"
+          ]
+        },
+        {
+          "id": "architecture-reviewer",
+          "kind": "gate-execution",
+          "method_bytes": 14117,
+          "template_bytes": 317,
+          "total_bytes": 14434,
+          "refs": [
+            "core:prompts/composed-stage.md",
+            "core:workflow/worker.md",
+            "core:agents/architecture-gate-reviewer.md",
+            "core:prompts/gate-review.md",
+            "core:workflow/gate-execution.md",
+            "core:skills/aidlc-fitness-check/SKILL.md",
+            "core:templates/work/gate-result.json"
+          ]
+        },
+        {
+          "id": "quality-reviewer",
+          "kind": "gate-execution",
+          "method_bytes": 14252,
+          "template_bytes": 317,
+          "total_bytes": 14569,
+          "refs": [
+            "core:prompts/composed-stage.md",
+            "core:workflow/worker.md",
+            "core:agents/quality-gate-reviewer.md",
+            "core:prompts/gate-review.md",
+            "core:workflow/gate-execution.md",
+            "core:skills/aidlc-fitness-check/SKILL.md",
+            "core:templates/work/gate-result.json"
+          ]
+        }
+      ]
+    }
+  },
+  "resources": {
+    "core:prompts/composed-stage.md": {
+      "bytes": 1007,
+      "sha256": "a2ce9a870185dff0d9d96e9fdfece56c2c714e1d830f0d2d96e141de43e03339"
+    },
+    "core:workflow/worker.md": {
+      "bytes": 4014,
+      "sha256": "7a9c9732c00015684225fa41a4ec33dbf7591492f34e11de84b83c21bb51351c"
+    },
+    "core:agents/engineer.md": {
+      "bytes": 1705,
+      "sha256": "1a299f971838a25521396618ac668530b1e2067b8383ca5d019047d6396a6550"
+    },
+    "core:prompts/diagnose.md": {
+      "bytes": 1508,
+      "sha256": "f2ba5c7d5872b8ee4ce47e2e143820973c0f7d61d734ef66352609a3db95a11c"
+    },
+    "core:templates/compact/change.md": {
+      "bytes": 1660,
+      "sha256": "8c34c7a4c996c1ce9a07f682e285b2d339c52e3dfbeae975b56eac6c40fe5088"
+    },
+    "core:workflow/knowledge-read.md": {
+      "bytes": 926,
+      "sha256": "79ee3ece9598f5f89c17618258fe087e5102753b28affcd1884dcf1f9e378c95"
+    },
+    "core:workflow/profiles.md": {
+      "bytes": 3161,
+      "sha256": "b77a5ccb628f2e0a4cd7bebcd31a820fc49d8b230fe62698fdeeafc1cacb3af5"
+    },
+    "core:workflow/gate-design.md": {
+      "bytes": 1989,
+      "sha256": "6cac43dbae84c42072d7dbd4354db8b0d99251cd1325f15d9f9a540a3cdf5eb2"
+    },
+    "core:agents/software-engineer.md": {
+      "bytes": 1274,
+      "sha256": "b77935bdc4f3d7e737d9b44b9e7be5a3b24093cd3e488f3b9cfe19d5dc6d94b0"
+    },
+    "core:prompts/implement.md": {
+      "bytes": 2308,
+      "sha256": "b2a5d596c622e2a5caabf23d2f5b946482c26e1deda4e5d4ba3ba86678d8e58c"
+    },
+    "core:templates/compact/verification.md": {
+      "bytes": 2296,
+      "sha256": "e3cc5dd5f4f6fc33e6d3474c8e32842fa22c217af693360ac9271c8fe38b59d3"
+    },
+    "core:workflow/tdd.md": {
+      "bytes": 5226,
+      "sha256": "ad978889a207c01139aac75be5130ed9da9149952cd768b137a3660153129c7b"
+    },
+    "core:skills/test-driven-development/SKILL.md": {
+      "bytes": 2054,
+      "sha256": "57ce2ea6b168078e963c8f1a71fe48126a042c30768052d3c6af575f312552e9"
+    },
+    "core:skills/incremental-implementation/SKILL.md": {
+      "bytes": 1229,
+      "sha256": "ee4d867ab15647c91e171abf81f726726108e5b988c2ca8bc29c0aca07b40c3b"
+    },
+    "core:templates/work/tdd-evidence.json": {
+      "bytes": 275,
+      "sha256": "b72fd22c393895d246957842d3c63d244107146f62c179ff6d115882e7144a38"
+    },
+    "core:agents/qe.md": {
+      "bytes": 2042,
+      "sha256": "f2fe43fdc69d27a758e784c50c08a615d73faa2d24bbe90e1d27c8c04066a455"
+    },
+    "core:prompts/verify.md": {
+      "bytes": 2956,
+      "sha256": "3533513f0ba73bd1b1acacc0a313dd1b9893696c111e1024b833028a603fc97e"
+    },
+    "core:workflow/gate-execution.md": {
+      "bytes": 3880,
+      "sha256": "899d0223bba291ee5b24deaaf516271b394b8bde4b9bd92b0e6c3aead105e7cd"
+    },
+    "core:templates/work/gate-result.json": {
+      "bytes": 317,
+      "sha256": "9804d65e8aca522a4171a64ce010af75272b203c879bf0ce241cf4f2109cf577"
+    },
+    "core:workflow/knowledge-prepare.md": {
+      "bytes": 2601,
+      "sha256": "c94a4415ce344ef8e99bdfd63dfc5a560efd968bc9e9d1c7e21de399ef91803c"
+    },
+    "core:templates/knowledge/snapshot.json": {
+      "bytes": 541,
+      "sha256": "46716ba95e72975679823fbd10c32b5b97e23f5a6da3e39e068c62bb5ae39c5c"
+    },
+    "core:agents/architecture-gate-reviewer.md": {
+      "bytes": 866,
+      "sha256": "d13941211b7bb9c92aae3fcf1388067b2949f4a4d0fdbc13fdabfe15489bf8e0"
+    },
+    "core:prompts/gate-review.md": {
+      "bytes": 1210,
+      "sha256": "dd8590279208407a8cf6c4476f3b6449ad390af079144da66cbe2719cbaca564"
+    },
+    "core:skills/aidlc-fitness-check/SKILL.md": {
+      "bytes": 3140,
+      "sha256": "9f2bb6ec79ec3fdd1562e47d2b80b2aa5c86799cc8e714b09e8fa8421700bf90"
+    },
+    "core:agents/quality-gate-reviewer.md": {
+      "bytes": 1001,
+      "sha256": "291e8a467e4eaab41a7708e16a9478d501034d8aca053cb7cb4edd658ff475fb"
+    },
+    "core:prompts/scope.md": {
+      "bytes": 1422,
+      "sha256": "7d36e411794da19b6196e1fb49fabffe76d1fc6c46aad21e79dbb3b56c150e60"
+    }
+  }
+}

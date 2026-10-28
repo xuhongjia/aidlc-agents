@@ -1,91 +1,99 @@
 # AI-native update
 
-0.13 → 0.14：新增项目 Setup Gate 和可选 config.setup；缺字段的旧安装仅要求 AIDLC，不自动将已有 Confluence/GitLab 配置设为必需，也不授予持续只读探测权。用户已有 setup 清单/授权和 .aidlc/setup/ 检查证据保留；新 work 锁带 setup_check_ref，旧 work/批准/锁不迁移。更新成功不等于外部接入 ready；按新要求检查后才启动新 work。
+English-primary applies to new method content only. `language=en` grants no rewriting of business artifacts, locked assets, or approvals. `translations/zh-CN/` stays immutable and outside installed payload.
 
-0.14 同时包含此前本地 0.13.1 的精简批次（0.13.1 未单独发布）：精简新工作使用的角色/阶段 Prompt 与 Skill 路由，并加入敏捷切片/术语/工程复盘指引。该批次不改变图、schema、权限和审批模式，不新增外部 Skills、tracker 或宿主配置。旧 work 继续其冻结方法；团队 Prompt/模板保持三方合并，不因正文缩短覆盖团队规则。
+0.15 moves Skills to `skills/<category>/<name>/SKILL.md`, preserving names/responsibilities. Resolve target `skills/catalog.json`; update manifest, bridge, registered router, and current references. Native entry stays `aidlc/SKILL.md`. Change new work only; preserve old locks/dispatches/assets/approvals. Three-way compare team references; never guess cross-version replacements.
 
-0.12 → 0.13：只对新工作启用 V2.1 Implement-only TDD、同名适配工程 Skill/按需资源、两个独立 Gate Reviewer 与 verified handoff。明确展示 Standard 从九阶段改为七阶段、默认不激活 Release/Learn；已有 config.delivery 保留，只绑定选中节点，不静默添加 CD。要继续发布/反馈，新工作选择团队扩展 ID。state/dispatch/result 原 schema 不变，只对新 work 增添空 optional refs/skill_uses/handoff；不迁移旧锁、批准、TDD 历史或旧 Gate 身份，不自动安装外部插件。团队定义/模板不兼容时按原三方冲突流程停止确认。
+List old/new paths. Moves still require baseline/current verification and exact deletion confirmation; never recursively delete directories/unknown content. Compare destinations and preserve conflicts. Update managed_files after references/hashes pass. Historical backups/fixed-version test baselines keep old paths. Install manifest payload only; exclude reference-only `translations/`.
 
-0.11 → 0.12：只为新工作启用可选 CI/CD 绑定及 waiting_external，state/dispatch/result/review/source-index/gate 分别为 schema 5/5/4/3/2/2。缺 config.delivery 只补 null，保留已有设置；不为旧工作补绑定/监控/权限，不迁移历史批准。原需求用原资产，等待中的工作与未停宿主 monitor 阻止应用更新。新的接入 Skill 独立配置已有流水线，普通 setup/update 不认证、不启动监控、不修改 CI/CD。
+0.14 → 0.15: optional roles/Jira case-result sync. Add missing collaboration=null; preserve roles/connections/targets/authority/team customizations. Never enable role-team or migrate old approvals/graphs automatically. Inventory non-code analysis work, outstanding QA packets, and sync children too. Preserve unfinished work’s method and original transfer/sync snapshots. Exclude project `.aidlc/collaboration/` and fixed handoff/approval/delivery records from managed_files; upgrades widen no permissions.
 
-0.9 → 0.10：新工作只走 DAG 主链，增加可选 checkpoint_low_risk 和独立的 Implement 纠错预算。config/state/扩展契约版本不变；新的 policy/dispatch/result/approval 模板为 schema 3。旧工作、历史卡及委托原样保留，不改模式、不补授权/额度；新增预算默认 0。先按 [legacy](../workflow/legacy.md) 完成旧工作再切换，缺原方法时阻塞，不从新版重建旧规则。
+0.13 → 0.14: optional config.setup/Setup Gate. Missing setup means AIDLC-only, not mandatory existing integrations or continuing probe authority. Preserve setup lists/authority and .aidlc/setup/ evidence. New locks use setup_check_ref; old work/approvals/locks stay unchanged. Check new-work requirements; update success proves no external readiness.
 
-0.8 → 0.9：只为新工作启用 [extensions](../workflow/extensions.md)/DAG 和 schema 4；旧 work/批准不迁移。config 仅补缺失的 workflow=auto、空 team 与 project_overrides=null，保留 profile 和用户扩展字段。更新前核验已配置 team/project 与目标 core_contract 兼容；不兼容先阻塞，不改团队定义。`.aidlc/team/`、overrides、团队更新账本、工作锁定资源副本及 knowledge 均不纳入核心受管清单。未完成 work/活 worker（含并行节点和 Hook）阻止核心/团队应用更新；团队更新另走 [team.md](team.md)。
+0.14 includes unreleased local 0.13.1: shorter new-work Prompts/routing, agile slicing, terminology, retrospectives. No graph/schema/permission/approval changes or new external Skills/trackers/host settings. Preserve old methods; three-way merge team Prompts/templates, never replace rules merely for brevity.
 
-0.7 → 0.8：只为新工作启用知识/来源映射契约。config 缺 knowledge 时仅补 `{targets:[]}`，保留已有配置及未知字段；同名不兼容字段先报告冲突。不迁移旧 work/approval，不为旧 policy 补授权；`.aidlc/knowledge/` 及发布凭据、撤销和回执永不受管/覆盖。盘点 knowledge/runs.json、sync dispatch/receipt 与真实宿主任务，活动 Hook 阻止更新（即使 work 已 completed）；无活任务的待投递记录不阻止更新。新适配器只可按 [knowledge.md](../workflow/knowledge.md) 重试兼容的原快照/原授权。
+0.12 → 0.13: new-work V2.1 adds Implement-only TDD, named adapted Skills/on-demand resources, independent dual Reviewers, and verified handoff. Show Standard’s nine→seven stages: Release/Learn inactive unless a team extension ID is selected. Preserve delivery config; bind selected nodes without adding CD. State/dispatch/result schemas stay unchanged; empty optional refs/skill_uses/handoff are new-work-only. Preserve old locks/approvals/TDD/Gate identities; install no external plugins. Incompatible team definitions/templates require three-way conflict resolution.
 
-此指引面向已经安装 `aidlc-agents` 的业务仓库。父会话负责更新，不运行交付阶段；不需要 Python 或专用安装器。用户在该仓库的 AI 工具里发送：
+0.11 → 0.12: optional new-work CI/CD/waiting_external; state/dispatch/result/review/source-index/gate schemas 5/5/4/3/2/2. Add missing config.delivery=null; preserve settings/assets/approvals and grant old work no bindings/monitors/authority. Waiting work/live monitors block updates. Separate integration setup configures existing pipelines; ordinary setup/update neither authenticates, monitors, nor changes CI/CD.
 
-> 请读取 https://raw.githubusercontent.com/xuhongjia/aidlc-agents/main/bootstrap/update.md，检查当前仓库已安装的 aidlc-agents，固定目标版本并给我升级差异和迁移计划；保留现有规则、需求、审批与证据，存在未完成工作或活跃子 agent 时先阻塞，等我确认后再更新。
+0.9 → 0.10: new-work DAG flow, optional checkpoint_low_risk, separate Implement correction budget (default 0). Config/state/extension versions stay; new policy/dispatch/result/approval schema is 3. Preserve old work/cards/delegation/modes/authority/budget; finish under [legacy](../workflow/legacy.md) before switching. Missing original methods block work; never reconstruct them from new rules.
 
-读取来源可联网；不代表允许额外服务连接、装依赖、改业务代码、提交、push 或部署。版本号不是内容身份；升级计划与确认必须绑定完整 commit，或用户明确允许的 local-unreleased 全文件摘要。
+0.8 → 0.9: new-work [extensions](../workflow/extensions.md)/DAG/schema 4; preserve old work/approvals. Add missing workflow=auto, empty team, project_overrides=null; preserve profile/extensions. Target core_contract incompatibility blocks update without rewriting team definitions. Exclude `.aidlc/team/`, overrides, team ledgers, frozen work assets, and knowledge from managed files. Unfinished work/live parallel/Hook workers block core/team updates; use [team.md](team.md).
 
-工作流入口也可按已安装的 [运行前检查](../workflow/preflight.md) 调用本协议：已授权的常规更新自动应用，冲突/删除/不兼容迁移仍需人工决定。已有工作保持原版本。更新器本身不执行交付阶段；成功后将实际版本交回调用入口。
+0.7 → 0.8: new-work knowledge/source mappings. Add absent config.knowledge as `{targets:[]}`; preserve existing/unknown fields, flag incompatible types. Never migrate old work/approvals or grant old policies authority. Never manage `.aidlc/knowledge/`, credentials, revocations, receipts. Inventory knowledge/runs.json, sync records, and host tasks: active Hooks block even completed work; pending deliveries without live tasks do not. Retry compatible original snapshots/authority only under [knowledge.md](../workflow/knowledge.md).
 
-## 1. 只读盘点并固定目标
+The parent updates installed product repositories without delivery stages, Python, or a dedicated installer. User prompt:
 
-1. 确认业务仓库根和 `.aidlc/config.json` 的 package。未知安装、缺失 config、非本包 `.aidlc`、软链接或路径越出项目根：停止，不当作首次安装覆盖。先读取现有宿主规则与本地改动。
-2. 按 [setup](setup.md) 的来源规则，取得一个固定目标 commit 的完整 payload；重新读取该版本的 update/manifest/schema。记录旧来源、目标来源和版本，不能将变化中的 main 混用。local-unreleased 必须记录完整文件集合及实际 SHA-256。
-3. 从所有 `.aidlc/work/*/state.json`、handoff/worker 记录和宿主任务状态检查未完成工作及活 worker。只有依据旧版本协议确实终结的工作才算结束；阶段等待批准、blocked、暂停、失败待修复、取消中都不是已完成。完成标记与 worker 状态冲突、状态缺失或无法确认也阻塞。逐项列出工作 ID、阶段、状态、方法版本和活 worker ID/状态，不能默认为空。
-对于已安装支持 closure 的版本，有真实终结记录且所有 worker/子进程均已停止的 closed 可视为已终结；closing、仅改 status 或无停止证据仍阻塞。旧版不支持的关闭记录不可回填；更新过程自身不能替审批人关闭工作。
+> Read https://raw.githubusercontent.com/xuhongjia/aidlc-agents/main/bootstrap/update.md, inspect the aidlc-agents installation in this repository, pin the target version, and show the upgrade diff and migration plan. Preserve rules, requirements, approvals, and evidence. Block if any work is unfinished or child agent is active, and wait for my confirmation before updating.
 
-4. **存在任一未完成工作或活 worker，就不应用更新**：给出确切阻塞清单，保留旧 `.aidlc/system/`、config、bridge 和工作数据原样可用。可以只读准备 diff；先由用户按旧协议结束工作、停止并确认 worker，再重新检查。不能自动批准/取消工作，不修改 `method_revision`，不以另开工作绕过。本版没有 side-by-side 方法解析器。
+Network source reads grant no other service connection, dependencies, product edits, commit/push, or deployment. Bind plan/confirmation to a full commit or explicit local-unreleased complete hashes, never semver alone.
 
-## 2. 三方比较，先给计划
+Installed [preflight](../workflow/preflight.md) may authorize routine updates; conflicts/deletions/incompatible migrations still require human decisions. Preserve existing work’s version; return actual installed version without running delivery.
 
-使用 old baseline（旧版上游原始包内容及摘要）、current（项目当前实际内容）、target（固定目标上游内容）三方比较。config 的 `managed_files` 是受管索引，不是“现有文件全部归我”的授权；从旧 commit 或可验证旧快照取得基线字节。区分实际安装的 `sha256` 和原始包的 `upstream_sha256`，不能将曾经保留/合并的用户定制结果当上游基线，以免下次升级覆盖定制。schema 1 没有 upstream_sha256 时，从可验证旧来源重建并与旧记录核对；无法解释的差异需要人工解决。旧 local-unreleased 没有可恢复基线、摘要缺失或无法验证时：无法证明安全合并的项标 conflict，等待用户提供基线/逐项决定，不猜造。
+## 1. Inventory read-only and pin the target
 
-| 情况 | 处理 |
+1. Read host rules/changes; verify product root and `.aidlc/config.json`. Unknown installations, missing config, foreign `.aidlc`, symlinks, or out-of-root paths block writes; never treat them as first installation.
+2. Follow [setup](setup.md) source rules: obtain one complete fixed payload, reread its Update/manifest/schema, and record old/target identities. Never mix main revisions. local-unreleased needs all files/actual SHA-256.
+3. Check unfinished work/live workers using all `.aidlc/work/*/state.json`, handoff/worker records, and host task state. Only work actually terminated under its original protocol counts as finished. Awaiting stage approval, blocked, paused, failed pending repair, and canceling are unfinished. Conflicting completion/worker state, missing state, or uncertainty also blocks. List each work ID, stage, status, method version, and live worker ID/status; never assume an empty list.
+For versions supporting closure, closed requires a real closure record and all worker/subprocess stop evidence. closing/status edits/missing evidence block. Never backfill unsupported closure or close work for approvers.
+
+4. **Do not apply updates while any work is unfinished or worker is live**. List blockers; preserve usable system/config/bridge/work. Read-only diffs are allowed. Finish under the old protocol and verify worker stops before rechecking. Never auto-approve/cancel, change `method_revision`, or open another work item to bypass this. No side-by-side method resolver exists.
+
+## 2. Compare three ways and present the plan
+
+Compare old baseline (original upstream package bytes/hashes), current (actual project content), and target (fixed upstream version). config.managed_files is an index, not authority over all existing files; retrieve baseline bytes from the old commit or a verifiable snapshot. Distinguish installed `sha256` from upstream `upstream_sha256`; never treat previously retained/merged customizations as upstream, which could erase them on the next upgrade. For schema 1 without upstream_sha256, reconstruct from a verifiable old source and check old records; unexplained differences need human resolution. If an old local-unreleased baseline cannot be recovered, hashes are absent, or verification fails, mark unprovably safe merges conflict and wait for a supplied baseline/item-level decision; do not guess.
+
+| Condition | Action |
 |---|---|
-| current 等于 baseline，target 改变 | 计划替换为 target |
-| current 改变，target 等于 baseline | 保留用户改动并显式记录；若与新版契约不兼容则冲突 |
-| current 与 target 都改变 | 展示三方差异，人工确认具体合并结果，不自动取远程覆盖 |
-| target 新增，current 不存在 | 计划新增；已存在同名用户文件则冲突 |
-| target 删除，current 等于 baseline | 进入精确的待删除清单，经用户明确确认才可移除 |
-| target 删除，current 已改/owner 未知 | 保留并标冲突，不删除 |
-| 未登记的文件或用户自建内容 | 永久视为用户内容，保留；不因不在新版 manifest 就删除 |
+| current equals baseline; target changed | Plan replacement with target |
+| current changed; target equals baseline | Preserve and record user changes; conflict if incompatible with the new contract |
+| current and target both changed | Show three-way diff; obtain human confirmation of the exact merge, never overwrite with remote automatically |
+| target adds a file; current absent | Plan addition; an existing same-name user file is a conflict |
+| target deletes; current equals baseline | Add to the exact deletion list; remove only with explicit confirmation |
+| target deletes; current changed/owner unknown | Preserve and mark conflict; do not delete |
+| Unregistered files or user-created content | Always preserve as user content; absence from the new manifest does not authorize deletion |
 
-bridge 比较单位是受管 marker 块，不是整个 `AGENTS.md` / `CLAUDE.md` 等文件。完整文件 hash 仅用于观察安装后有无变化；块外用户追加、编辑一律保留。marker 必须精确唯一且配对；旧 config 没有块 hash 时，从可验证旧版 adapter 重建旧块基线并确认与历史安装一致，不可以当前块反写成旧基线。无法重建、块内本地修改或重复 marker 都需要明确解决。可选 router Skill 也按其登记的精确文件三方比较。
+Compare bridges by managed marker block, not whole `AGENTS.md` / `CLAUDE.md` files. Whole-file hashes only reveal post-installation changes; preserve every user addition/edit outside the block. Markers must be exact, unique, and paired. If old config lacks block hashes, reconstruct the baseline from a verifiable old adapter and confirm historical consistency; never backfill the current block as the old baseline. Unrecoverable baselines, local block edits, or duplicate markers require explicit resolution. Apply the same three-way comparison to the exact registered optional router Skill file.
 
-给用户的计划包括：固定来源、新增/替换/合并/保留/删除路径、冲突及已拟定的精确解决方案、执行能力变化、schema 迁移、备份和恢复路径、每个写入前的 current hash。显示所需的差异，不泄露秘密。手动 update 必须收到针对本计划/目标的明确确认才进入应用；“检查升级”或重复“setup”不算确认。若入口已提供有效 preflight 持续授权，且当前安装协议判断本计划完全属于其常规更新范围，可记录该授权及本次资格判断后直接应用；删除/冲突/不兼容迁移仍需目标级确认。存在未解决冲突就停。
+The plan shows fixed source; added/replaced/merged/preserved/deleted paths; conflicts and proposed exact resolutions; execution-capability changes; schema migrations; backup/recovery paths; and every pre-write current hash. Show necessary diffs without exposing secrets. Manual update requires explicit confirmation bound to this plan/target; “check upgrades” or repeated “setup” is insufficient. If entry supplies valid continuing preflight authorization and the installed protocol classifies the entire plan as routine, record that authority and this eligibility decision and apply directly. Deletions/conflicts/incompatible migrations still require target-specific confirmation. Stop with any unresolved conflict.
 
-## 3. 从 0.2.x 迁移的明确边界
+## 3. Explicit boundaries for migration from 0.2.x
 
-- config schema 1 → 2：保留 owner、solo/standard 设置、tool、installed_at、用户扩展字段和所有未更改设置；添加 `execution`，不得用空模板全量重置 config。
-- 默认 `execution.mode=isolated-subagents`、`context_policy=fresh-minimal`、`max_parallel_workers=2`；新增 capabilities 为 null，探针后才填实测值。若已有用户同名键/不兼容类型，先列冲突，不能吞掉。
-- 这是从父会话执行到新隔离子 agent 执行的行为变更，不只是文档更新。明确告知用户宿主必须支持原生 fresh-context spawn 和结果收集；未知/不支持则 blocked，旧版保持可用，绝不切成父会话 inline fallback。
-- 需求、Spec、审批、证据、work state 和历史 `method_revision` 均不迁移、不重算、不自动批准。历史工作继续保留原版本身份；由于所有工作必须先终结，更新后只为新工作使用新方法。未来重开旧工作需另行设计迁移，不能隐式把它变为新版本。
+- config schema 1 → 2: preserve owner, solo/standard, tool, installed_at, user extensions, and unchanged settings; add `execution` without resetting config from an empty template.
+- Default `execution.mode=isolated-subagents`, `context_policy=fresh-minimal`, `max_parallel_workers=2`; new capabilities start null and receive actual values only after probing. Report incompatible types/existing same-name user keys as conflicts; do not discard them.
+- This changes execution from the parent to isolated children; it is more than documentation. Tell the user native fresh-context spawn and result collection are required. Unknown/unsupported means blocked; leave the old version usable and never use parent inline fallback.
+- Do not migrate/recalculate/automatically approve requirements, Spec, approvals, evidence, work state, or historical `method_revision`. Historical work retains its version identity. All work must end first, so only new work uses the updated method. Reopening old work requires a separately designed migration, never implicit conversion.
 
-## 4. 暂存、探针、备份和切换
+## 4. Stage, probe, back up, and switch
 
-0.3 → 0.4：config schema 仍为 2，但新增 profile 选择和 schema 3 的**新工作模板**。保留已有 config.profile（包括 standard），不静默改成 auto；在更新计划中让用户选择是否为今后新需求启用 auto。新增自动批准能力默认关闭；保留历史审批来源，不回填为自动批准，不能把启用 auto 路由当委托审批。旧 work/profile/批准不迁移；新工作不再生成重复 drafts/handoff，历史文件全部保留。所有未完成工作仍必须先按旧版本结束，不能靠更换 profile 绕过升级阻塞。
+0.3 → 0.4: config remains schema 2 but adds profile selection and schema 3 **new-work templates**. Preserve config.profile, including standard; do not silently set auto. Let the user choose auto routing for future requirements in the plan. Automatic approval defaults off; preserve historical approval sources without backfilling auto approval. Auto routing is not delegated approval. Do not migrate old work/profile/approvals. New work no longer creates duplicate drafts/handoff; preserve every historical file. Finish unfinished work under the old version first; changing profile cannot bypass the update block.
 
-0.4 → 0.5：只为新工作加入审批人解析（Jira 经办人 > Git > 系统登录人）与所有路线必需的双 Gate 报告；历史 approval 不回填姓名/邮箱、不补造 Gate 证据。仍须先结束旧版工作再更新。短流程缺 Gate 要补建，不再接受人工核对作为替代；展示这一行为差异并保留用户原设置。
+0.4 → 0.5: adds approver resolution (Jira assignee > Git > system login) and mandatory dual Gate reports for every route in new work. Do not backfill names/emails or invent Gate evidence for historical approvals. Finish old work first. Short routes missing Gates must add them; manual checks no longer substitute. Show this behavior change and preserve original settings.
 
-0.5 → 0.6：新工作支持 Release/Learn 主动只读取证（业务 Git/CI/Jira）和审批人明确确认的直接终结。新增 external_reads/source-index/closure 记录，首次字段为空，不回填历史证据或终结状态；现有绑定、审批人与用户设置保留，来源歧义在新工作中核实。
+0.5 → 0.6: new work supports proactive read-only Release/Learn evidence collection (product Git/CI/Jira) and direct closure explicitly confirmed by the approver. New external_reads/source-index/closure records start empty; do not backfill historical evidence or closure state. Preserve bindings, approvers, and user settings; resolve ambiguous sources within new work.
 
-0.6 → 0.7：加入运行前 GitHub 检查。旧版没有此入口，不会自己发现更新；先执行一次显式 update，并由用户在更新请求/计划中明确启用“新需求先更新、已有需求保持原版本”。添加 `update_policy`（mode=before_new_work、ref=refs/heads/main、authorization={user_statement,source,at}），仅填真实授权。用户显式固定版本则 mode=pinned；原有策略/扩展字段保留，不用新模板重置。缺少启用授权时不默认为同意；当前更新可在人工确认后完成，但新需求入口需先确定策略。首次启用不把本次手动升级追认成自动授权。
+0.6 → 0.7: adds preflight GitHub checks. Older versions cannot discover updates themselves; first perform one explicit update, with the user explicitly enabling “update before new requirements; keep existing requirements on their version” in the request/plan. Add `update_policy` (mode=before_new_work, ref=refs/heads/main, authorization={user_statement,source,at}) using real authorization only. Explicitly fixed versions use mode=pinned. Preserve policies/extensions without template resets. Missing enabling authorization is not consent: a confirmed manual update may finish, but resolve policy before new requirement entry. Initial activation does not retroactively make this manual update automatic.
 
-此处是 AI 使用宿主文件工具执行的操作协议，不得额外生成安装脚本或声称它是防篡改/原子事务系统。
+Use host file operations; no extra installer or claim of tamper-proof/atomic transactions.
 
-1. 确认后，在 `.aidlc/updates/<unique-id>/` 建立事务目录，**在 system 外**保存 plan、journal、stage、backup 和 `update-report.md`。写入 journal 的状态为 preparing，记录目标身份、用户确认原文（或有效持续授权引用与自动资格判断）、精确受管写入/删除清单和原摘要；此目录不得包含凭据。暂存完整目标 payload 及计划中的明确合并结果，逐文件校验 SHA-256、引用和 schema，不混用旧新 payload。
-2. 按 `workflow/orchestration.md` / [setup](setup.md) 的只读探针，使用暂存版本中的明确文件路径创建全新隔离子 agent 并实际收回结果；不创建 work、不写审批。把证据写事务报告。任一能力未知/失败就停在 blocked，原安装不变；不能用父会话的分析替代探针。
-3. 在切换前再次确认没有未完成工作、活 worker，并重新比对 current hash 与已确认计划；任何漂移都重新计划，不沿用旧确认。停止其他 setup/update 并行运行；无法确认唯一更新操作者就暂停。
-4. 备份实际将改动的受管文件、旧 config、bridge 的原受管块及块外摘要（也可留整个 bridge 作为参考，**不能以整文件回滚**）。逐文件确认备份字节与 current 的 hash 一致，再标 prepared。删除项必须属于已确认的精确列表且 current 仍等于 baseline；未知文件或目录不递归清理。
-5. 标 applying 后逐项安装已暂存结果，journal 记录每项预期前/后摘要与已应用状态。写 bridge 前重读文件，只替换精确唯一受管块，保留最新块外字节。不要整目录覆盖/替换 system，未知文件必须保留。只有已验证备份的项才能写入或执行已确认的精确删除。
-6. 对安装后的完整受管范围校验实际摘要、引用、stage catalog、bridge 和 config 候选；检查业务文件、work 和用户非受管内容未改变。**全部通过之后最后写 config**：更新来源、package_version、schema、managed_files/块摘要及实测 execution；每项分别记录实际安装 sha256 与目标上游 upstream_sha256，保留本地定制的事实。保留用户设置和首次 installed_at，可追加实际 updated_at。config 不自包含自身摘要。
-7. 校验最终 config 与安装一致，把 journal 标 complete，写实际 update report 并返回用户。若中途失败或存在 preparing/prepared/applying 未结束记录，新会话必须先恢复/回滚，禁止启动任何交付阶段。config 仍是旧版不代表混合目录安全可用；report 必须明确 unavailable-until-recovered，而不是 ready。
+1. After confirmation, create `.aidlc/updates/<unique-id>/` with plan, journal, stage, backup, and `update-report.md` **outside system**. Mark journal preparing; record target identity, exact user confirmation (or valid continuing authorization and eligibility decision), exact managed writes/deletions, and original hashes. Store no credentials. Stage the complete target payload and exact planned merges; verify hashes, references, and schemas file by file without mixing versions.
+2. Run the read-only isolated-child probe from `workflow/orchestration.md` / [setup](setup.md), using explicit staged-version file paths, and actually collect results. Create no work or approvals. Record evidence in the transaction report. Any unknown/failed capability stops at blocked with installation unchanged; parent analysis cannot replace the probe.
+3. Before switching, recheck unfinished work/live workers and compare current hashes with the confirmed plan. Any drift requires replanning and fresh confirmation. Stop concurrent setup/update operations; pause if a single updater cannot be established.
+4. Back up affected managed files, old config, the original managed bridge block, and hashes of outside-block content. An entire bridge may be retained as reference, **never for whole-file rollback**. Verify each backup against current hashes before marking prepared. Deletions must be on the confirmed exact list and still equal baseline. Never recursively clean unknown files/directories.
+5. Mark applying and install staged results item by item; journal expected before/after hashes and applied state. Reread the bridge before writing; replace only its exact unique block and preserve latest outside-block bytes. Do not overwrite/replace the whole system directory; preserve unknown files. Write or perform confirmed exact deletions only for items with verified backups.
+6. Verify actual hashes, references, stage catalog, bridge, and candidate config across the complete installed managed scope. Check product files, work, and unmanaged user content are unchanged. **Write config last, only after everything passes**: update source, package_version, schema, managed_files/block hashes, and measured execution. Record installed sha256 and target upstream_sha256 separately per item, preserving customization facts. Keep user settings and original installed_at; an actual updated_at may be added. config does not hash itself.
+7. Verify final config against installation, mark journal complete, write the actual report, and return it. After failure or unfinished preparing/prepared/applying records, a new session must recover/roll back before any delivery stage. Old config does not make a mixed directory safe; report unavailable-until-recovered, not ready.
 
-## 5. 中断恢复、回滚与幂等
+## 5. Recovery, rollback, and idempotency
 
-恢复先读 journal、已验证备份和当前摘要，核对用户确认及目标身份。仅当每项 current 等于其记录的 before 或 after 状态，且没有未完成业务工作/活 worker，才能在用户确认下继续原计划；无法判断的一律冲突，不猜测最后执行到了哪里。
+For recovery, read journal, verified backups, and current hashes; check confirmation and target identity. Continue the original plan with user confirmation only if every current item equals its recorded before/after state and no unfinished product work/live worker exists. Uncertainty is a conflict; never guess the last completed operation.
 
-回滚也先展示精确范围取得用户确认：只恢复本事务已改且 current 仍等于已记录 after 的受管文件，使用已验证 backup；仅移除本事务新增且仍未改动的精确文件。对于已改 bridge，只用备份的旧块替换当前已知新版块，保留当前块外内容；不得复制整个旧 AGENTS 文件回去。已由用户编辑的项、未知文件和所有 work/审批/证据都保留并阻塞自动回滚。旧 config 最后恢复并重新验证。只有全部恢复到可验证的一致旧版才能标 rolled-back/旧版可用，否则维持 recovery-required，给出未解决清单。备份默认保留，不自动清理。
+For rollback, show exact scope and obtain confirmation first. Restore only files changed by this transaction whose current bytes still match recorded after, using verified backups. Remove only exact files newly added by this transaction and still unchanged. Replace a changed bridge's known new block with the backed-up old block, retaining current outside-block content; never copy back an entire old AGENTS file. Preserve user-edited items, unknown files, and all work/approvals/evidence; these block automatic rollback. Restore old config last and reverify. Mark rolled-back/old version usable only after reaching a fully verifiable consistent old installation; otherwise retain recovery-required and list unresolved items. Preserve backups by default without automatic cleanup.
 
-重跑同一 commit（或相同 local-unreleased 路径+摘要集合）且受管内容一致、没有未结束事务：只报告 up-to-date，不追加 bridge、不重写 config/安装日期、不创建工作。相同 semver 但来源摘要不同仍必须走完整升级计划。已完成更新的报告和备份不重用为新事务证据。
+Same commit/local path-hash set, identical managed content, and no unfinished transaction means up-to-date: no bridge append, config/date rewrite, or work creation. Different hashes require a full plan even at the same semver. Old reports/backups prove no new transaction.
 
 ## 0.10 → 0.11
 
-只为新工作使用按需 instruction_refs/worker/知识与 Gate 协议，dispatch 模板升至 schema 4；旧 work、锁、dispatch 和批准全部保留原版本，不回填或替换引用。context.json 及必需/条件资源纳入冻结资产。仍须等待未完成 work/活 stage、leaf、Hook 后应用更新。
+Only new work uses on-demand instruction_refs/worker/knowledge/Gate protocols; dispatch templates advance to schema 4. Existing work, locks, dispatches, and approvals retain original versions without backfilled/replaced references. Freeze context.json and required/conditional resources with other assets. Apply only after unfinished work and live stage/leaf/Hook workers end.
 
-保留团队 Prompt/模板/必读 instructions、原 knowledge 目标和未知字段；不自动切旧快照到 TWG、不为旧授权补写权限。Confluence 新接入走知识 setup Skill，安装/登录是明确配置操作，不是 update 的隐含步骤。现有 .codex/config.toml 不登记为方法受管文件，不重写工具预算/模型/插件；可选精简键只在用户明确启用时合并。
+Preserve team Prompts/templates/required instructions, knowledge targets, and unknown fields. Do not automatically move old snapshots to TWG or grant writes to old authorizations. New Confluence integration uses the knowledge setup Skill; installation/login is explicit configuration, not implicit update. Do not register existing .codex/config.toml as method-managed or rewrite tool budgets/models/plugins; merge optional efficiency keys only when explicitly enabled.

@@ -4,16 +4,34 @@ import { readFileSync } from 'node:fs';
 import { measureCompactWorkflow, measureInstructions } from './support/context-budget.mjs';
 
 const baseline = JSON.parse(readFileSync(new URL('./fixtures/context-v013-baseline.json', import.meta.url)));
+// Historical fixture bytes and hashes remain pinned. Normalize only exact known old
+// Skill identities when comparing required resources with the current package layout.
+const skillCatalog = JSON.parse(readFileSync(new URL('../skills/catalog.json', import.meta.url)));
+const historicalSkillRefs = new Map(skillCatalog.skills.map(skill => [
+  'core:skills/' + skill.name + '/SKILL.md', 'core:' + skill.path,
+]));
+const currentRefForBaseline = ref => historicalSkillRefs.get(ref) ?? ref;
 const coordinatorResources = new Set(['extensions', 'dag', 'protocol', 'orchestration', 'approval', 'knowledge', 'gates', 'implementation-feedback']
   .map(name => 'core:workflow/' + name + '.md'));
 
 test('static accounting uses UTF-8 bytes and rejects duplicate instructions instead of hiding them', () => {
   const plan = [{ ref: 'core:prompts/example.md' }, { ref: 'core:templates/example.md' }];
-  const result = measureInstructions(plan, relative => relative.startsWith('templates/') ? 'x' : '中文');
+  const result = measureInstructions(plan, relative => relative.startsWith('templates/') ? 'x' : '\u4e2d\u6587');
   assert.equal(result.method_bytes, 6);
   assert.equal(result.template_bytes, 1);
   assert.equal(result.total_bytes, 7);
   assert.throws(() => measureInstructions([...plan, plan[0]], () => ''), /unique/);
+});
+
+test('baseline comparison maps only exact historical core Skill names in the catalog', () => {
+  for (const skill of skillCatalog.skills) {
+    assert.equal(currentRefForBaseline('core:skills/' + skill.name + '/SKILL.md'), 'core:' + skill.path);
+    assert.equal(currentRefForBaseline('core:' + skill.path), 'core:' + skill.path);
+  }
+  for (const ref of ['core:skills/unknown/SKILL.md', 'team:skills/test-driven-development/SKILL.md',
+    'core:skills/other/test-driven-development/SKILL.md', 'core:workflow/tdd.md']) {
+    assert.equal(currentRefForBaseline(ref), ref, 'Do not normalize an unrelated resource');
+  }
 });
 
 test('current compact runs preserve every baseline mandatory resource while reducing method bytes', () => {
@@ -23,7 +41,7 @@ test('current compact runs preserve every baseline mandatory resource while redu
     for (const run of actual.runs) {
       const previous = before.runs.find(item => item.id === run.id);
       assert.ok(previous, 'Unknown default run: ' + run.id);
-      assert.deepEqual(run.files.map(file => file.ref).sort(), previous.refs.toSorted(), 'Mandatory resources changed for ' + run.id);
+      assert.deepEqual(run.files.map(file => file.ref).sort(), previous.refs.map(currentRefForBaseline).sort(), 'Mandatory resources changed for ' + run.id);
       assert.ok(run.files.every(file => !coordinatorResources.has(file.ref)), 'Worker loaded a parent coordination protocol');
       assert.equal(run.total_bytes, run.method_bytes + run.template_bytes);
     }

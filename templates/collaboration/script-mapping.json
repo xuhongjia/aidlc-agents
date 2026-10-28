@@ -1,0 +1,9 @@
+{
+  "contract_version": 1,
+  "project_id": null,
+  "story_id": null,
+  "source_design_ref": null,
+  "candidate": null,
+  "links": [{"case_id": null, "case_revision": null, "case_digest": null, "status": "pending_sync", "reason": null, "protocol_ref": null, "test_refs": []}],
+  "status": "pending_sync"
+}

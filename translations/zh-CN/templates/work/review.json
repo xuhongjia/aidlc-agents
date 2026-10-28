@@ -1,0 +1,24 @@
+{
+  "schema_version": 3,
+  "work_id": null,
+  "approver": null,
+  "profile": null,
+  "workflow_ref": null,
+  "step_id": null,
+  "stage_id": null,
+  "routing_facts": {},
+  "stage": null,
+  "revision": null,
+  "files": [],
+  "inputs": [],
+  "candidate": {
+    "files": [],
+    "scope": []
+  },
+  "gate_evidence": [],
+  "tdd_evidence": [],
+  "external_evidence": [],
+  "pipeline_evidence": [],
+  "execution": [],
+  "knowledge_refs": []
+}

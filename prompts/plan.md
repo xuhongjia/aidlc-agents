@@ -1,9 +1,9 @@
-# Plan · 可验证的纵向切片
+# Plan · Verifiable vertical slices
 
-读取批准 Spec、Architecture、Quality。先安排最小端到端行为切片验证关键接口，再逐步扩展；不要按“全部数据库→全部后端→全部前端”堆大批任务。大需求先明确阻塞决定，跨会话从任务/批准记录恢复，不靠长聊天记忆。
+Read approved Spec, Architecture and Quality. Start with the smallest end-to-end behavior validating key interfaces, then extend; avoid layer-by-layer batches. Resolve blocking decisions first. Resume from task/approval records, not chat memory.
 
-每个 Task 关联 Requirement/AC、Oracle、完成标准、文件/模块、前置 Task ID、验证入口和回滚；包括已批准 Fitness 的安装任务、来源 revision 与目标路径。缺失行为/未知决定不能伪装为可执行 ticket。
+Each Task links Requirement/AC, Oracle, completion criteria, files/modules, predecessor IDs, verification entrypoint and rollback. Include approved Fitness installation, source revision and target paths. Missing behavior or unresolved decisions block executable tickets.
 
-仅前置任务完成且写路径、读写接口和共享资源无冲突的 ready 任务可提议并行。明确唯一 writer 和最终集成验证；共享锁文件/DB/缓存或未稳定接口串行。父协调器派发，默认单切片顺序实施；不为每个 ticket 自动创建 Agent。
+Parallel ready tasks require completed dependencies and conflict-free writes, interfaces and resources. Assign one writer per resource and final integration validation; serialize shared lockfiles/DB/cache or unstable interfaces. The parent dispatches; sequential slices are default, not one Agent per ticket.
 
-按 plan.md 表交付，注明额外依赖/网络/权限/外部写入需授权。核对漏项及范围外工作，不编造负责人、日期或工时。使用本地 Task ID 即可；tracker 同步不属于默认 Plan 权限。
+Use plan.md's table; flag dependencies, network, permissions and external writes needing authorization. Check omissions/scope; invent no owners, dates or estimates. Local Task IDs suffice; Plan does not authorize tracker sync.

@@ -15,7 +15,8 @@ const profiles = catalog.profiles;
 const ids = ['intake', 'spec', 'architecture', 'quality', 'plan', 'implement', 'verify', 'release', 'learn'];
 function files(directory = root) {
   return readdirSync(directory, { withFileTypes: true })
-    .filter(item => !['.git', 'node_modules', '.DS_Store'].includes(item.name))
+    .filter(item => !['.git', 'node_modules', '.DS_Store'].includes(item.name)
+      && !(directory === root && item.name === 'translations'))
     .flatMap(item => {
       const name = path.join(directory, item.name);
       assert.ok(!lstatSync(name).isSymbolicLink(), `Package contains a symlink: ${name}`);
@@ -23,13 +24,15 @@ function files(directory = root) {
     });
 }
 const all = files();
+const installedPackageRefs = text => [...text.matchAll(/\.aidlc\/system\/([A-Za-z0-9_/-]+\.(?:md|json))/g)]
+  .map(match => match[1]);
 
 test('manifest describes an instruction-only payload and all declared entrypoints exist', () => {
   assert.equal(manifest.name, 'aidlc-agents');
   assert.equal(manifest.runtime, 'none');
   assert.equal(manifest.repository, 'https://github.com/xuhongjia/aidlc-agents');
   for (const name of [...manifest.payload_directories, ...manifest.payload_files,
-    manifest.bootstrap, manifest.update, manifest.preflight, manifest.entrypoint, manifest.protocol, manifest.orchestration, manifest.stage_catalog]) {
+    manifest.bootstrap, manifest.update, manifest.preflight, manifest.entrypoint, manifest.protocol, manifest.orchestration, manifest.stage_catalog, manifest.skill_catalog]) {
     assert.ok(!path.isAbsolute(name) && !name.split('/').includes('..'));
     assert.ok(existsSync(path.join(root, name)), `Missing payload: ${name}`);
   }
@@ -155,12 +158,16 @@ test('checkpoint and correction templates add no default delegation or correctio
 });
 
 test('stage catalog resolves roles, prompts, skills and every required template', () => {
+  const skillCatalog = json(manifest.skill_catalog);
   assert.deepEqual(stages.map(stage => stage.id), [...ids, 'scope', 'diagnose']);
   assert.deepEqual(stages.filter(stage => stage.product_write).map(stage => stage.id), ['implement']);
   for (const stage of stages) {
     assert.ok(existsSync(path.join(root, `agents/${stage.agent}.md`)));
     assert.ok(existsSync(path.join(root, stage.prompt)));
-    assert.ok(existsSync(path.join(root, stage.skill ?? `skills/aidlc-${stage.id}/SKILL.md`)));
+    assert.equal(typeof stage.skill, 'string', `${stage.id} must declare its Skill path`);
+    const skill = skillCatalog.skills.find(entry => entry.path === stage.skill);
+    assert.ok(skill?.stages.includes('core.' + stage.id), `${stage.id} Skill must match the catalog`);
+    assert.ok(existsSync(path.join(root, stage.skill)));
     assert.ok(stage.outputs.length > 0);
     for (const output of stage.outputs) {
       assert.equal(path.basename(output), output);
@@ -288,9 +295,9 @@ test('all JSON artifacts parse, templates start without fabricated approvals or 
   assert.equal(Object.hasOwn(json('templates/work/review.json'), 'digest'), false, 'No self-referential manifest hash');
 });
 
-test('twenty-five unique skills have valid discovery metadata', () => {
+test('thirty-one unique skills have valid discovery metadata', () => {
   const skillFiles = all.filter(file => path.basename(file) === 'SKILL.md');
-  assert.equal(skillFiles.length, 25);
+  assert.equal(skillFiles.length, 31);
   const names = new Set();
   for (const file of skillFiles) {
     const text = readFileSync(file, 'utf8');
@@ -305,6 +312,31 @@ test('twenty-five unique skills have valid discovery metadata', () => {
   }
 });
 
+test('Skill catalog categories and paths exactly match the physical package layout', () => {
+  const skillCatalog = json(manifest.skill_catalog);
+  const categories = skillCatalog.categories.map(category => category.id);
+  assert.deepEqual(categories.toSorted(), ['orchestration', 'reusable-capability', 'role-collaboration', 'setup', 'stage-entry', 'sync-publication']);
+  assert.equal(skillCatalog.purpose, 'navigation-only');
+  assert.equal(new Set(skillCatalog.skills.map(skill => skill.name)).size, 31);
+  assert.equal(new Set(skillCatalog.skills.map(skill => skill.path)).size, skillCatalog.skills.length);
+  assert.deepEqual(readdirSync(path.join(root, 'skills'), { withFileTypes: true })
+    .filter(entry => entry.isDirectory()).map(entry => entry.name).sort(), categories.toSorted());
+  for (const category of categories) assert.ok(skillCatalog.skills.some(skill => skill.category === category));
+  for (const skill of skillCatalog.skills) {
+    assert.ok(categories.includes(skill.category), skill.name);
+    assert.equal(skill.path, `skills/${skill.category}/${skill.name}/SKILL.md`);
+    assert.ok(existsSync(path.join(root, skill.path)), skill.path);
+  }
+  assert.deepEqual(all.filter(file => path.basename(file) === 'SKILL.md')
+    .map(file => path.relative(root, file).split(path.sep).join('/')).sort(),
+    skillCatalog.skills.map(skill => skill.path).sort());
+});
+
+test('canonical installed-path extraction includes uppercase Skill filenames', () => {
+  assert.deepEqual(installedPackageRefs('Read .aidlc/system/skills/orchestration/aidlc/SKILL.md and .aidlc/system/workflow/context.json.'),
+    ['skills/orchestration/aidlc/SKILL.md', 'workflow/context.json']);
+});
+
 test('Markdown links and canonical installed-path references resolve', () => {
   for (const file of all.filter(file => /\.(md|mdc)$/.test(file))) {
     const text = readFileSync(file, 'utf8');
@@ -315,8 +347,8 @@ test('Markdown links and canonical installed-path references resolve', () => {
       if (!reference) continue;
       assert.ok(existsSync(path.resolve(path.dirname(file), reference)), `${file} -> ${reference}`);
     }
-    for (const match of text.matchAll(/\.aidlc\/system\/([a-z0-9_/-]+\.(?:md|json))/g)) {
-      assert.ok(existsSync(path.join(root, match[1])), `${file} -> ${match[1]}`);
+    for (const reference of installedPackageRefs(text)) {
+      assert.ok(existsSync(path.join(root, reference)), `${file} -> ${reference}`);
     }
   }
 });
@@ -327,7 +359,7 @@ test('tool bridges have one managed block and Cursor has native frontmatter', ()
     assert.equal(content.split('<!-- AIDLC-AGENTS:START -->').length, 2);
     assert.equal(content.split('<!-- AIDLC-AGENTS:END -->').length, 2);
     assert.ok(content.indexOf('<!-- AIDLC-AGENTS:START -->') < content.indexOf('<!-- AIDLC-AGENTS:END -->'));
-    assert.ok(content.includes('.aidlc/system/skills/aidlc/SKILL.md'));
+    assert.ok(content.includes('.aidlc/system/skills/orchestration/aidlc/SKILL.md'));
     assert.ok(content.includes('.aidlc/system/workflow/protocol.md'));
   }
   assert.match(read('adapters/cursor.mdc'), /^---\r?\n[\s\S]*?alwaysApply:\s*true[\s\S]*?\r?\n---/);

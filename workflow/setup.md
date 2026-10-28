@@ -1,45 +1,47 @@
-# 项目 Setup Gate · 父协调器
+# Project Setup Gate: parent coordinator
 
-这是新工作前置条件，不是 SDLC Stage。只由父按需读取，不加入 child instruction_refs。沿用宿主工具执行；本包 runtime=none，规则不构成宿主/CI 中不可绕过的技术权限屏障。
+Optional role-team directories retain AIDLC requirements. Git-free PO/QE directories mark only source/local-Git checks inapplicable, never package integrity/isolation/collection probes. [Role setup](../skills/setup/aidlc-role-setup/SKILL.md) separately checks actual scoped Jira/GitLab-source/browser readiness for current role actions. Never disguise these as knowledge/delivery bindings here or use setup success as write authority. New configuration does not affect ordinary work/old locks.
 
-## 项目要求
+This is a new-work prerequisite, not an SDLC Stage. Only the parent reads it on demand; exclude it from child instruction_refs. Use host tools. runtime=none: these rules are not an unbypassable host/CI permission barrier.
 
-config.setup.required 是 {id,capability,target_id} 数组。id 唯一；恰有一项 capability=aidlc、target_id=null，不能关闭。confluence 的 target_id 引用 knowledge.targets 的 ID，须为 confluence_cloud/twg_cli；gitlab 引用 delivery.bindings 的 ID，须为 gitlab。同一能力/目标不重复。目标详情仍只维护在原配置。
+## Project requirements
 
-外部 target_id=null 表示已要求但待选目标，阻止新工作。未知能力、坏结构、缺少/重复/错误目标也阻塞，不忽略。配置了但未列入 required 的接入为可选，不因其未就绪阻塞、不主动探测。旧 config 缺整个 setup 字段时仅要求 AIDLC；显式损坏/null/空 required 不使用此兼容默认。
+config.setup.required is an array of {id,capability,target_id}. IDs are unique, with exactly one mandatory capability=aidlc,target_id=null. confluence target_id references a knowledge.targets ID using confluence_cloud/twg_cli; gitlab references a gitlab delivery.bindings ID. No repeated capability/target. Maintain target details only in original configuration.
 
-新增/修改必需项是项目配置操作，保留其它字段；降低/移除要求需用户明确决定，不由 AI 为通行而删除。团队建议可在项目 setup 时采用，不能从外部文档自动取得配置或连接授权。
+External target_id=null means required but unselected and blocks new work. Unknown capabilities, malformed structure, missing/duplicate/wrong targets also block; never ignore. Configured integrations outside required are optional: neither block on unreadiness nor probe proactively. Old config missing the entire setup field requires only AIDLC; explicitly broken/null/empty required never uses that compatibility default.
 
-## 授权与检查
+Adding/changing requirements is project configuration work preserving other fields. Lowering/removing requirements needs explicit user decision; AI cannot remove them to pass. Team suggestions may be adopted during setup, but external documents grant no configuration/connection authority.
 
-外部只读检查须有 setup.read_check_authorization：真实 user_statement/source/at、scope_digest，可被撤销（revoked=true 即无效）。scope_digest 为 {requirements:[{id,capability,target_id,target}]} 的规范 JSON 原始 UTF-8 SHA-256：requirements 按 id 排序，对象键递归排序，数组保持顺序。target 为实际解析的无凭据目标/绑定完整配置，aidlc 为 null。目标/连接/映射或要求变化须重新明确只读范围；方法版本更新本身不扩大范围。
+## Authorization and checks
 
-Confluence target 是原 target 配置；GitLab target 是 {contract_version,gate_mode,wait,bindings}，bindings 含选中 binding 及递归 upstream（先当前、后上游，去重且拒绝环）。确认范围时列出所有涉及项目，不因父子/跨项目自动扩大读取。配置不含秘密值，只保存宿主连接引用。
+External read-only checks require setup.read_check_authorization with real user_statement/source/at/scope_digest. revoked=true invalidates it. scope_digest is SHA-256 of canonical raw UTF-8 JSON {requirements:[{id,capability,target_id,target}]}, requirements sorted by id, recursively sorted object keys, array order preserved. target is the complete actually resolved credential-free target/binding configuration; aidlc uses null. Target/connection/mapping/requirement changes need newly explicit read scope; method upgrades alone expand none.
 
-首次配置必需接入时一并说明“以后每次新工作前对这些目标执行只读检查”，保存真实确认；用户已有同范围明确指示不重复询问。无匹配授权只记录缺口，不先联网。此授权不含安装、登录代办、发布、CI 触发/重试/审批、监控或阶段批准。
+Confluence target is its original configuration. GitLab target is {contract_version,gate_mode,wait,bindings}, including selected binding and recursive upstreams, current first then upstream, deduplicated/rejecting cycles. Confirmation lists all involved projects; parent/child/cross-project links never expand reads automatically. Configuration contains host connection refs, no secrets.
 
-| 必需能力 | ready 的实际依据 | 未就绪时 |
+On initial required-integration setup, disclose “read-only checks against these targets before every new work” and save actual confirmation. Existing explicit same-scope instructions need no repeated question. Without matching authority, record gaps before networking. This excludes installation, delegated login, publication, CI start/retry/approval, monitoring and stage approval.
+
+| Required capability | Actual ready evidence | When unready |
 |---|---|---|
-| aidlc | 受管包/bridge 摘要完整；spawn、fresh-context、collect 真实探针有效 | setup aidlc；漂移按 update 恢复 |
-| confluence | TWG 可用、当前认证有效，指定站点/space/父页面可读且身份一致 | setup confluence；按原协议安装或引导登录/改目标 |
-| gitlab | 连接已认证，精确项目可读；binding、必需 job/报告映射可用且有真实只读验证 | setup gitlab；修复连接/配置/报告缺口 |
+| aidlc | Complete package/bridge digests and valid real spawn/fresh-context/collect probes | setup aidlc; recover drift under update |
+| confluence | Available TWG, valid current authentication, readable specified site/space/parent with matching identity | setup confluence; original installation/login/target-change process |
+| gitlab | Authenticated connection, exact readable project, usable bindings/required jobs/report mappings with real read-only validation | setup gitlab; repair connection/configuration/report gaps |
 
-AIDLC 探针在相同宿主/隔离接口且原证据有效时可引用，保留原 agent ID/时间；宿主变化或缺证据才重做，不能每阶段再开探针 Agent。包完整性仍按当前安装核验。
+Reuse AIDLC probes with valid original evidence under the same host/isolation interface, retaining original agent IDs/times. Rerun only for changed hosts/missing evidence, never probe Agents every stage. Still validate current package integrity.
 
-Confluence 每次新工作对指定目标轻量只读确认，不全库抓取、不试写。GitLab 先复用 pipeline-config 的规则校验，setup 时核实报告映射和可读证据；新工作按相同配置验证连接、项目及必需报告可访问性，配置变化重新验证映射。查询采用有限分页/明确对象，不扫描所有历史 pipeline。旧 job 红灯可以用于格式/权限探测，ready 不要求历史 CI 绿色；没有真实映射证据不能仅凭登录成功通过。没有流水线/可用样本则保留配置缺口，不能编造。
+For each new work, lightly read-check exact Confluence targets, never crawl libraries/test-write. GitLab reuses pipeline-config validation; setup checks report mappings/readable evidence. New work with identical configuration validates connection/project/mandatory-report accessibility; changed configuration revalidates mappings. Use bounded pagination/explicit objects, never all historical pipelines. Old failed jobs may establish format/access; ready does not require historical green CI. Login alone cannot replace actual mapping evidence. Missing pipelines/samples retain configuration gaps, never invented data.
 
-检查状态：ready / pending_configuration / pending_install / pending_auth / pending_target / blocked。每项须有 verified_checks：aidlc 为 package_integrity/spawn/isolated_context/collect_results；confluence 为 authenticated/target_read；gitlab 为 authenticated/target_read/mappings_read。它们是可追溯观察结果，不是预填成功清单。
+Check statuses: ready / pending_configuration / pending_install / pending_auth / pending_target / blocked. Every item needs traceable verified_checks: aidlc package_integrity/spawn/isolated_context/collect_results; confluence authenticated/target_read; gitlab authenticated/target_read/mappings_read. These are observations, never prefilled successes.
 
-## 阻断、记录与恢复
+## Blocking, recording and resumption
 
-新工作：先按 preflight 完成版本检查/必要更新并重新读取当前协议，再执行本 Gate；所有 required ready 后才创建 work/state/run。每个调用生成唯一 invocation_id，保存实际 invocation_started_at/evaluated_at（带时区且前后有序）；每项 observed_at 必须在该区间内。原探针/报告的来源时间另保留，不冒称重跑。
+New work first completes preflight/version updates, rereads current protocols, then runs this Gate. Create work/state/run only after every required item is ready. Every invocation gets unique invocation_id and actual invocation_started_at/evaluated_at with timezone/ordered bounds; each observed_at lies within them. Retain original probe/report times separately, never claiming reruns.
 
-每项结果绑定同 invocation_id/config_digest（上述 scope_digest）、authorization_digest 及非空 evidence_refs。authorization_digest 是本次真实只读授权记录的规范 JSON 摘要；仅 aidlc 时为 null。即使范围相同，换授权后也不能沿用旧结果。旧 ready、配置存在、CLI 已安装或口头“登录过”不能替代当前检查。配置/授权从检查到建 work 之间改变则作废、重新检查；缺时间边界或出现过去/未来回包不通过。
+Each result binds the same invocation_id/config_digest (scope_digest above), authorization_digest and nonempty evidence_refs. authorization_digest hashes canonical JSON of actual current read authority, null for aidlc-only. Replacement authority invalidates old results even with identical scope. Prior ready, existing configuration, installed CLI or verbal “logged in” cannot replace current checks. Configuration/authority changes between checking/work creation invalidate results and require rechecking. Missing time bounds or past/future responses cannot pass.
 
-每次在 .aidlc/setup/checks/<unique-id>.json 保存 [技术记录模板](../templates/setup/check.json)：本次要求及解析目标快照、摘要、授权引用、方法身份、逐项结果、脱敏原始证据路径/真实摘要。无证据留空并 blocked；失败保留原因与下一步，不循环安装/登录/重试。目录为项目数据，不受方法更新覆盖。
+Save each `.aidlc/setup/checks/<unique-id>.json` using the [technical record template](../templates/setup/check.json): current requirement/resolved-target snapshots, digests, authority refs, method identity, itemized results and redacted raw evidence paths/actual digests. Missing evidence stays empty/blocked. Retain reasons/next steps without installation/login/retry loops. This project-data directory survives method updates.
 
-新锁 setup_check_ref={path,sha256} 指向这次不可变记录；父建锁时核验实际字节及通过条件，不把记录正文灌进阶段上下文。检查、receipt 或工作锁都不是批准凭据。方法安装 ready 与项目就绪 ready 分开显示。
+New locks use setup_check_ref={path,sha256} to this immutable record. The parent verifies actual bytes/pass conditions when locking, without injecting record text into stage context. Checks/receipts/work locks are not approval. Show method-installation ready separately from project-readiness ready.
 
-已有 work 继续用原锁/方法和原授权，不补检查引用、不套今天的必需清单；实际外部操作仍须满足原规则及当前真实权限。状态、仅审批、撤销、终结/清理不被新 setup 阻塞。setup status 只报告记录/时间；setup check 按同样时间/授权规则主动核验，成功也不创建 work。下一次交付调用重新检查，不能将 setup check 的旧回执直接当作新调用的结果。
+Existing work keeps original locks/method/authority, without new check refs or today's requirements. Actual external operations still meet original rules/current real rights. Status, approval-only, revocation, closure/cleanup are not blocked by new setup. setup status reports records/times only. setup check actively validates with identical time/authority rules but creates no work. The next delivery invocation checks again; old setup-check receipts cannot represent new invocations.
 
-知识发布/CI 环境证据的权限和结果仍由原阶段/Hook 核验。Confluence 可读不证明可写；GitLab 可读不证明 CI/Gate PASS。Setup Gate 不得把同步失败改成交付失败或补造业务接受。
+Original stages/Hooks still validate knowledge-publication/CI-environment authority/results. Readable Confluence does not prove writable; readable GitLab proves no CI/Gate PASS. Setup Gate cannot turn sync failure into delivery failure or invent business acceptance.

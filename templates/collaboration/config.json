@@ -1,0 +1,19 @@
+{
+  "contract_version": 1,
+  "enabled": false,
+  "workflow_id": "team.role-delivery",
+  "jira": {
+    "connection_ref": null,
+    "site": null,
+    "project_id": null,
+    "work_types": {"story": null, "task": null, "bug": null},
+    "field_map": {"summary": null, "description": null, "labels": null},
+    "link_type": null
+  },
+  "gitlab": {"connection_ref": null, "project_id": null, "repository_url": null},
+  "prd": {"provider": "jira", "target_ref": null},
+  "approvers": {"po": null, "qa": null, "technical": null, "final": null},
+  "ui_tests": {"browser_connection_ref": null, "environments": [], "allowed_actions": [], "data_policy": "synthetic"},
+  "sync": {"triggers": ["explicit", "dev_resume"], "max_write_attempts_per_target": 1},
+  "authorization_refs": []
+}

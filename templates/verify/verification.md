@@ -1,35 +1,35 @@
 # Verification
 
-AIDLC_DRAFT — 针对当前精确候选执行批准的检查后填写并替换本标志；未执行不能删除未知状态并写成成功。
+AIDLC_DRAFT — report approved checks on the exact candidate; unexecuted checks stay unexecuted.
 
-## 验证身份
+## Verification identity
 
-引用批准 Spec、Coverage、两个 Fitness Pack、实现 review，以及候选文件摘要。记录实际环境、时间和执行者。
+Approved Spec, Coverage, both Fitness Packs, implementation review, candidate hashes; actual environment/time/executors.
 
-## 验收追踪
+## Acceptance traceability
 
-| AC/NFR | 检查 ID/人工协议 | 实际结果 | 原始证据路径 | 限制 |
+| AC/NFR | Check ID/manual protocol | Actual result | Raw evidence path | Limits |
 |---|---|---|---|---|
 
-`acceptance-results.json` 的 `criteria` 与批准 AC ID 集合一致，每项含 `id`、`status`（`PASS`/`FAIL`/`NOT_RUN`）和 `evidence`（实际证据路径数组）。自动 PASS 须有对应全部必要检查的实际通过证据；人工 PASS 须有真实观察记录，不能由 AI 猜测。未运行、证据缺失或过期保持阻断。
+acceptance-results.json criteria must match approved AC IDs: `id`, `status` (PASS/FAIL/NOT_RUN), `evidence` paths. Automated PASS needs every required check's success; manual PASS needs actual observations. Missing, stale or unexecuted evidence blocks.
 
-## 双 Gate 证据
+## Dual Gate evidence
 
-分别记录 architecture-gate-reviewer 与 quality-gate-reviewer 的真实独立 Agent/run、同一候选与原执行证据；collector 不能代跑/代签或冒称重跑。
+Identify independent architecture-gate-reviewer and quality-gate-reviewer agents/runs, same candidate and original evidence. The collector cannot execute/sign for them or claim unperformed reruns.
 
-| Gate/Check | 规则版本与 SHA-256 | 候选/输入身份 | 实际命令与退出码/数量 | PASS/FAIL/UNKNOWN/NOT_RUN | 原始日志 |
+| Gate/Check | Rule version/SHA-256 | Candidate/input identity | Actual command/exit code/count | PASS/FAIL/UNKNOWN/NOT_RUN | Raw logs |
 |---|---|---|---|---|---|
 
-规则未配置、零测试、全跳过、缺少依赖或执行未覆盖候选均不能视为通过。记录实际成功判据，不以 Agent 的自然语言判断代替工具结果。
+No PASS for unconfigured rules, zero/all-skipped tests, missing dependencies or irrelevant checks. Tool results, not Agent prose, establish execution.
 
-有固定 CI/CD 绑定时引用各 pipeline-result/source-index，列精确 pipeline/job/attempt、规则/候选、构建物及目标环境观察。远端执行与本地执行分开记录，实际未提供的退出码留空；恢复保留旧检查的原执行来源，不冒称重跑。
+Only with fixed CI/CD bindings: pipeline-result/source-index, exact pipeline/job/attempt, rules/candidate, artifacts and environment observations. Distinguish remote/local executors; unavailable exit codes stay blank. Resume with original evidence provenance.
 
-## 缺陷与变化
+## Defects and changes
 
-列出复现、影响、证据及退回阶段。验证期间不得悄悄修改源码、测试 Oracle 或已批准规则；候选/输入变化后旧结果失效，重新审核并运行。
+Record reproduction, impact, evidence and return stage. Never modify source, Oracle or approved rules during Verify. Changed candidate/inputs invalidate old results and require review/rerun.
 
 ## Implementation Verified Handoff
 
-列 TDD/例外与最终回归的独立核验、双 Gate PASS、全 AC PASS、完整证据及候选无漂移的来源。必要批准未完成时只作建议；父保存精确审批后才标 verified handoff。Standard 到此结束，业务结果未评估，不自动 Release/Learn 或 Production。
+Require independent TDD/exception/final-regression review, dual Gate/all AC PASS, complete evidence and no drift. Recommend only until the parent records exact required approval. Standard ends here; business outcomes remain unassessed, with no automatic Release/Learn/Production.
 
-解释业务正确性、测试相关性和证据完整性仍需人类审查。单人模式如实记录一人兼任角色，不称为职责分离。
+Human review checks business correctness, test relevance and evidence completeness. Disclose single-person roles without claiming separation of duties.

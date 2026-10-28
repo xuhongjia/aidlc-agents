@@ -1,24 +1,24 @@
 # Change
 
-AIDLC_DRAFT — 一页左右的实施前说明；无关章节不展开，实际风险和阻塞不得省略。
+AIDLC_DRAFT — about one page before implementation; retain all risks/blockers.
 
-## 请求与路线
+## Request and route
 
-原需求链接、profile、为什么适合此路线；影响范围与不做什么。仅引用现有项目规范/画像，不重写一份背景报告。
+Original request, profile/suitability, impact, exclusions, and applicable standards.
 
-## 缺陷依据（仅 fix）
+## Defect basis (fix only)
 
-预期 / 实际、复现步骤与原始证据、根因及因果依据。未复现或根因未确认就阻塞，不能仅凭猜测开修。回归测试应在修复前失败、修复后通过。
+Expected/actual, reproduction/raw evidence, root cause and causal evidence. Unreproduced defects or unconfirmed causes block. Regression must fail before and pass after the fix.
 
-## 验收与检查
+## Acceptance and checks
 
-| 来源引用 / FR或NFR ID | AC ID（或明确排除） | 可观察的预期 / Oracle | 测试或人工验证方法 | 检查命令/证据要求 / 排除理由与批准 |
+| Source / FR or NFR ID | AC ID (or explicit exclusion) | Observable expectation/Oracle | Test/manual verification | Command/evidence or exclusion reason/approval |
 |---|---|---|---|---|
 
-逐项覆盖原始请求的 FR/NFR；无 AC 的范围排除必须在本次卡明确批准，不能静默漏项。相关知识只列采用/拒用 ID、版本、适用性与当前代码核实依据；历史经验不能替代 Oracle。
+Cover every source FR/NFR with nonempty unique AC or explicit exclusion approval. For reused knowledge, record adopted/rejected ID/version, applicability and current-code evidence; history cannot replace Oracle.
 
-AC 非空且 ID 唯一。必须分别定义 Architecture Gate 与 Quality Gate：每类至少一项真实可执行的 blocking 规则，列 ID/来源/范围/命令/cwd/阈值/报告及已有规则版本。缺失时引用 Architect/QE leaf 的补建方案和脚本草案，列 Implement 安装路径与受控负向样例；不得用人工核对、N/A 或空规则替代双 Gate。详细脚本作技术附件，正文只保留定义/链接。
+Define Architecture and Quality Gates separately: executable blocking rule ID/source/scope/command/cwd/threshold/report/version. Missing rules require Architect/QE leaf proposals, Implement installation paths and controlled negative examples. Manual checks, N/A or empty rules cannot replace Gates. Link script attachments.
 
-## 实施边界
+## Implementation boundaries
 
-待改文件/模块、最小实现步骤、依赖顺序、允许的命令/cwd/副作用、回滚方式。必要时才列并行所有权。列阻塞问题和风险；本版本获批才允许 Implement，不包含 push/部署授权。
+Files/modules, ordered steps, commands/cwd/effects, rollback, risks/blockers; parallel ownership when needed. Implement needs approval of this version; push/deployment need separate authority.

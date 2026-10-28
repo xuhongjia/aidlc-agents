@@ -1,10 +1,10 @@
-# FIX-001 · 人工审批演练输入
+# FIX-001 · manual-approval rehearsal input
 
-在隔离任务清单 CLI 仓库修复“搜索无结果却显示 total=1”。使用 fix 路线；仅进入 Diagnose，等待我批准精确 review 后再实施。不得替我批准、开启自动模式、提交或推送。
+Fix “search returns no results but shows total=1” in the isolated task-list CLI repository. Use fix and enter Diagnose only; wait for my approval of the exact review before implementing. Do not approve for me, enable automatic mode, commit, or push.
 
-- FR-1：搜索不存在的词返回 items=[]、total=0。
-- FR-2：有匹配时 total 等于返回条数；大小写不敏感。
-- NFR-1：不传 search 的既有行为与原始顺序保持兼容；空数据总数为 0。
-- NFR-2：domain 不依赖 CLI、文件系统/网络或 adapter；Architecture Gate 缺失需 Architect leaf 设计，批准后 Implement 安装并证明违约负样例失败。Quality Gate 必须真实测试业务行为。
+- FR-1: Searching for an absent term returns items=[] and total=0.
+- FR-2: With matches, total equals returned item count; search is case-insensitive.
+- NFR-1: Preserve existing behavior/order without search; empty data has total=0.
+- NFR-2: domain depends on neither CLI, filesystem/network, nor adapters. If Architecture Gate is missing, an Architect leaf designs it; after approval, Implement installs it and proves a violating negative case fails. Quality Gate must test actual business behavior.
 
-数据只使用随附人工样例，无公司系统。复现命令：`node src/cli.mjs --file data/tasks.json --search missing`。复现失败、修复前测试失败、修复后通过及独立 Verify 的证据分开保留。
+Use only supplied synthetic examples, without company systems. Reproduce with `node src/cli.mjs --file data/tasks.json --search missing`. Keep reproduction failure, pre-fix test failure, post-fix success, and independent Verify evidence separate.

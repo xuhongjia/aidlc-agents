@@ -1,0 +1,21 @@
+{
+  "contract_version": 1,
+  "work_id": null,
+  "project_id": null,
+  "story_id": null,
+  "controller_id": null,
+  "executor_actor_id": null,
+  "source_revision": null,
+  "dispatch_ref": null,
+  "method_ref": null,
+  "workflow_ref": null,
+  "authorization_ref": null,
+  "candidate": null,
+  "controller_state": "pending",
+  "dispatch_state": "pending",
+  "grant_state": "pending",
+  "allowed_operations": [],
+  "lease_expires_at": null,
+  "revoked_at": null,
+  "closed_at": null
+}

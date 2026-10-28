@@ -1,0 +1,381 @@
+{
+  "schema_version": 1,
+  "purpose": "navigation-only",
+  "categories": [
+    {
+      "id": "orchestration",
+      "label": "Orchestration",
+      "description": "Route requests, coordinate stages and customize workflows"
+    },
+    {
+      "id": "setup",
+      "label": "Setup",
+      "description": "Installation readiness, connections and project configuration; not delivery stages"
+    },
+    {
+      "id": "stage-entry",
+      "label": "Stage entry",
+      "description": "Enter built-in lifecycle stages or the first stage of a short flow"
+    },
+    {
+      "id": "role-collaboration",
+      "label": "Role collaboration",
+      "description": "Preparation and handoff entrypoints for independent PO, DEV and QA sessions"
+    },
+    {
+      "id": "reusable-capability",
+      "label": "Reusable capability",
+      "description": "Specification, design, engineering and checking methods loaded on demand by stages"
+    },
+    {
+      "id": "sync-publication",
+      "label": "Synchronization and publication",
+      "description": "Explicitly synchronize fixed content; not new delivery stages"
+    }
+  ],
+  "stage_groups": [
+    {
+      "id": "requirements",
+      "label": "Requirements preparation and intake",
+      "optional": false,
+      "stages": [
+        "core.intake",
+        "core.spec",
+        "core.scope",
+        "core.diagnose",
+        "team.prd",
+        "team.story",
+        "team.role-intake"
+      ]
+    },
+    {
+      "id": "design-plan",
+      "label": "Architecture, quality design and planning",
+      "optional": false,
+      "stages": [
+        "core.architecture",
+        "core.quality",
+        "core.plan",
+        "team.test-design",
+        "team.role-design"
+      ]
+    },
+    {
+      "id": "implementation",
+      "label": "Implementation and TDD",
+      "optional": false,
+      "stages": [
+        "core.implement",
+        "team.role-implement"
+      ]
+    },
+    {
+      "id": "verification",
+      "label": "QA execution and independent verification",
+      "optional": false,
+      "stages": [
+        "team.role-qa",
+        "core.verify",
+        "team.role-verify"
+      ]
+    },
+    {
+      "id": "release-learn",
+      "label": "Release and learning extensions",
+      "optional": true,
+      "stages": [
+        "core.release",
+        "core.learn"
+      ]
+    }
+  ],
+  "stage_sources": {
+    "core": "workflow/stages.json",
+    "role_team": "examples/team-packs/role-team/pack.json"
+  },
+  "skills": [
+    {
+      "name": "aidlc",
+      "path": "skills/orchestration/aidlc/SKILL.md",
+      "category": "orchestration",
+      "stages": [],
+      "scope": "Parent coordinator: routing, dispatch, status and approval"
+    },
+    {
+      "name": "aidlc-workflow",
+      "path": "skills/orchestration/aidlc-workflow/SKILL.md",
+      "category": "orchestration",
+      "stages": [],
+      "scope": "Team DAG, stage and template configuration; does not run delivery"
+    },
+    {
+      "name": "aidlc-setup",
+      "path": "skills/setup/aidlc-setup/SKILL.md",
+      "category": "setup",
+      "stages": [],
+      "scope": "AIDLC installation and required project checks"
+    },
+    {
+      "name": "aidlc-knowledge-setup",
+      "path": "skills/setup/aidlc-knowledge-setup/SKILL.md",
+      "category": "setup",
+      "stages": [],
+      "scope": "Confluence / TWG knowledge integration"
+    },
+    {
+      "name": "aidlc-pipeline-setup",
+      "path": "skills/setup/aidlc-pipeline-setup/SKILL.md",
+      "category": "setup",
+      "stages": [],
+      "scope": "GitLab CI/CD bindings and waiting configuration"
+    },
+    {
+      "name": "aidlc-role-setup",
+      "path": "skills/setup/aidlc-role-setup/SKILL.md",
+      "category": "setup",
+      "stages": [],
+      "scope": "Jira/GitLab sources, role approvals and browser handoff configuration"
+    },
+    {
+      "name": "aidlc-intake",
+      "path": "skills/stage-entry/aidlc-intake/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.intake"
+      ],
+      "scope": "Requirement sources, goals, scope and risk"
+    },
+    {
+      "name": "aidlc-spec",
+      "path": "skills/stage-entry/aidlc-spec/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.spec"
+      ],
+      "scope": "Behavior specifications, FR/NFR and AC"
+    },
+    {
+      "name": "aidlc-enhance",
+      "path": "skills/stage-entry/aidlc-enhance/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.scope"
+      ],
+      "scope": "Scope entry for enhance, followed by Implement / Verify"
+    },
+    {
+      "name": "aidlc-fix",
+      "path": "skills/stage-entry/aidlc-fix/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.diagnose"
+      ],
+      "scope": "Diagnose entry for fix, followed by Implement / Verify"
+    },
+    {
+      "name": "aidlc-architecture",
+      "path": "skills/stage-entry/aidlc-architecture/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.architecture"
+      ],
+      "scope": "Architecture constraints, contracts and Architecture Fitness"
+    },
+    {
+      "name": "aidlc-quality",
+      "path": "skills/stage-entry/aidlc-quality/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.quality"
+      ],
+      "scope": "Test strategy, Oracle, coverage and Quality Fitness; no TDD execution"
+    },
+    {
+      "name": "aidlc-plan",
+      "path": "skills/stage-entry/aidlc-plan/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.plan"
+      ],
+      "scope": "Verifiable slices, dependencies and implementation authority"
+    },
+    {
+      "name": "aidlc-implement",
+      "path": "skills/stage-entry/aidlc-implement/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.implement",
+        "team.role-implement"
+      ],
+      "scope": "Software engineering, TDD, self-tests and candidate handoff"
+    },
+    {
+      "name": "aidlc-verify",
+      "path": "skills/stage-entry/aidlc-verify/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.verify",
+        "team.role-verify"
+      ],
+      "scope": "Independent collector of actual dual Gate / AC evidence"
+    },
+    {
+      "name": "aidlc-release",
+      "path": "skills/stage-entry/aidlc-release/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.release"
+      ],
+      "scope": "Explicit team extension for release readiness; no automatic production release"
+    },
+    {
+      "name": "aidlc-learn",
+      "path": "skills/stage-entry/aidlc-learn/SKILL.md",
+      "category": "stage-entry",
+      "stages": [
+        "core.learn"
+      ],
+      "scope": "Explicit team extension for actual feedback and revised lessons"
+    },
+    {
+      "name": "aidlc-prd",
+      "path": "skills/role-collaboration/aidlc-prd/SKILL.md",
+      "category": "role-collaboration",
+      "stages": [
+        "team.prd"
+      ],
+      "scope": "PO: BRD to PRD in an independent analysis workflow"
+    },
+    {
+      "name": "aidlc-story",
+      "path": "skills/role-collaboration/aidlc-story/SKILL.md",
+      "category": "role-collaboration",
+      "stages": [
+        "team.story"
+      ],
+      "scope": "PO: PRD / original requirements to a standard Jira Story with AC"
+    },
+    {
+      "name": "aidlc-test-design",
+      "path": "skills/role-collaboration/aidlc-test-design/SKILL.md",
+      "category": "role-collaboration",
+      "stages": [
+        "team.test-design"
+      ],
+      "scope": "QA: confirm shared business cases before development; design only"
+    },
+    {
+      "name": "aidlc-qa",
+      "path": "skills/role-collaboration/aidlc-qa/SKILL.md",
+      "category": "role-collaboration",
+      "stages": [
+        "team.role-qa"
+      ],
+      "scope": "QA: browser tests and human observations for a frozen candidate, not final Gates"
+    },
+    {
+      "name": "aidlc-spec-generation",
+      "path": "skills/reusable-capability/aidlc-spec-generation/SKILL.md",
+      "category": "reusable-capability",
+      "stages": [
+        "core.spec",
+        "core.scope",
+        "core.diagnose",
+        "team.story",
+        "team.role-intake"
+      ],
+      "scope": "Refine verifiable specifications and requirement-source mapping"
+    },
+    {
+      "name": "aidlc-adr",
+      "path": "skills/reusable-capability/aidlc-adr/SKILL.md",
+      "category": "reusable-capability",
+      "stages": [
+        "core.architecture",
+        "team.role-design"
+      ],
+      "scope": "Draft architecture decisions and tradeoffs, never approve them"
+    },
+    {
+      "name": "aidlc-test-generation",
+      "path": "skills/reusable-capability/aidlc-test-generation/SKILL.md",
+      "category": "reusable-capability",
+      "stages": [
+        "core.quality",
+        "core.scope",
+        "core.diagnose",
+        "core.implement",
+        "team.test-design",
+        "team.role-design",
+        "team.role-implement"
+      ],
+      "scope": "Design Oracles/scenarios; write test source only in approved Implement"
+    },
+    {
+      "name": "aidlc-fitness-check",
+      "path": "skills/reusable-capability/aidlc-fitness-check/SKILL.md",
+      "category": "reusable-capability",
+      "stages": [
+        "core.implement",
+        "core.verify",
+        "team.role-implement",
+        "team.role-verify"
+      ],
+      "scope": "Implement self-tests or Verify Reviewer checks; self-tests are not independent Gates"
+    },
+    {
+      "name": "test-driven-development",
+      "path": "skills/reusable-capability/test-driven-development/SKILL.md",
+      "category": "reusable-capability",
+      "stages": [
+        "core.implement",
+        "team.role-implement"
+      ],
+      "scope": "Implement only: RED → GREEN → REFACTOR"
+    },
+    {
+      "name": "incremental-implementation",
+      "path": "skills/reusable-capability/incremental-implementation/SKILL.md",
+      "category": "reusable-capability",
+      "stages": [
+        "core.implement",
+        "team.role-implement"
+      ],
+      "scope": "Implement only: deliver independent behavior slices"
+    },
+    {
+      "name": "debugging-and-error-recovery",
+      "path": "skills/reusable-capability/debugging-and-error-recovery/SKILL.md",
+      "category": "reusable-capability",
+      "stages": [
+        "core.implement",
+        "team.role-implement"
+      ],
+      "scope": "On-demand diagnosis of Implement failures, without additional correction authority"
+    },
+    {
+      "name": "code-review-and-quality",
+      "path": "skills/reusable-capability/code-review-and-quality/SKILL.md",
+      "category": "reusable-capability",
+      "stages": [
+        "core.implement",
+        "team.role-implement"
+      ],
+      "scope": "On-demand Implement self-review, not independent Reviewer verification"
+    },
+    {
+      "name": "aidlc-knowledge-sync",
+      "path": "skills/sync-publication/aidlc-knowledge-sync/SKILL.md",
+      "category": "sync-publication",
+      "stages": [],
+      "scope": "Independent publication Hook after Verify/Learn approval, or explicit retry"
+    },
+    {
+      "name": "aidlc-test-sync",
+      "path": "skills/sync-publication/aidlc-test-sync/SKILL.md",
+      "category": "sync-publication",
+      "stages": [],
+      "scope": "Explicit case/result sync or DEV continuation checks; script changes return to Implement"
+    }
+  ]
+}

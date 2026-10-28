@@ -1,7 +1,7 @@
-# 一次性 Prompt · 代码评审
+# One-off · Code review
 
-先确认待评审的 diff / commit / 文件范围与所依据的批准验收基线（standard 的 Spec 或 enhance/fix 的 change.md）。阅读相关实现与测试，重点找行为错误、边界、兼容性、安全、回归和缺失验收覆盖。对每个实质问题给出具体位置、触发条件、影响和证据；不把风格偏好当成阻塞缺陷。
+Confirm diff/commit/file scope and approved baseline: Spec for standard, change.md for enhance/fix. Inspect implementation/tests for defects, boundaries, compatibility, security, regressions and missing AC coverage. Each finding needs location, trigger, impact and evidence; style preferences are not blocking defects.
 
-检查是否通过改预期、删除测试或降低阈值掩盖问题。不得声称未实际执行的测试已通过。若没有可证实问题，说明检查范围和剩余不确定性。
+Check for expectation changes, deleted tests or lowered thresholds hiding failures. Never claim unexecuted tests passed. If no issue is substantiated, report scope and residual uncertainty.
 
-这是只读评审；不直接修改代码，不批准或推进工作流。已接入项目遵循 `.aidlc/system/workflow/protocol.md`，将结果作为相应阶段 review 的辅助证据。
+Read-only: no code edits, approval or workflow advancement. Installed projects follow `.aidlc/system/workflow/protocol.md`; findings supplement stage review.

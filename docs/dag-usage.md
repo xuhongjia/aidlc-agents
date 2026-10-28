@@ -1,170 +1,172 @@
-# DAG 使用指南：让 AI 选择阶段，再按批准的图执行
+# DAG usage: let AI select stages, then execute the approved graph
 
-普通使用者不必手写 DAG。向 AI 说明需求、约束和希望得到的结果，它会读取已注册阶段，推荐流程，并在首阶段调查后交你确认。团队维护者才需要定制阶段与配方。
+Describe your goal/constraints; AI recommends registered stages and confirms the workflow after first-stage investigation. Team maintainers customize recipes; users need not write DAGs.
 
-这里的 DAG 是“有依赖、可分支、可并行、不能循环的阶段图”。**当前能力由宿主 AI 按指令执行，不是另一个工作流引擎，也没有按分数自动裁剪阶段的程序。** 内容测试和参考模型测试不等于真实宿主执行成功。
+A DAG has dependencies, branches, and parallelism, without cycles. **The host follows this protocol; no separate engine or score-based stage trimmer exists.** Content/model tests prove no host execution.
 
-## 1. 普通使用者怎么开始
+## 1. Start as a user
 
-前提：业务仓库已接入支持组合流程的 aidlc-agents（0.9 起），且宿主通过独立子 Agent 能力检查。旧安装先按 [更新说明](../bootstrap/update.md) 更新；没有团队包也能使用内置 fix/enhance/standard，它们同样会解析成 DAG。配置包和执行真实需求是两件事。
+Require composed-workflow support (0.9+) and a passing child-Agent probe; [update](../bootstrap/update.md) older installs. Built-in fix/enhance/standard resolve to DAGs without packs. Pack configuration and delivery are separate.
 
-让 AI 自动选择：
-
-```text
-使用 aidlc 处理需求：给现有任务列表增加状态筛选，保留搜索、排序及无筛选时的行为。
-请根据当前项目事实和已注册阶段推荐工作流，说明风险、选择/省略各阶段的理由及可并行部分。
-先启动独立的首阶段子 Agent 核实，把流程和本阶段结果一起交我审批；未批准前不要实现。
-```
-
-指定已有团队流程（须先接入对应包）：
+Let AI select a workflow:
 
 ```text
-本次使用 team.api-enhancement 处理需求：……；不要修改项目的默认 workflow。
-先核实该流程是否适用，若有高风险或缺少必要阶段就停下说明，不强行套用。
+Use aidlc to add task-list status filtering, preserving search/sort/unfiltered behavior.
+Recommend registered stages from project facts; explain risk, omissions, and parallelism.
+Investigate with an independent entry child; submit workflow/results for approval
+before implementation.
 ```
 
-只想讨论方案：
+Specify an existing team workflow after installing its pack:
 
 ```text
-本次只做方案分析，不实现。使用已接入的 team.design-analysis，逐阶段人工审批；
-最终只报告设计结论、风险和待决定事项，不标记已验证交付。
+Use team.api-enhancement for <request>, preserving the project default.
+Check applicability; stop on high risk or missing responsibilities.
 ```
 
-`config.workflow=auto` 是选流程，不是自动批准。手动指定流程也不能跳过风险判断；与现有 workflow/profile 偏好冲突时先确认。若希望长期改变默认流程，应明确要求修改配置；一次需求指令不默认改配置。
-
-## 2. 第一次使用团队 DAG
-
-可从包内的 [API 示例](../examples/team-packs/api-team/pack.json) 开始，在业务仓库对 AI 说：
+For analysis only:
 
 ```text
-按 .aidlc/system/bootstrap/team.md 检查并接入
-.aidlc/system/examples/team-packs/api-team/ 这个团队包。
-先展示来源、阶段/模板、权限与现有配置差异，等我确认后应用；
-保留原 workflow/profile 偏好，不开启自动审批，不执行真实需求，完成后列出可用 workflow ID。
+Use installed team.design-analysis for options only, with human stage approvals.
+Return conclusions/risks/open decisions; no implementation or verified-delivery claim.
 ```
 
-随后再使用上一节的 `team.api-enhancement` 指令接需求。已有团队包时不要直接复制覆盖：首版仅支持一个活动团队包，新增内容须由 AI 给出明确合并/替换差异后确认。接入私有团队 Git 仓库、本地定制及更新见 [团队接入指南](team-workflows.md)。
+`config.workflow=auto` selects, never approves. Assess manual choices too; confirm preference conflicts. Per-request selection does not change defaults without explicit configuration authority.
 
-### 读懂一个 DAG
+## 2. Use a team DAG for the first time
 
-| 字段 | 使用时怎么理解 | API 示例 |
+Start with the packaged [API example](../examples/team-packs/api-team/pack.json). In the business repository, ask AI:
+
+```text
+Follow .aidlc/system/bootstrap/team.md to install .aidlc/system/examples/team-packs/api-team/.
+Show source/stages/templates/permissions/diffs for confirmation. Preserve preferences;
+keep auto approval off and execute no request. Return available workflow IDs.
+```
+
+Then use `team.api-enhancement`. One active pack is supported; existing packs need confirmed merge/replacement diffs, never blind copying. See [team setup](team-workflows.md) for private/local sources and updates.
+
+### Read a DAG
+
+| Field | Meaning | API example |
 |---|---|---|
-| `stage_id` | 可复用的阶段定义，决定职责、Prompt 和输入输出 | `team.scope` |
-| `step_id` | 这个阶段在本次图中的实例；批准的是具体实例和 revision | `scope` |
-| `edges` | 等谁批准后才能执行；同源多个出边可形成并行 | scope 到两个审查步骤 |
-| `bindings` | 实际消费哪一步的哪类产物；有依赖边不等于输入已绑定 | implement 的 change 来自 scope |
-| `switches` | 用已批准的有类型事实选择预设分支 | `needs_review` 为 boolean |
-| `terminals` | 哪个节点能结束，以及结束意味着什么 | verify → verified |
+| `stage_id` | Reusable stage definition specifying responsibility, Prompt, and inputs/outputs | `team.scope` |
+| `step_id` | This stage's instance in the current graph; approval binds a specific instance and revision | `scope` |
+| `edges` | Predecessor approvals required to execute; multiple outgoing edges may create parallelism | scope to two review steps |
+| `bindings` | Which step's artifact is consumed; a dependency edge alone does not bind input | implement consumes change from scope |
+| `switches` | Select predefined branches using approved typed facts | boolean `needs_review` |
+| `terminals` | Which node may finish and what completion means | verify → verified |
 
-API 示例的实际路径如下；每个步骤都使用新子 Agent：
+Actual API paths; every step uses a fresh child Agent:
 
-| Scope 获批的事实 | 激活的阶段路径 |
+| Approved Scope fact | Activated path |
 |---|---|
-| `needs_review=true` | scope → compatibility 与 tests-review 并行 → implement → verify |
-| `needs_review=false` | scope → implement → verify；两个审查节点记录为 not_selected |
-| 未知、缺证据或未批准 | 停在当前审批/阻塞点，不默认选择短路径 |
+| `needs_review=true` | scope → compatibility and tests-review in parallel → implement → verify |
+| `needs_review=false` | scope → implement → verify; both reviews record not_selected |
+| Unknown, unevidenced, or unapproved | Stop at the current review/blocker; never default to the short path |
 
-两个审查节点根据已批准 change 分别检查消费者兼容性和测试覆盖，互不消费对方产物。选中它们后，Implement 必须等**两者都批准**；一个完成不代表汇合完成。它们虽然绑定为 optional analysis，也不能在已选中却未完成时被忽略。
+Reviews independently inspect compatibility/coverage from approved change, not each other’s output. Implement waits for **both approvals**; optional analysis bindings cannot bypass selected unfinished nodes.
 
-这是额外审查深度的选择，不是安全门禁开关：两条路径的 Verify 都必须独立执行 Architecture / Quality Gate。`needs_review=false` 不会清除身份权限、敏感数据、迁移等高风险信号。
+Both paths retain independent Architecture / Quality Gates. `needs_review=false` clears no identity/permission, sensitive-data, or migration risks.
 
-## 3. AI 如何动态选择 stage
+## 3. How AI selects stages dynamically
 
-“动态”分两层：**新需求选择/组合图；运行中按已批准事实选择图内分支。** 图获批后不随聊天内容或实时工具返回随意改写。
+Dynamic selection means **new-work graph choice/composition, then approved-fact branch selection**. Chat or tool output cannot arbitrarily alter an approved graph.
 
-### 新需求：先推荐，再由首阶段核实
+### New work: recommend, then investigate in the first stage
 
-1. **先查新和读配置。** 新需求按 preflight 处理核心更新，读取 core/team/project 中已注册的阶段、工作流和项目规则；旧需求继续用原锁。团队 Git 包不随核心自动追新。
-2. **判断任务目的和风险。** 区分恢复既有行为、小增强、新能力、只读分析；考虑影响的模块/消费者、契约变化、验收与回滚是否明确、现有知识是否仍适用。信息不够先澄清，不用代码行数当复杂度。
-3. **选择足够且必要的阶段。** 可选择已有配方，也可从已注册阶段形成 work 专用组合；说明选入/省略的理由。没有现成阶段能承担必要职责时报告缺口，请求团队定制，不在执行需求时暗中发明新 Prompt。
-4. **校验全图，不只看一条路径。** 检查输入产物来源、实施授权、所有分支终点、最后一次实施后的独立 Verify/双 Gate，以及哪些节点能真正并行。高风险必须具备 standard 等价的需求、架构、质量与规划保障并保持人审。
-5. **先固定，再调查。** 保存图、来源和 Prompt/模板的实际副本及哈希，派发唯一只读 entry 子 Agent。父协调器不代做诊断。首阶段核实初选，审查卡同时呈交图、依据、范围与本阶段产物；初选不是批准。
-6. **获批后调度。** 图适用则按具体节点批准推进；若调查要求换路线，停止旧执行、追加新图 revision 和新 entry run，旧结果保留为 superseded，再确认。不能把旧批准改挂新图。
+1. **Preflight:** check core updates and registered core/team/project stages, workflows, rules. Preserve old locks; core updates do not update team Git.
+2. **Assess:** fix/enhancement/new capability/analysis; modules/consumers, contracts, acceptance/rollback, knowledge. Clarify gaps; line counts do not measure complexity.
+3. **Select:** existing recipe or registered-stage graph; explain inclusions/omissions. Missing responsibility needs team customization, not an invented delivery Prompt.
+4. **Validate:** sources, implementation authority, every endpoint, independent Verify/dual Gates after final implementation, and parallelism. High risk needs human-reviewed standard-equivalent requirement/architecture/quality/planning safeguards.
+5. **Freeze:** graph/sources/Prompt-template copies/hashes, then one read-only entry child; no parent diagnosis. Its review validates the proposed route and includes graph/rationale/scope/artifacts. Choice is not approval.
+6. **Schedule:** require applicable node approvals. Route changes stop old execution, append graph revision/entry run, supersede old results, and reconfirm; never reattach old approvals.
 
-下面是选型示意，不是给未经调查的真实需求下结论：
+Illustrative choices, subject to investigation:
 
-| 任务事实 | 合理选择 | 不能省略的内容 |
+| Task facts | Reasonable choice | Required coverage |
 |---|---|---|
-| 局部、可复现的计数 bug，预期行为明确 | core.fix：diagnose → implement → verify | 根因、修复前失败/修复后通过、邻近回归、双 Gate |
-| 已有边界内增加筛选，可独立验收回滚 | core.enhance，或适用的低风险团队配方 | 范围/AC/Oracle、实施授权、独立验证 |
-| 同一低风险增强涉及多个本地消费者或覆盖复杂 | API 示例的审查分支 | 已选两项审查均获批后才能实施 |
-| 权限/支付/敏感数据、迁移、破坏性契约或影响不可界定 | core.standard，或满足同等保障的人工团队流程 | 不能靠增加一个审查节点把高风险变成低风险 |
-| 只研究方案，没有业务代码修改 | 只读 analysis 流程 | 有依据的结论和人工审批；不声明 verified |
+| Local reproducible count bug with clear expected behavior | core.fix: diagnose → implement → verify | Root cause, failure before/pass after, adjacent regression, both Gates |
+| Filter added within existing boundaries, independently acceptable and reversible | core.enhance or a suitable low-risk team recipe | Scope/AC/Oracle, implementation authority, independent verification |
+| Same low-risk enhancement affects several local consumers or complex coverage | API example's review branch | Both selected reviews approved before implementation |
+| Permissions/payments/sensitive data, migration, breaking contracts, or unbounded impact | core.standard or a human-reviewed team flow with equivalent safeguards | One extra review node cannot reclassify high risk as low risk |
+| Options research without business-code changes | Read-only analysis workflow | Evidenced conclusions and human approval; no verified claim |
 
-是否省略一个独立阶段，取决于其责任能否在其他已批准语义产物中充分承载，而不只是名字是否出现。例如 fix 的 change.md 已合入轻量架构影响和质量检查，不表示省略架构与质量责任。
+Omit a stage only if another approved semantic artifact covers its responsibility. fix change.md still covers architecture impact and quality checks.
 
-### 运行中：依据事实选分支，不重新发明图
+### During execution: select branches from facts, without reinventing the graph
 
-API 包的 `team.scope.routing_facts` 声明 `needs_review: boolean`。Scope 子 Agent 根据实际消费者与覆盖证据返回值及 `evidence_refs`；父协调器核对正文一致性并冻结进 review。该 review 获批后，才严格比较 switch 的 true/false case，并把选择写入 `state.branch_decisions`。
+`team.scope.routing_facts` declares `needs_review: boolean`. Scope returns value/`evidence_refs` from actual consumers/coverage. Parent verifies document consistency, freezes review, then after approval strictly selects true/false and records `state.branch_decisions`.
 
-事实缺失、类型错误或无法选中唯一 case 时停止。`default` 也只接收“有合法值但未命中普通 case”，不能兜底未知事实。Gate FAIL、无权限、超时不可以用作跳过检查的条件。
+Missing/wrong-type facts or non-unique selection block. `default` handles valid unmatched values, not unknown facts. FAIL, missing permission, and timeout cannot skip checks.
 
-主协调器每次只派发依赖已批准、输入齐全、且已获继续权的 ready 节点。默认最多 2 个活动子 Agent；只读独立阶段可并行，业务写入节点必须在图中有明确先后顺序，存在共享资源冲突则排队。图有分支并不意味着所有分支都会跑。
+Dispatch ready nodes only: approved dependencies, complete inputs, continuation authority; default 2 active children. Independent reads may parallelize. Business writers need graph ordering; shared conflicts queue. Only selected branches execute.
 
-## 4. 审批时看什么，怎么继续
+## 4. Review and continue
 
-首张审查卡应让你看清：工作流 ID/图版本、阶段取舍依据、条件及证据、可并行节点、实施范围、预期产物、终点含义和阻塞项。想核对选择依据，可以说：
-
-```text
-只查看 REQ-001 的工作流，不启动任何阶段：列出 workflow_ref、各 step_id 的职责和状态、
-选择/省略理由、分支判定的已批准证据、下一批可执行节点及尚缺的批准。
-```
-
-`REQ-001`、revision 和步骤名应替换成当前审查卡的真实对象。假设卡中 scope r1 已核实 `needs_review=true`，你可以明确批量授权下一批：
+First card: workflow/graph version, stage rationale, conditions/evidence, parallelism, implementation scope, outputs, endpoint, blockers. Inspect with:
 
 ```text
-批准 REQ-001 当前图的 scope r1 审查卡及其中的流程和分支事实；
-继续卡中列明的 compatibility、tests-review 两个节点，完成后等我审批。
+Show REQ-001 workflow_ref, step responsibilities/status/rationale, approved branch
+evidence, ready nodes, and missing approvals without starting execution.
 ```
 
-两个审查都返回后，再明确批准各自的 revision，并授权 Implement；Implement 候选也须获批才进入独立 Verify。不要在多个待审节点时只说“批准当前”。批准后不说继续，默认记录后停止。
-
-0.10 起，未被覆盖的低风险内置 fix/enhance 可选择“两次人审”：
+Replace `REQ-001`, revisions, and step names with real review-card objects. If scope r1 confirms `needs_review=true`, explicitly authorize the next batch:
 
 ```text
-为 REQ-001 准备 checkpoint_low_risk 授权卡：首阶段我批准范围和计划，
-合格 Implement 候选由协调器验真后委托批准并继续独立 Verify，最终仍等我确认。
-纠错预算保持 0，不授权知识发布或外部写入。
+Approve the scope r1 review card for REQ-001's current graph, including its workflow
+and branch facts. Continue the listed compatibility and tests-review nodes,
+then wait for my approval.
 ```
 
-仍有三个阶段和独立候选批准记录，只减少中间的人类确认；首张卡必须真实获批。此模式不适用于改过图、阶段、Prompt 或模板的团队配方，即使保留 core ID 也不行。
+Approve both exact review revisions and authorize Implement; approve its candidate before independent Verify. Name each object when several await review. Approval without continuation stops.
 
-希望低风险流程全自动推进，可要求“先给本工作 auto approval 授权卡”，确认固定图、所有可能激活的步骤、路径/命令/工具范围和停止条件。每个可激活阶段都须满足 `auto_eligible=true`，但这只是资格；没有真实初始委托就不能自动批准。standard、高风险、纯分析工作流仍人审；交付流中的只读分析节点不因此失去自动资格。详见 [审批规则](../workflow/approval.md)。
-
-无论哪种审批模式，都可另外申请“首次 Implement 候选审查前，允许原批准范围内最多两轮局部自纠错，不能改测试/Oracle/Gate”。默认预算为 0；只适用低风险非 standard 实施。每轮先记账再启动同一 step/revision 的新子 Agent，预算跨会话累计，不是新阶段或 DAG 回边。Verify 失败、环境/未知故障、范围变化仍停下转人工，不能自动返工。见 [实施反馈](../workflow/implementation-feedback.md)。
-
-## 5. 团队怎么改阶段、模板和图
-
-对 AI 提交配置需求即可，不必 fork 核心：
+Since 0.10, unchanged low-risk built-in fix/enhance may use two human reviews:
 
 ```text
-按 .aidlc/system/bootstrap/team.md 为团队调整流程：在现有只读范围确认后，增加可选的兼容性审查；
-满足多消费者条件时，与测试审查并行，两者都批准后才实施。
-修改范围阶段 Prompt 和变更说明模板，保留 change 语义、FR/NFR→AC、Oracle 及双 Gate。
-先给阶段定义、图、模板和权限的精确差异；确认后只修改团队/项目扩展，不执行需求。
+Prepare REQ-001 checkpoint_low_risk: I approve initial scope/plan and final results;
+coordinator may verify/approve an eligible Implement candidate and continue to independent
+Verify. Feedback budget 0; no knowledge publishing or external writes.
 ```
 
-团队维护者的对应修改位置：
+Retain three stages and independent candidate-approval record. Real first-card approval is required. Changed team graphs/stages/Prompts/templates are excluded, even with core IDs.
 
-| 要改什么 | 改在哪里 | 校验重点 |
+For fully automatic low-risk progression, request “Prepare this work's auto approval authorization card first.” Confirm the frozen graph, every potentially active step, path/command/tool scope, and stop conditions. Every potentially active stage needs `auto_eligible=true`, but eligibility alone grants nothing without genuine initial delegation. standard, high-risk, and pure-analysis workflows retain human review; read-only analysis nodes inside a delivery workflow do not thereby lose automatic eligibility. See [approval rules](../workflow/approval.md).
+
+Any approval mode may separately request “Before the first Implement candidate review, allow up to two local self-correction rounds within the original scope, without changing tests/Oracle/Gates.” The default budget is 0, limited to low-risk non-standard implementation. Record each round before creating a new child for the same step/revision. The budget accumulates across sessions; this is not a new stage or DAG back edge. Verify failure, environmental/unknown faults, and scope changes still stop for human action without automatic rework. See [implementation feedback](../workflow/implementation-feedback.md).
+
+## 5. Customize stages, templates, and graphs
+
+Ask AI for a configuration change; no core fork is needed:
+
+```text
+Follow .aidlc/system/bootstrap/team.md: after scope approval, conditionally review
+compatibility for multiple consumers alongside test review; require both approvals
+before Implement. Adjust scope Prompt/template while preserving change semantics,
+FR/NFR→AC, Oracle, and both Gates. Show stage/graph/template/permission diffs;
+after confirmation edit team/project extensions only, without executing work.
+```
+
+Maintainer edit locations:
+
+| Change | Location | Validation focus |
 |---|---|---|
-| 阶段职责与提示词 | pack 的 StageDefinition + 引用的 prompts 文件 | kind/能力与职责一致；新增阶段先注册 |
-| 正文结构和文件名 | outputs 的 template/name + 模板文件 | 保留 contract 语义与全部必需证据 |
-| 阶段组合/顺序/分支 | WorkflowDefinition 的 nodes/edges/bindings/switches | 无环、每个分支完整、输入与批准来源明确 |
-| 仅某项目不同 | `.aidlc/overrides/pack.json` 的显式完整 replacement | 不深度合并；不移除强制保证或扩大权限 |
-| 外部接口操作 | tool_bindings 与阶段的 tool_binding_ids | 声明不授权；宿主实际可用且工作级单独授权 |
+| Stage responsibility and Prompt | Pack StageDefinition + referenced prompts files | kind/capability matches responsibility; register new stages first |
+| Document structure and filename | outputs template/name + template file | Preserve contract semantics and required evidence |
+| Stage composition/order/branches | WorkflowDefinition nodes/edges/bindings/switches | Acyclic, complete branches, explicit input/approval sources |
+| One project's difference | Explicit full replacement in `.aidlc/overrides/pack.json` | No deep merge, lost guarantees, or broadened permissions |
+| External operations | tool_bindings and stage tool_binding_ids | Declaration is not authority; real host capability and separate work-level authorization required |
 
-完整可参考 [API pack](../examples/team-packs/api-team/pack.json) 和 [设计 pack](../examples/team-packs/design-team/pack.json)；[扩展模板](../templates/extensions/pack.json) 是待补全骨架，不能直接作为已接入配置。字段定义见 [Interface](../workflow/extensions.md)，调度细节见 [DAG 协议](../workflow/dag.md)。
+See complete [API](../examples/team-packs/api-team/pack.json) and [design](../examples/team-packs/design-team/pack.json) packs. The [extension template](../templates/extensions/pack.json) is an incomplete skeleton, not an installed configuration. Fields are defined in the [Interface](../workflow/extensions.md), with scheduling in the [DAG protocol](../workflow/dag.md).
 
-存在未结束 work 或活动 worker 时，团队配置可以先审阅差异，但不应用切换。已有需求使用自己的固定资源副本；如本需求确实需要增加阶段、换模板或改条件，必须按图变更规则停止旧任务、新锁/新确认，不能编辑 workflow.lock.json 后直接继续，也不能沿用旧 auto policy。
+Unfinished work/live workers permit diffs, not configuration switching. Existing work uses frozen assets. Stage/template/condition changes require stopping old execution, a new lock, and reconfirmation; never edit workflow.lock.json in place or reuse old auto authority.
 
-## 6. 常见停住原因
+## 6. Common blockers
 
-- **没有 team.api-enhancement：** 示例随方法包提供但没有默认启用；先接入团队包。只想用短流程则选内置 enhance。
-- **节点显示 not_selected：** 条件分支没有选它，不是它已经通过；应查看分支事实及批准来源。
-- **汇合节点不启动：** 查所有选中前驱的批准、bindings 产物和继续授权；一个等待中的分支仍然阻塞汇合。
-- **想让架构与质量都并行：** 只有没有产物依赖时才行；内置 standard 的 Quality 消费 Architecture，不能直接并行。
-- **中途发现高风险或新工作量：** 暂停并重规划/确认，不用自动批准继续扩大范围。
-- **同图返工想画回边：** DAG 不支持循环；按依赖失效链创建受影响节点新 revision，保留旧证据，返工需批准。
+- **Missing team.api-enhancement:** examples ship with the package but are not enabled by default. Install the team pack, or use built-in enhance for a short workflow.
+- **Node is not_selected:** its conditional branch was not selected; this is not a passing result. Inspect branch facts and approval sources.
+- **Join does not start:** check all selected predecessors' approvals, bound artifacts, and continuation authority. A waiting branch still blocks the join.
+- **Architecture and Quality should run in parallel:** only when no artifact dependency exists. Built-in standard Quality consumes Architecture and cannot run directly in parallel with it.
+- **New risk or work discovered midway:** pause, replan, and reconfirm instead of expanding scope through automatic approvals.
+- **Rework needs a back edge:** DAGs cannot cycle. Create affected node revisions along the dependency-invalidation chain, retain old evidence, and obtain rework approval.
 
-以上是使用契约，不是实测业务交付结果。当前通过与未运行的验证范围见 [验证记录](validation.md)。
+These are usage contracts, not observed delivery. See [validation](validation.md) for executed/unexecuted checks.

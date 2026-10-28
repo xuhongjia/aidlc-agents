@@ -23,9 +23,9 @@ test('only implementation dispatches load TDD and incremental execution skills',
   for (const stage of core.stages) {
     const refs = instructionPlan(context, stage, {}).map(i => i.ref);
     for (const id of ['test-driven-development', 'incremental-implementation']) {
-      assert.equal(refs.includes('core:skills/' + id + '/SKILL.md'), stage.kind === 'implementation', stage.id);
+      assert.equal(refs.includes('core:skills/reusable-capability/' + id + '/SKILL.md'), stage.kind === 'implementation', stage.id);
     }
-    assert.ok(!refs.some(ref => /skills\/(debugging-and-error-recovery|code-review-and-quality)\//.test(ref)));
+    assert.ok(!refs.some(ref => /skills\/(?:reusable-capability\/)?(debugging-and-error-recovery|code-review-and-quality)\//.test(ref)));
   }
 });
 
@@ -112,7 +112,6 @@ test('optional engineering skills are frozen metadata, never upstream/Gate defau
   assert.deepEqual(optionalInstructionPlan(context, stage).map(r => r.id), ['debugging-and-error-recovery', 'code-review-and-quality']);
   for (const upstream of core.stages.filter(s => s.kind !== 'implementation')) {
     assert.deepEqual(optionalInstructionPlan(context, upstream), []);
-    assert.throws(() => instructionPlan(context, { ...upstream, instructions: ['core:skills/test-driven-development/SKILL.md'] }, {}), /implementation only/);
   }
   const verifier = core.stages.find(s => s.kind === 'verification');
   for (const kind of ['architecture', 'quality']) {
@@ -123,6 +122,26 @@ test('optional engineering skills are frozen metadata, never upstream/Gate defau
     assert.ok(!refs.some(r => r.includes('/test-driven-development/')));
   }
   assert.throws(() => instructionPlan(context, verifier, {}, { leaf: 'gate-execution' }), /reviewer required/);
+});
+
+test('engineering execution Skills in flat or categorized layouts are forbidden outside Implement', () => {
+  const names = ['test-driven-development', 'incremental-implementation', 'debugging-and-error-recovery', 'code-review-and-quality'];
+  const verifier = core.stages.find(stage => stage.kind === 'verification');
+  for (const namespace of ['core', 'team', 'project']) {
+    for (const directory of ['skills/', 'skills/reusable-capability/']) {
+      for (const name of names) {
+        const ref = namespace + ':' + directory + name + '/SKILL.md';
+        for (const upstream of core.stages.filter(stage => stage.kind !== 'implementation')) {
+          assert.throws(() => instructionPlan(context, { ...upstream, instructions: [ref] }, {}),
+            /implementation only/, upstream.id + ': ' + ref);
+        }
+        for (const gate_kind of ['architecture', 'quality']) {
+          assert.throws(() => instructionPlan(context, { ...verifier, instructions: [ref] }, {},
+            { leaf: 'gate-execution', gate_kind }), /implementation only/, gate_kind + ': ' + ref);
+        }
+      }
+    }
+  }
 });
 
 function gateFixture() {

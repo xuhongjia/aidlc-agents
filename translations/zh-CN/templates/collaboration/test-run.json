@@ -1,0 +1,23 @@
+{
+  "contract_version": 1,
+  "run_id": null,
+  "project_id": null,
+  "story_id": null,
+  "handoff_ref": null,
+  "method_ref": null,
+  "workflow_ref": null,
+  "dispatch_ref": null,
+  "source_revision": null,
+  "test_design_ref": null,
+  "candidate": null,
+  "environment": {"id": null, "url": null, "observed_artifact": null, "identity_evidence_ref": null},
+  "executor": {"actor_id": null, "agent_run_id": null},
+  "started_at": null,
+  "finished_at": null,
+  "status": "NOT_RUN",
+  "results": [],
+  "evidence_refs": [],
+  "control_observation_refs": [],
+  "limitations": [],
+  "blockers": ["No actual UI or manual execution evidence collected"]
+}

@@ -1,0 +1,15 @@
+{
+  "contract_version": 1,
+  "authorization_id": null,
+  "project_id": null,
+  "story_ids": [],
+  "actor_id": null,
+  "decision_ref": null,
+  "method_ref": null,
+  "workflow_ref": null,
+  "targets": [],
+  "operations": [],
+  "artifact_refs": [],
+  "expires_at": null,
+  "revoked_at": null
+}

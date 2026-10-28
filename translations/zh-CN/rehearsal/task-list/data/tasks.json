@@ -1,0 +1,5 @@
+[
+  {"id": "t3", "title": "Ship CLI", "status": "open"},
+  {"id": "t1", "title": "Review CLI", "status": "done"},
+  {"id": "t2", "title": "Write tests", "status": "open"}
+]

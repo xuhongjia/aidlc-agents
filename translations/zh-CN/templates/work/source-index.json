@@ -1,0 +1,19 @@
+{
+  "schema_version": 2,
+  "stage": null,
+  "status": "not_collected",
+  "candidate": {
+    "commit": null,
+    "verify_review_ref": null,
+    "match_status": "unverified",
+    "mapping_evidence": []
+  },
+  "coverage": [],
+  "ci_runs": [],
+  "images": [],
+  "deployments": [],
+  "environment_checks": [],
+  "feedback": [],
+  "sources": [],
+  "gaps": []
+}

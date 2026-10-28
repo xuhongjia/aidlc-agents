@@ -1,7 +1,5 @@
-# 独立节点入口
+# Isolated node
 
-全新隔离 child 接收 project_root、dispatch_path、result_path，不继承父聊天。先读 dispatch，用工具核验完整 workflow_ref 原始字节 SHA-256，再提取本节点、定义、依赖/授权/资产。按锁内 context、kind/capabilities/输出语义及团队传递依赖推导必读集合，核对 instruction_refs 完整性及每项 path/hash；缺项、未知语义或漂移即 blocked。通过后才读取固定 worker、角色、当前 Prompt/模板及条件契约。
+Fresh child gets project_root, dispatch_path, result_path; no parent history. Read dispatch; tool-verify SHA-256 of full workflow_ref bytes before extracting this node, definition, dependencies, grants and assets. Derive instructions from locked context, kind/capabilities, output semantics and transitive team dependencies; verify instruction_refs completeness and each path/hash. Missing/unknown/drifting inputs block. Then read frozen worker, role, Prompt/templates and conditional contracts.
 
-只执行本节点，已读不重复；不加载整锁、阶段 Skill 包装或父协议，父摘要不能替代已验锁。
-
-旧 dispatch 使用原方法及冻结资产，不补新版字段或从活动安装补旧规则；无法恢复则 blocked。
+Run only this node; read once. No full lock, Skill wrappers or parent protocols; summaries cannot replace verification. Old dispatches use original method/assets, never new fields or active-install substitutes. Block if unrecoverable.

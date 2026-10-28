@@ -1,0 +1,44 @@
+{
+  "schema_version": 2,
+  "package": "aidlc-agents",
+  "package_version": null,
+  "source": {
+    "repository": "https://github.com/xuhongjia/aidlc-agents",
+    "kind": null,
+    "revision": null,
+    "local_path": null,
+    "file_hashes": []
+  },
+  "tool": null,
+  "profile": "auto",
+  "workflow": "auto",
+  "team": {"manifest": null, "source": null, "authorization": null},
+  "project_overrides": null,
+  "owner": null,
+  "mode": "solo",
+  "setup": {
+    "required": [{"id": "aidlc", "capability": "aidlc", "target_id": null}],
+    "read_check_authorization": null
+  },
+  "update_policy": {
+    "mode": "before_new_work",
+    "ref": "refs/heads/main",
+    "authorization": null
+  },
+  "execution": {
+    "mode": "isolated-subagents",
+    "context_policy": "fresh-minimal",
+    "max_parallel_workers": 2,
+    "capabilities": {
+      "spawn": null,
+      "isolated_context": null,
+      "collect_results": null
+    },
+    "probe": null
+  },
+  "knowledge": {"targets": []},
+  "delivery": null,
+  "collaboration": null,
+  "installed_at": null,
+  "managed_files": []
+}

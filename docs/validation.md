@@ -1,270 +1,341 @@
-# 本版验证记录
+# Validation records
 
-## 0.14.0：项目必需 Setup Gate
+## Package-wide content reduction
 
-验证日期：2026-10-26。本地方法包增加项目 setup.required、自然语言 setup 入口与父协调器新工作前置检查；已有 Confluence/GitLab 配置默认仍可选。新锁仅增加 setup_check_ref，不迁移历史工作/批准。未 commit/push，也未在业务项目执行安装或认证。
+Validation date: 2026-10-28. Compared with the local working tree immediately before this pass, not an older Git commit. Audited 274 active text/source files; compacted 129 of 170 Markdown/MDC files. Historical validation records, Chinese snapshots, licenses, schemas, tests and host settings were preserved. The prose inventory excludes this historical log: 546,538 → 461,079 UTF-8 bytes (**15.64% less**). The 31 Skill discovery descriptions fell from 4,465 to 2,926 bytes (**34.5% less**).
 
-| 验证 | 结果 |
-|---|---|
-| Node 内容/契约回归 | 173/173 PASS，0 fail、0 skipped；`node --test tests/*.test.mjs` |
-| 新 Setup 参考模型 | 16 项 PASS：默认/旧安装、必需/可选、多目标、未配置/认证、错误映射、授权撤销/替换、旧/重复/缺失证据、时间区间、旧工作/控制豁免、setup check 不建工作 |
-| Skill 元数据 | 新 Setup 及修改的 router/Confluence/GitLab 共 4 个 Skill，通过系统 quick_validate.py；使用环境已有解释器，无依赖安装 |
-| 独立静态审阅 | 修复授权身份未绑定与观察时间边界可省略两项问题；回归新增授权替换、缺时间/越界和 setup_check 用例 |
-| 上下文预算 | child 必读集合和阶段数量不变；fix/enhance 方法正文仍为 60,907/60,793 bytes，Setup 只在父入口按需读取 |
-| 真实接入/安装/认证/新交付 | NOT_RUN；没有访问公司系统、安装 TWG/glab、写 Confluence 或触发 GitLab/宿主监控 |
-
-模型仅检查结构、摘要和状态契约，不是宿主可执行门禁或身份认证系统。ready 不代表知识可写、CI/Gate 通过、部署或业务批准。技术收据绑定本次调用、配置、实际授权摘要与时间；真实权限和原始证据仍由宿主执行核验。完整使用方式见 [项目 Setup](project-setup.md)。
-
-## 0.13.1：敏捷指引与 Prompt 去重
-
-验证日期：2026-10-26。参考 Matt Pocock skills 固定提交 5beb35b040e3de97e54fa9e386d7e42d15c295c2，自行适配路由、领域术语、纵向切片、依赖并行和工程复盘；详见 [来源映射](agile-skills.md)。未安装上游 Skills、依赖或修改宿主配置；本节记录本地结果，不代表已发布。
-
-| 验证 | 结果 |
-|---|---|
-| Node 内容/契约回归 | 157/157 PASS，0 fail、0 skipped；命令 `node --test tests/*.test.mjs` |
-| Skill 元数据 | 13 个修改过的 Skill 通过系统 quick_validate.py；仓库默认 Python 缺 PyYAML，改用环境已有的兼容解释器验证，未安装依赖 |
-| 新增加载预算 | 3 项 PASS：UTF-8/去重、保留必读集合且较 0.13.0 少至少 20%、模板/反馈/重复 collector 分开计量 |
-| 原有控制回归 | 自定义 DAG/模板、授权/撤销、双 Gate/TDD/候选漂移、知识同步及 CI/CD 等待模型测试均保留 |
-| 独立子 Agent 路由探针 | 咨询“跨用户订单越权，是否一行 fix”时建议 standard/等价人审流程；仅读 router/profiles（另有搜索片段），未启动交付。仅验证这一次咨询行为 |
-| 独立静态审阅 | 修正 router 路径基准歧义；在所审查权限、冻结资产、TDD、Gate、CI 等待、知识发布及来源声明范围内未发现其他实质回退；不等于真实交付验证 |
-| 独立真实业务交付、模型 token A/B | NOT_RUN；上述是静态内容/参考模型测试 |
-| 真实 GitLab、宿主自动唤醒、Confluence | NOT_RUN；本次不改变其接入契约 |
-
-静态基线固定为 d075ef1（0.13.0），并在测试 fixture 保存每个资源的摘要。以下计算三个阶段和两个 Reviewer 各一次的声明 instruction_refs；不是实际端到端 run 数或 token 数。
-
-| 路线 | 方法正文 before → after | 降幅 | 含模板 before → after |
+| Declared workflow loads | Before: method + templates | After: method + templates | Reduction |
 |---|---|---|---|
-| fix | 78,280 → 60,907 bytes | 22.19% | 86,299 → 68,926 bytes（20.13%） |
-| enhance | 78,194 → 60,793 bytes | 22.25% | 86,213 → 68,812 bytes（20.18%） |
+| standard: 9 | 87,752 + 16,026 | 81,001 + 13,575 | 8.9% |
+| fix: 5 | 62,603 + 8,487 | 57,759 + 7,150 | 8.7% |
+| enhance: 5 | 62,524 + 8,487 | 57,665 + 7,150 | 8.7% |
+| PO/DEV/QA delivery: 7 | 98,693 + 11,508 | 89,031 + 10,554 | 9.6% |
+| verified-release: 11 | 121,957 + 20,646 | 109,958 + 17,417 | 10.7% |
 
-9 个角色与 11 个阶段 Skill 包装共 34,509 → 19,138 bytes（44.5%）；不能将未被默认加载的包装节省重复计入阶段数字。公共执行正文 4,170 bytes。额外 collector 每 run 再计 15,870 bytes（含模板）；非零反馈另读 1,516 bytes，重跑仍按实际次数计入。业务输入、完整锁/证据、团队规则、CI/知识 Hook、宿主上下文另计，不为达标裁掉。短入口的传递依赖仍需按实际触发核对。
+Counts include declared nodes and independent Reviewer leaves, deduplicated within each run, never across runs. Additional collectors, parent coordination, conditional integrations, business inputs and evidence are separate. These are UTF-8 bytes, not measured tokens, actual Agent counts or billing savings. All ten bundled core/team graphs retained identical declared instruction sets; the API graph's all-node comparison includes its optional review branch. Three example Prompts stopped requesting parent coordination protocols outside their node instructions.
 
-Schema、Stage ID、默认图和必读资源集合不变；旧工作保持原方法。新版仅精简约束表述及按阶段增加敏捷指引，不迁移批准、自动发布、免除 Gate 或自动进入 Production。
+Full regression: **216/216 PASS**, no failures/skips; original budget thresholds, source fixtures and archive hashes retained. Independent semantic review corrected complete GitLab endpoint paths, the prohibition on reading credentials, explicit before/after learning baselines, review-digest storage and approval conjunctions. Metadata names/paths and machine contracts did not change.
 
-## 0.13.0 / V2.1：Implement-scoped TDD 与独立 Gate Reviewer
+Real paired model-token/cost measurements and external delivery integrations: **NOT_RUN**. See [context measurement and usage](context-efficiency.md); no installation dependency, commit or push was added by this pass.
 
-验证日期：2026-10-11；本地方法包 0.13.0，行为契约 V2.1，Node v26.10.0。保留既有未提交的 CI/CD 改动；未 commit/push，未安装外部插件或依赖。旧 work、冻结资产、批准和委托不迁移。
+## Bilingual Jira Story presentation
 
-| 范围 | 结果与边界 |
+Validation date: 2026-10-28. English remains the default; one active Simplified Chinese Story template is an explicit language-scan exception. The 272-file historical Chinese snapshot is unchanged.
+
+| Check | Result and scope |
 |---|---|
-| 内容与全部回归 | 154 项 Node 测试通过，0 failed / 0 skipped；包含 24 个 Skill 元数据、JSON/链接、团队 DAG/模板、审批、候选漂移、知识同步、CI/CD 和等待契约。fix/enhance 仍为三阶段、两类正文 |
-| Implement 边界 | 默认加载唯一 TDD/incremental Skill；两项可选 Skill 只冻结路径/摘要，实际触发才读正文。上游和 Reviewer 不加载 TDD 执行；阻止团队 instructions 将执行 Skill 注入上游，校验可选资源的真实字节漂移 |
-| TDD 证据契约 | synthetic 参考模型拒绝环境故障冒充 RED、修改 Oracle、零检查/跳过、缺失或截断原始报告、漏任务、行为任务假例外、错误最终候选和未验证最终回归。真实文档例外仍需理由及适用验证；模型不替业务执行或认证身份 |
-| 独立 Gate 与交接 | 两个专职 Reviewer 和最终 collector 的真实身份必须各异，并独立于实施者；负向测试重建合法原始摘要/来源后仍拒绝同一 Reviewer。TDD/双 Gate 全绿但缺失、失败、无关或未观察的 AC、候选漂移或无批准仍不能 handoff。人工记录/compact 委托均为 synthetic，不是用户签字 |
-| 维护测试先行 | 修改前实际运行的 Standard 终点、Implement 默认 Skill 行为断言失败；独立身份负向测试在补入检查前实际出现 Missing expected exception，补入后通过。仅为本方法包维护回归，不冒充真实需求的 RED/GREEN/REFACTOR、独立 Gate 或交付审批 |
-| Standard / CI/CD | 默认 Standard 七阶段，终点为 Implementation Verified Handoff，只采用其实际选中 CI 绑定；显式 release-team 示例保留 Release/Learn/CD 链。继续覆盖原 CI/CD 失败、证据、审批循环及等待恢复边界，没有生产操作权限 |
-| 静态上下文预算 | 三阶段声明的方法正文：fix 145,285 → 51,427 字节（64.60%），enhance 145,199 → 51,341（64.64%）；共同执行契约 5,021 字节，低于 6 KB。两个 Reviewer leaf 分别额外 14,117 / 14,252 字节；串行/并行都须分别计量，collector 重派与等待唤醒也另计。模板、业务输入、证据、锁、团队额外规则不裁剪；不是实际 tokens/费用节省 |
-| 真实宿主交付 / 模型 token A/B | NOT_RUN；未在业务仓库派发真实 TDD 实施链、两个 Reviewer 或取得人类交付批准。没有原生子 Agent 数量、输入/缓存/输出 tokens 或费用测量 |
-| 真实 GitLab / 自动唤醒 / Confluence | NOT_RUN；未查询公司流水线或运行环境、创建监控、发布知识、部署或审批。既有模拟/契约测试不替代真实联调 |
+| Full maintainer regression | 216/216 PASS; no failures or skipped tests; existing context budgets still pass |
+| Template selection | The complete project override example and per-work node override select only one Story template, retaining canonical acceptance.json, output names/contracts, capabilities and approval requirements |
+| Independent bilingual review | Matching business fields, source/AC mapping, approval boundaries and selective loading; presentation guidance retains actual-connector fallbacks |
+| Real Jira publication / UI rendering | NOT_RUN; local template and contract checks do not establish remote rendering or publishing success |
 
-命令：`node --test tests/*.test.mjs`；`git diff --check` 通过。测试/support 仅供维护者，不随 payload 安装；本包仍为指令和协议，不增加运行器、身份认证、Python setup 或强制安装依赖。
+See [Story templates and selection](jira-story-templates.md). No installation dependency, runtime, new workflow stage or external write was added. Earlier records below retain their original scope and counts.
 
-已只读评估 addyosmani/agent-skills 并固定 commit `1be8e34187e34647bb83adc3a1323b26ae6f6abe`，保留四个同名短适配 Skill、来源与原 MIT 许可证；没有另建同职责 TDD Skill/Agent或安装整套第三方插件。详情见 [执行与复用说明](engineering-skills.md)。新 TDD Skill 的官方 quick_validate.py 因缺 PyYAML 失败；未安装依赖，不宣称该校验通过，24 个 Skill 的 Node 元数据/链接检查通过。以下历史记录保持原样，不用本版结果回填旧版本。
+Subsequent prose compaction retained 216/216 passing tests: EN/ZH templates each fell from 74 to 35 lines (3,905/3,691 to 1,462/1,463 bytes); selection guide 5,794 to 2,498 bytes; Story Skill 1,872 to 1,087 bytes; Stage prompt 2,018 to 1,676 bytes. These are source-byte reductions, not measured runtime-token or cost savings. Shared execution protocols, contracts and archive were unchanged.
 
-## 0.12.0：可配置 CI/CD 取证与有限自动等待
+## English primary and preserved Chinese snapshot
 
-验证日期：2026-09-30；本地 0.12.0 指令包，Node v26.8.1。未 commit/push，未连接公司项目或注册真实监控。旧 work/批准/授权不迁移，delivery 默认 null。
+The primary source tree is now English. `translations/zh-CN/` preserves all 272 files from the working tree immediately before translation; `translations/zh-CN.snapshot.json` records their original byte counts and SHA-256 values. The archive is excluded from the installed payload and active Skill discovery. Existing business work, approvals and frozen assets are not translated in place.
 
-| 范围 | 结果与边界 |
+| Check | Result and scope |
 |---|---|
-| 内容与全部回归 | 143 项 Node 测试通过，0 failed / 0 skipped；包括 20 个 Skill 元数据、JSON/路径/模板、既有 DAG/审批/知识与业务夹具。保留三阶段、两类正文和独立双 Gate |
-| CI/CD 契约 | 模拟真实响应形态，验证同 pipeline、父子/跨项目、团队选择、报告映射、同 Verify 先 CI 后 CD、只读环境查询；拒绝旧绿新红、错误候选/规则、失败 retry、allow_failure、跳过/零检查、缺失/截断报告、错误环境/运行 digest、审批循环。不代表真实 GitLab 返回或原生子 Agent 行为 |
-| Gate 集成 | 参考模型读取并校验完整原始字节，覆盖 CI/hybrid、远端执行身份、非零断言、原始 job/配置/报告、不能补造 exit code；恢复保留旧执行者与原始记录，规则/输入/候选漂移不能复用 |
-| 等待行为模拟 | 观察实际模型状态写入与宿主回调调用次数：pending→收集、manual、失败、权限、超时、重复唤醒、共享监控、未知创建结果、停止/关闭/撤销、迟到结果及有效检查复用。假 PASS 不呈审，manual/auto 等待处理本身均不生成批准；无原子领取时不自主派发。这不是已运行的后台服务 |
-| 静态上下文预算 | 未配置 CI/CD：fix 145,285 → 44,667 字节（69.26%）；enhance 145,199 → 44,581（69.30%）；共同执行契约 5,021 字节，低于 6 KB。配置后当前阶段额外加载 8,006 字节的方法正文；未绑定阶段不加载。模板、业务输入/证据、锁和团队规则单列，不裁剪 |
-| 真实宿主自动唤醒 | NOT_RUN；未创建 heartbeat/定时任务，未验证真实唤醒、原子领取、原生 fresh child 和监控清理。需在业务 work 有实际有限授权后验证 |
-| 真实公司 GitLab | NOT_RUN；缺真实项目/连接，未查询公司 pipeline/部署/运行环境，未登录、改流水线、执行部署或审批。示例仅为可配置样本 |
-| 实际 token A/B / 真实交付 / Confluence | NOT_RUN；静态字节不是 tokens/费用节省，模型/夹具不是审批或交付演练，未新增外部发布 |
+| Full maintainer regression | 213/213 PASS; no failures or skipped tests |
+| Primary-language scan | No remaining Han text outside the archive; Unicode test inputs retain their behavior through escaped literals |
+| Snapshot integrity | All 272 saved files match their recorded hashes and byte counts; historical context baselines remain byte-identical |
+| JSON contract comparison | 64 descriptive values translated; no unexpected key, type, enum, default or identifier changes. The root manifest adds `language=en` |
+| Translation review | All Skills and Prompts reviewed against the snapshot; worker, Gate execution and TDD contracts independently checked. Explicit drift, retry-loop, pre-implementation approval and restore-intent wording corrected |
+| Static context budget | fix/enhance method bodies: 62,603/62,524 bytes; with templates: 71,090/71,011. Common execution contract: 4,186 bytes. Original required-resource sets, historical baselines and budget thresholds unchanged |
+| Real token usage / external integrations | NOT_RUN for this translation; content and contract checks do not prove real token savings or live integrations |
 
-命令：`node --test tests/*.test.mjs`；`git diff --check` 通过。新增测试/support 只供维护者，不随 payload 安装；没有新的 CLI、Python setup、服务或依赖。接口和等待由宿主已有工具按契约执行，本包不是权限/认证/调度运行器。
+The first English draft exceeded the existing static loading limit. Concise wording restored compliance without dropping required resources or weakening the limit. Records below retain their original validation scope and measurements; this language change is not a rerun of earlier delivery probes.
 
-新 pipeline Skill 的官方 quick_validate.py 尝试因缺 PyYAML 失败；未安装依赖，不宣称该校验通过。20 个 Skill 的 Node frontmatter/链接检查通过。使用见 [CI/CD 指南](ci-cd-validation.md)、[认证与接入](../bootstrap/pipelines.md)。以下历史记录保持原样，不用本版测试回填过去结果。
+## 0.15.0: independent role handoffs and shared test cases
 
-## 0.11.0：按需上下文与 TWG 知识接入
+Validation date: 2026-10-28. Added optional role-team with 3 preparation-analysis graphs and a 5-node delivery graph; existing standard/fix/enhance remain. Jira Story/AC is the business specification; one test-design Task manages shared Cases; engineering Specs/scripts/full reports live in GitLab. Formal dual Gates run after QA. This was a local implementation, without commit/push, company-project configuration, or external publishing.
 
-验证日期：2026-09-29；对象为本地未发布 0.11.0 指令包。旧方法、工作、审批与授权不迁移；本次未 commit/push。
-
-| 范围 | 结果与边界 |
+| Validation | Result and boundary |
 |---|---|
-| 内容及既有回归 | 102 项 Node 测试通过，包括既有审批/反馈、DAG、来源/知识模拟、业务夹具；新增上下文选择/真实固定文件摘要/整锁漂移/团队模板、截断 Gate 阻断、知识配置及 trace 计量契约 |
-| 静态加载预算 | fix 145,285 → 42,819 字节（70.53%）；enhance 145,199 → 42,733 字节（70.57%）。共同执行正文 4,909 字节，小于 6 KB |
-| TWG 本地能力发现 | 实际只读 help 核实 twg login、content get、content update 的 snapshotToken/body-file/html 接口；没有读取企业页面、登录或执行远端写入 |
-| Codex 项目配置 | 方法仓库新增 tool_output_token_limit=3000，其它设置未改；用户全局配置不改。当前已打开会话是否重新加载、受信任客户端实际生效尚未验证 |
-| 真实模型 token A/B | NOT_RUN；提供配对运行步骤及原始 usage 解析函数，不用字节/4 捏造 tokens，不把本长期会话累计数称为新版流程成本 |
-| 安装器/登录/真实 Confluence | NOT_RUN；下载只读检查遇 DNS 不可达，本地已有 twg。安装命令来自用户，未执行/审计远端脚本；无测试父页面和发布授权，未创建/更新任何页面 |
+| Content/contract regression | 211/211 PASS, 0 fail, 0 skipped; `node --test tests/*.test.mjs` |
+| Collaboration reference model | 24 PASS: admission fields/source mapping, role identity/genuine decision references, script/case drift, browser/manual/existing CI evidence, wrong candidate/environment/data, zero checks, idempotency/unknown writes/ownership conflicts, current revocation, historical handoff reuse |
+| Team DAG | 10 PASS: independent preparation, approval dependencies, mandatory QA, rejection of early completion, final verification only, on-demand TDD, unchanged original graph, real browser-binding readiness, and forbidden scope-expanding overrides |
+| Skill metadata | All 6 new entry points plus router, 7/7, passed quick_validate using an existing maintainer-environment interpreter; no installation dependency added |
+| Skill directory reorganization | 31 Skills match six physical categories/catalog. Stage entries, bridges, relative links, and uppercase SKILL.md references passed validation. Non-Implement TDD injection through old/new paths was rejected. Bytes in both pinned context baselines were unchanged; comparisons only map same-name old paths |
+| Independent review | Fixed unfrozen real browser bindings, missing live revocation source for remote QA, inconsistent PO role references, browser cases incorrectly requiring scripts, and historical preparation artifacts incorrectly expiring with execution leases |
+| Isolated content probes | First fresh child preserved 4 FR→7 AC and rejected imported-text impersonation of approval/Done, but JSON aliases were incompatible; canonical fields and regression checks were added. Second probe's actual 4 FR→8 AC JSON passed parent contract checks; its result-writing command raised SyntaxError and remained failed. Third fresh child completed output with 4 FR→7 AC and 10 content checks; the parent separately verified canonical JSON, 4/4 sources, input/artifact/dispatch digests, and blocked state, all matching probe expectations |
+| Context budget | After directory reorganization, fix/enhance method text was 60,944/60,830 bytes; including templates, 68,963/68,849 bytes. Paths/links added 37 bytes each; mandatory-resource sets and budgets passed. New role entries/protocols are counted separately rather than injected into all old workflows. Real token A/B NOT_RUN |
+| Real Jira/GitLab/browser end-to-end | NOT_RUN: no Jira object creation, enterprise authentication, CI/CD/browser-environment interaction, or complete real delivery chain |
 
-静态基线固定到 b726a1e36b06a5f35b6304cf319432b6a7095f07，选定的保守方法正文集合与字节数保存在 tests/fixtures/context-baseline.json。新集合按实际 context.json、kind/capability/输出语义推导并去重，包含明确两轮反馈分支；模板、业务输入、锁/证据和宿主上下文不计入。它不是全库体积、实测 tokens、费用或真实阶段行为证明。
+Reference models in tests/ are excluded from installation and are not authentication, watchers, or host execution engines. Passing configuration/templates/static graphs, rewritten content, and simulated sync do not prove actual API/browser integration. Setup must discover actual schemas, tool operations, roles, and current control sources before execution. Role-preparation analysis_complete, DEV test handoff, QA execution records, and final verified remain distinct.
 
-新 dispatch schema 4 的 instruction_refs 不授予权限。维护参考模型不随包安装，不是运行器/身份认证或防篡改系统；真实宿主必须独立核验完整锁、批准、候选和原始证据。团队额外必读资源不能因预算裁掉。Confluence 配置/安装/认证不等于 knowledge_publish 授权，普通 setup/update 和 Hook 不自动安装/登录。
+The isolated probe executed only requirement normalization with synthetic inputs and pinned method files, without real business approval. Its blocked state meant missing business decisions/source baseline, not successful admission. Failed records remain intact; later probes cannot rewrite their outcomes. See [role handoffs](role-delivery.md).
 
-Skill 官方 quick_validate.py 因缺 PyYAML 无法运行；未安装依赖，不能报告该校验器通过。19 个 Skill 的 Node frontmatter/发现元数据与链接检查通过。使用见 [精简说明](context-efficiency.md)、[知识接入与登录](../bootstrap/knowledge.md)；历史记录保持原样。
+The host returned three actual child identifiers: `/root/role_story_forward_probe`, `/root/role_story_forward_probe_r2`, and `/root/role_story_forward_probe_r3`. Original packets/inputs/results remain in an isolated maintainer-environment directory outside the method payload. JSON-field improvements also apply to case-step, result-row, and script-mapping templates, whose shapes stages read through instruction_refs. Example content is not enterprise requirements or user approval.
 
-## 0.10.0：单一执行链、两次人审与有界实施反馈
+## 0.14.0: required project Setup Gate
 
-验证日期：2026-09-27；对象为本地未发布 0.10.0 指令包。Node v26.8.1；未运行远端 CI，不改写下面各版本的历史结论。
+Validation date: 2026-10-26. The local package added setup.required, natural-language setup entry points, and parent checks before new work. Existing Confluence/GitLab settings remain optional by default. New locks add only setup_check_ref, without migrating historical work/approvals. No commit/push or installation/authentication in a business project occurred.
 
-| 范围 | 结果与边界 |
+| Validation | Result |
 |---|---|
-| 内容检查 | 20 项通过：沿用原 JSON/链接/18 个 Skill/安装/团队/Gate/知识契约，新增 checkpoint 元数据与 policy/dispatch/result/反馈账本的默认无授权检查 |
-| 新审批/反馈参考模型 | 17 项通过：首尾人工、中间委托；继续权不等于 Verify 批准；拒绝团队覆盖/假 PASS/缺 Gate/零测试/漂移；三种模式的独立纠错授权、跨会话/策略累计、先预约再派发、保护 Oracle/测试、撤销/越权/未知失败阻断；全部授权与记录明确为 synthetic |
-| 既有回归 | 原 37 项 DAG 模型、12 项模拟知识同步/来源契约、4 项 Node 业务夹具检查通过；没有把模型或受控夹具修改称为真实交付 |
-| 独立指令读者 | 不继承聊天历史的只读 child 检查 8 个场景，发现并修正委托撤销例外、批准/继续字段区分、预期负向证据及纠错候选基线的跨文件歧义；限定复核未发现剩余可操作矛盾。这是指令理解测试，不是阶段执行或人类批准 |
-| 真实宿主交付/行为评测、安装升级 | NOT_RUN：未以真实用户授权运行两次人审交付链、纠错预算恢复或团队安装；没有新增真实候选的独立双 Gate/审批执行证据 |
-| 真实连接器 / Confluence | NOT_RUN：未创建、更新页面或执行其它外部写入；原模拟同步检查不能替代实际集成 |
+| Node content/contract regression | 173/173 PASS, 0 fail, 0 skipped; `node --test tests/*.test.mjs` |
+| New Setup reference model | 16 PASS: default/old installations, required/optional targets, multiple targets, unconfigured/authentication cases, wrong mappings, authorization revocation/replacement, stale/duplicate/missing evidence, time intervals, old-work/control exemptions, and setup check without work creation |
+| Skill metadata | 4 Skills—new Setup plus changed router/Confluence/GitLab—passed system quick_validate.py using an existing interpreter; no dependency installation |
+| Independent static review | Fixed unbound authorization identity and optional observation-time boundaries; added authorization replacement, missing/out-of-range time, and setup_check regressions |
+| Context budget | Child mandatory sets and stage counts unchanged; fix/enhance method text remained 60,907/60,793 bytes. Setup loads only at the parent entry point as needed |
+| Real integration/installation/authentication/new delivery | NOT_RUN; no company-system access, TWG/glab installation, Confluence writes, or GitLab/host-monitor triggers |
 
-命令：`node --test tests/*.test.mjs`，90 passed / 0 failed / 0 skipped；`git diff --check` 通过。模型与夹具仅用于维护者，不随方法包安装，不增加用户 setup 依赖或运行器。它们校验给定记录的契约，不认证用户、执行 Gate 或强制宿主权限。
+The model checks structure, digests, and state contracts; it is not an executable host Gate or authentication system. ready does not imply knowledge-write access, passing CI/Gates, deployment, or business approval. Technical receipts bind the current invocation, configuration, actual authorization digest, and time. The host still verifies real permissions and raw evidence. See [project Setup](project-setup.md).
 
-精简口径：相对修改前 HEAD，router、protocol、orchestration、profiles、approval、common 六份共享执行说明由 59,152 降到 25,486 字节；连新增 feedback/legacy 两份按需说明共 31,266 字节，净减少约 47%。这是这些文件的字节统计，不是整个仓库体积、实际加载 token 或交付效率的测量。
+## 0.13.1: agile guidance and Prompt deduplication
 
-两个修改 Skill 的官方 quick_validate.py 均因缺 PyYAML 无法运行；未安装依赖，不能报告该校验器通过。Node 元数据与引用检查通过。全部改动仍在本地，未 commit/push；旧 work、历史批准和委托不迁移，新功能只对升级后的新工作另行授权。使用见 [DAG 指南](dag-usage.md) 与 [审批规则](../workflow/approval.md)。
+Validation date: 2026-10-26. Independently adapted routing, domain terminology, vertical slicing, dependency parallelism, and engineering retrospectives from Matt Pocock skills at pinned commit 5beb35b040e3de97e54fa9e386d7e42d15c295c2; see [source mapping](agile-skills.md). No upstream Skills/dependencies were installed or host settings changed. These are local results, not a release claim.
 
-## 0.9.0：团队扩展与可组合工作流
-
-验证日期：2026-09-25；对象为本地未发布 0.9.0 指令包；本机 Node v26.8.1，维护 CI 配置仍为 Node 22（本轮未运行远端 CI）。保留下面 0.8 的知识闭环及演练夹具，不改写历史验证结论。
-
-| 范围 | 结果与边界 |
+| Validation | Result |
 |---|---|
-| 内容检查 | 19 项通过：JSON/链接/18 个 Skill 元数据、扩展入口、空白模板默认无授权、内置语义映射、两套团队包资源引用，以及原安装/短流程/Gate/知识契约 |
-| DAG 参考模型 | 37 项通过：内置等价归一化、团队覆盖、输入契约、循环与遗漏路径阻断、条件分支、AND 汇合、并行读写边界、批准/候选漂移、双 Gate 执行字段、工作锁、工具权限与有限自动批准；使用 synthetic 记录，不代表真实宿主执行 |
-| 既有知识与业务夹具 | 12 项模拟知识同步/来源契约、4 项 Node 业务夹具检查通过；沿用 0.8 的模拟与受控修改边界，不冒充交付链 |
-| 独立指令读者 | fresh-reader 核对 API 分支、模板变更隔离、只读设计终点及工具无隐式授权；据反馈补齐核心角色路径和固定资产映射，复核未发现可操作矛盾。另核对锁与外置发布授权无循环摘要依赖；不是实际阶段执行 |
-| 真实宿主 DAG / 团队安装升级 / 交付演练 | NOT_RUN：没有在业务仓库接入团队包、运行条件并行阶段或取得真实逐阶段/初始自动授权。示例包是可解析定义，不是已经完成的需求 |
-| 真实连接器 / Confluence | NOT_RUN：未执行外部创建、更新或接口副作用；声明工具接口不意味着已连接或已授权 |
+| Node content/contract regression | 157/157 PASS, 0 fail, 0 skipped; `node --test tests/*.test.mjs` |
+| Skill metadata | 13 changed Skills passed system quick_validate.py. The repository's default Python lacked PyYAML, so an existing compatible interpreter was used without installing dependencies |
+| New loading budgets | 3 PASS: UTF-8/deduplication, mandatory sets retained with at least 20% reduction versus 0.13.0, and separate template/feedback/repeated-collector accounting |
+| Existing control regression | Custom DAG/templates, authorization/revocation, dual Gates/TDD/candidate drift, knowledge sync, and CI/CD waiting model tests retained |
+| Independent child routing probe | For advice on “cross-user order authorization bypass: can this be a one-line fix?”, recommended standard/equivalent human-reviewed workflow. Read only router/profiles, plus search snippets; no delivery started. Validates only this advice interaction |
+| Independent static review | Fixed ambiguity in router path bases. No other material regression found within reviewed permissions, frozen assets, TDD, Gates, CI waits, knowledge publishing, and source notices; not real delivery validation |
+| Independent real business delivery / model token A/B | NOT_RUN; the above are static content/reference-model tests |
+| Real GitLab, host automatic wakeup, Confluence | NOT_RUN; their integration contracts were unchanged |
 
-命令：`node --test tests/*.test.mjs`，72 passed / 0 failed / 0 skipped；`git diff --check` 通过。参考模型只用于维护者检查，不随方法包安装，不是新增运行器；它最多枚举 128 个分支组合，超过上限会明确拒绝，不能据此宣称任意规模图已验证。
+The static baseline is d075ef1 (0.13.0), with resource digests saved in the test fixture. The figures below count declared instruction_refs once for each of three stages and two Reviewers; they are neither actual end-to-end run counts nor token counts.
 
-新 Skill 的官方 quick_validate.py 尝试失败：环境缺 PyYAML；未安装依赖，不能报告该校验器通过。Node 元数据与链接检查已通过。全部变更仍在本地，未 commit/push；真实行为验证需另行取得授权，按 [团队接入指南](team-workflows.md) 与 [演练手册](delivery-rehearsal.md) 执行。
+| Workflow | Method text before → after | Reduction | Including templates before → after |
+|---|---|---|---|
+| fix | 78,280 → 60,907 bytes | 22.19% | 86,299 → 68,926 bytes (20.13%) |
+| enhance | 78,194 → 60,793 bytes | 22.25% | 86,213 → 68,812 bytes (20.18%) |
 
-### 使用说明补充（2026-09-25）
+The 9 role and 11 stage-Skill wrappers total 34,509 → 19,138 bytes (44.5%). Savings in wrappers not loaded by default cannot be counted again in stage totals. Shared execution text is 4,170 bytes. Each additional collector run adds 15,870 bytes including templates; nonzero feedback loads another 1,516 bytes, with reruns counted at actual frequency. Business inputs, full locks/evidence, team rules, CI/knowledge Hooks, and host context are separate and are not trimmed to meet budgets. Transitive dependencies of short entry points still require actual-trigger checks.
 
-新增 [DAG 使用指南](dag-usage.md) 及 README/团队指南入口。独立 fresh-reader 检查覆盖首次需求、团队包接入、AI 选阶段、条件/并行汇合、人工与自动批准、图变更及分析终点；发现的可复制指令路径已改为业务仓库安装路径。补充文档后重新运行 72 项测试及 `git diff --check`，均通过。本次只检查文档与既有模型，不新增真实宿主 DAG、业务交付或连接器运行结论。
+Schemas, Stage IDs, default graphs, and mandatory-resource sets remain unchanged; existing work retains its method. This version only streamlines constraint wording and adds stage-specific agile guidance. It does not migrate approvals, publish automatically, waive Gates, or enter Production automatically.
 
-## 0.8.0：知识闭环、发布 Hook 与演练夹具
+## 0.13.0 / V2.1: Implement-scoped TDD and independent Gate Reviewers
 
-验证日期：2026-09-25；对象为本地未发布 0.8.0 指令包；本机 Node v26.8.1，维护 CI 配置仍为 Node 22（本轮未运行远端 CI）。
+Validation date: 2026-10-11; local package 0.13.0, behavior contract V2.1, Node v26.10.0. Existing uncommitted CI/CD changes were preserved. No commit/push, external plugins, or dependencies were installed. Existing work, frozen assets, approvals, and delegations were not migrated.
 
-| 范围 | 结果与边界 |
+| Scope | Result and boundary |
 |---|---|
-| 内容检查 | 17 项 Node 内容测试通过：JSON/链接/17 个 Skill 元数据、Hook 可达性、缺省无发布权、原短流程和双 Gate 不变；不是宿主自动发现或审批执行证明 |
-| 模拟同步/契约 | 12 项通过：两个文件模拟目标、部分失败/重放/超时恢复/人工编辑/撤销/越权/漂移/单次写预算/新版防回退/补充目标/适用性/四类内容及来源映射；标准与 Learn 输入明确 synthetic |
-| 业务夹具测试 | 4 项通过：真实 Node CLI 复现、临时副本受控修改前红后绿和邻近回归、真实模块依赖边及负向违约、Gate 记录契约；受控测试修改不是 Agent 真实交付链 |
-| 真实子 Agent 交付/行为评测 | NOT_RUN：未开始需逐阶段人审的 fix，未取得 enhance 初始自动委托；无正式候选独立双 Gate 交付记录。负向宿主动作验证同样未运行 |
-| 真实 Confluence | NOT_RUN：没有指定测试父页面或发布授权；未执行 create/update。适配器已按官方 Page API 编写，但不是实测集成 |
+| Content and full regression | 154 Node tests passed, 0 failed / 0 skipped; includes 24 Skill metadata checks, JSON/links, team DAG/templates, approvals, candidate drift, knowledge sync, CI/CD, and waiting contracts. fix/enhance retain three stages and two main document types |
+| Implement boundary | Loads the single TDD/incremental Skills by default. Two optional Skills freeze only paths/digests and load text only when triggered. Upstream stages and Reviewers do not load TDD execution. Team instructions cannot inject execution Skills upstream; actual optional-resource byte drift is checked |
+| TDD evidence contract | Synthetic model rejects environmental faults as RED, Oracle changes, zero/skipped checks, missing/truncated raw reports, omitted tasks, false behavioral-task exceptions, wrong final candidates, and unverified final regression. Genuine documentation exceptions still require reasons/applicable checks; the model neither executes business work nor authenticates identities |
+| Independent Gates and handoff | Both dedicated Reviewers and final collector must have different real identities and be independent of implementers. Negative tests still reject the same Reviewer after rebuilding valid raw digests/provenance. Green TDD/Gates cannot hand off with missing, failed, irrelevant, or unobserved AC, candidate drift, or missing approval. Manual records/compact delegations are synthetic, not user signatures |
+| Maintenance test-first evidence | Standard-endpoint and default-Implement-Skill assertions actually failed before changes. The identity-negative test produced Missing expected exception before the check was added, then passed. This is method-package maintenance regression, not a real request's RED/GREEN/REFACTOR, independent Gate, or delivery approval |
+| Standard / CI/CD | Default Standard has seven stages and ends at Implementation Verified Handoff, using only its selected CI bindings. The explicit release-team example retains Release/Learn/CD. Existing CI/CD failure, evidence, approval-loop, and wait-recovery boundaries remain covered; no production-operation authority |
+| Static context budget | Three-stage declared method text: fix 145,285 → 51,427 bytes (64.60%); enhance 145,199 → 51,341 (64.64%). Shared execution contract 5,021 bytes, below 6 KB. Reviewer leaves add 14,117 / 14,252 bytes separately in serial or parallel. Collector redispatches/wakeups are additional. Templates, business inputs, evidence, locks, and extra team rules are not trimmed. Not measured token/cost savings |
+| Real host delivery / model token A/B | NOT_RUN; no real TDD implementation chain or two-Reviewer dispatch in a business repository, and no human delivery approval. No native child-Agent count, input/cached/output token, or cost measurement |
+| Real GitLab / automatic wakeup / Confluence | NOT_RUN; no company pipeline/runtime query, monitor creation, knowledge publishing, deployment, or approval. Existing simulation/contracts do not replace real integration tests |
 
-命令：`node --test tests/*.test.mjs`，33 passed / 0 failed / 0 skipped；`git diff --check` 通过。测试仅使用 Node 内置模块，维护者夹具/模型不会被安装到业务仓库。
+Command: `node --test tests/*.test.mjs`; `git diff --check` passed. tests/support is maintainer-only and excluded from payload installation. This remains instructions/protocols without a new runner, authentication, Python setup, or mandatory dependency installation.
 
-文档协作技能的独立 fresh-reader 检查覆盖 7 个恢复/权限场景，修正了旧知识回退、实时撤销读取、补充目标快照绑定和 superseded 枚举一致性。读者检查不冒充真实交付行为。
+Read-only evaluation of addyosmani/agent-skills pinned commit `1be8e34187e34647bb83adc3a1323b26ae6f6abe` retained four short same-name adaptations, provenance, and the original MIT license. No duplicate-responsibility TDD Skill/Agent or full third-party plugin was installed. See [execution and reuse](engineering-skills.md). Official quick_validate.py for the new TDD Skill failed because PyYAML was missing; no dependencies were installed and that validator is not reported as passing. Node metadata/link checks passed for 24 Skills. Historical outcomes below are retained rather than backfilled with this version's results.
 
-官方 Skill quick_validate.py 尝试运行但环境缺 PyYAML，未安装依赖；不能报告该校验器通过。Node 元数据和所有文档链接检查已通过。未向企业知识库写入、未执行完整演练、未 commit/push；下一步按 [演练手册](delivery-rehearsal.md) 获得实际授权后执行。
+## 0.12.0: configurable CI/CD evidence and bounded automatic waiting
 
-## 0.7.0：运行前查新与自动更新
+Validation date: 2026-09-30; local 0.12.0 instruction package, Node v26.8.1. No commit/push, company-project connection, or real monitor registration. Existing work/approvals/authorizations were not migrated; delivery defaults to null.
 
-验证日期：2026-09-17；对象为本地未发布 0.7.0 指令包。
-
-- 16 项内容检查通过，包含四种工具入口对 preflight 的引用、空白模板不预授权更新、原有审批边界及 JSON/链接/Skill 元数据检查；git diff --check 通过。
-- 独立只读读者测试覆盖 10 个场景：新需求干净更新、同 semver 不同 commit、待批准旧需求继续、新需求被旧工作阻塞、联网失败、删除/本地冲突、中断恢复、旧安装与固定来源、更新后重读规则、控制操作与 child/leaf 豁免。根据读者反馈明确 pinned 离线行为与首次 setup 的更新授权。
-- 未在真实业务仓库执行在线自动更新、故障恢复或更新后阶段派发；读者测试和静态契约不等同于端到端执行，也不构成权限强制。未新增安装器、运行器或依赖。
-
-## 0.6.0 历史记录：主动取证与直接终结
-
-验证日期：2026-09-16；对象为本地未发布 0.6.0 指令包。
-
-- 原有 15 项内容检查通过，覆盖 JSON、模板/链接、Skill 元数据及既有路由/审批/Gate 契约；git diff --check 通过。未把字段存在视为行为执行证明。
-- 独立只读读者测试覆盖 12 个场景：候选/CI 不匹配、digest 类型、未部署、Jira 反馈语义、冲突/分页/访问失败、主动读取、leaf 汇总、缺证据时终结、worker 未停、自动策略无终结权、更新资格、无 spawn 的关闭恢复。
-- 未连接真实业务 Git/CI/Jira，未验证线上镜像/反馈、真实进程中断或完整状态推进。关闭与取证仍由宿主 Agent 按指令执行，未新增运行器。官方 Skill Python 校验依赖缺失的限制沿用历史记录。
-
-复现静态检查：`node --test tests/*.test.mjs`。历史工作/批准/来源快照保持原方法版本，不以本记录补造过去执行。
-
-## 0.5.0 历史记录：审批人解析与所有路线双 Gate
-
-验证日期：2026-09-16；对象为本地未发布 0.5.0 指令包。
-
-| 验证 | 实际结果与边界 |
+| Scope | Result and boundary |
 |---|---|
-| 本地内容检查 | 15 项通过；新增身份优先级/空字段/实际决策分离、全 profile 必需双 Gate/非空执行/不可人工替代的契约检查；原有路径、元数据、审批与安全检查保留 |
-| 独立读者测试 | 10 个场景覆盖 Jira 邮箱隐藏/未分配/无权限、Git 与系统回退、无批准/改派、缺 Gate 补建、Verify 缺实现、零检查/人工替代、单 Gate leaf 汇总及设计草案权限；修正双报告作用域、同阶段草案与角色加载冲突 |
-| 格式检查 | git diff --check 通过；没有引入安装器、额外运行器或业务依赖 |
+| Content and full regression | 143 Node tests passed, 0 failed / 0 skipped; includes 20 Skill metadata checks, JSON/paths/templates, existing DAG/approval/knowledge tests, and business fixtures. Three stages, two main document types, and independent dual Gates retained |
+| CI/CD contract | Simulated real response shapes cover same-pipeline, parent-child/cross-project, team selection, report mappings, CI-before-CD in one Verify, and read-only environment queries. Reject stale green/latest red, wrong candidates/rules, failed retries, allow_failure, skipped/zero checks, missing/truncated reports, wrong environments/runtime digests, and approval loops. Not actual GitLab responses or native child-Agent behavior |
+| Gate integration | Model reads/checks complete raw bytes, covering CI/hybrid, remote executor identity, nonzero assertions, raw jobs/config/reports, and no invented exit codes. Recovery retains original executors/records; rule/input/candidate drift prevents reuse |
+| Wait simulation | Observed actual model-state writes and host-callback counts for pending→collection, manual, failure, permission, timeout, duplicate wakeups, shared monitor, unknown creation outcome, stop/close/revoke, late results, and valid-check reuse. Fake PASS never reaches review. Manual/auto waiting itself creates no approval; without atomic claiming, no autonomous dispatch. Not a running background service |
+| Static context budget | Without CI/CD: fix 145,285 → 44,667 bytes (69.26%); enhance 145,199 → 44,581 (69.30%). Shared execution contract 5,021 bytes, below 6 KB. Configured current stages load another 8,006 method-text bytes; unbound stages do not. Templates, business inputs/evidence, locks, and team rules are separate and untrimmed |
+| Real host automatic wakeup | NOT_RUN; no heartbeat/scheduled task created or actual wakeup, atomic claim, native fresh child, or monitor cleanup verified. Requires real bounded authorization on business work |
+| Real company GitLab | NOT_RUN; no real project/connection, company pipeline/deployment/runtime queries, login, pipeline changes, deployments, or approvals. Examples are configurable samples only |
+| Actual token A/B / real delivery / Confluence | NOT_RUN; static bytes are not token/cost savings, models/fixtures are not approvals or delivery rehearsals, and no external publishing was added |
 
-未连接真实 Jira、未以真实登录人签署审批、未运行业务项目的 Gate 补建/负向样例/双 Gate 或三阶段闭环；上述读者测试不是运行时行为证明，静态契约不是权限强制。官方 Skill 校验依赖缺失的限制仍未解除，未安装 PyYAML；16 个 Skill 元数据由本包 Node 检查覆盖。
+Command: `node --test tests/*.test.mjs`; `git diff --check` passed. Added tests/support is maintainer-only, outside installation. No new CLI, Python setup, service, or dependency. Existing host tools execute interfaces/waits under the contract; the package is not a permission/authentication/scheduling runner.
 
-复现：`node --test tests/*.test.mjs`。已有安装须显式 update 后才有这些能力；历史审批人和 Gate 证据不回填。
+Official quick_validate.py for the pipeline Skill failed because PyYAML was missing. No dependency installation or passing-validator claim. Node frontmatter/link checks passed for 20 Skills. See [CI/CD usage](ci-cd-validation.md) and [authentication/setup](../bootstrap/pipelines.md). Historical outcomes below remain unchanged rather than backfilled.
 
-## 0.4.0 历史记录：分级流程、精简产物与自动批准
+## 0.11.0: on-demand context and TWG knowledge integration
 
-验证日期：2026-09-16。本节记录本地未发布的 0.4.0 指令包，不把历史版行为实验当作新版运行结果。
+Validation date: 2026-09-29; local unpublished 0.11.0 instruction package. Existing methods/work/approvals/authorizations were not migrated. No commit/push.
 
-| 验证 | 实际结果与边界 |
+| Scope | Result and boundary |
 |---|---|
-| 本地内容测试 | 13 项通过：自动批准默认关闭/逐需求授权契约、三条路线的阶段/实施授权、短流程两类正文及输出覆盖、16 个 Skill 元数据、路径/JSON/执行契约及原有安全检查 |
-| 独立文档读者 | 能回答小增强、未知根因、高风险 bug、实施批准、短流程完成、升级历史保留、旧安装更新这 7 个场景；发现并修正复用角色/Prompt 中 Plan-only、Spec-only、错误返工阶段和旧 drafts 措辞 |
-| 自动批准读者测试 | 独立读者能解释默认人工、自动继续开/关、DEV/QE 检查时序、失败/人工证据缺失、高风险、撤销/恢复、命令副作用变化、最终结束这 9 个场景；补齐了活动 worker 撤销程序和确认卡的不可变摘要绑定 |
-| 格式与依赖 | git diff --check 通过；官方 Skill 格式校验因现有 Python 缺 PyYAML 未运行成功，未安装依赖。Node 元数据检查不冒充官方校验 |
+| Content and existing regression | 102 Node tests passed, including existing approval/feedback, DAG, provenance/knowledge simulations, and business fixtures; added context selection, real frozen-file digests, whole-lock drift, team templates, truncated-Gate blocking, knowledge configuration, and trace-measurement contracts |
+| Static loading budget | fix 145,285 → 42,819 bytes (70.53%); enhance 145,199 → 42,733 bytes (70.57%). Shared execution text 4,909 bytes, below 6 KB |
+| TWG local capability discovery | Actual read-only help confirmed twg login and content get/update snapshotToken/body-file/html interfaces. No enterprise pages read, login, or remote writes |
+| Codex project configuration | Added tool_output_token_limit=3000 to the method repository without changing other settings or user-global configuration. Reloading in the existing open session and actual trusted-client effectiveness remain unverified |
+| Real model token A/B | NOT_RUN; provided paired-run steps and a raw-usage parser without fabricating tokens from bytes/4 or treating this long session's cumulative usage as new-workflow cost |
+| Installer/login/real Confluence | NOT_RUN; read-only download inspection encountered unreachable DNS; twg was already local. The installation command came from the user; its remote script was neither executed nor audited. No test parent page or publishing authorization, and no pages created/updated |
 
-本版未执行 enhance/fix 的完整三阶段真实业务闭环、人工/自动批准推进、运行时撤销/负向风险阻断或允许应用的旧安装升级；也未验证部署、业务接受、远程 CI。读者测试验证文档可理解性，不等同于实际子 Agent 始终遵守规则。此前 0.3 的独立执行实验只证明当时版本及其场景。
+The static baseline is b726a1e36b06a5f35b6304cf319432b6a7095f07. The selected conservative method-text set and byte counts are saved in tests/fixtures/context-baseline.json. The new set derives from actual context.json, kind/capability/output semantics and is deduplicated, including the explicit two-round feedback branch. Templates, business inputs, locks/evidence, and host context are excluded. This is not repository size, measured tokens/cost, or proof of real stage behavior.
 
-复现静态检查：`node --test tests/*.test.mjs`。没有新增运行器、Python setup 或用户安装依赖。
+New dispatch schema 4 instruction_refs grants no authority. The maintenance model is not installed and is not a runner/authentication/tamper-proof system. The real host independently checks full locks, approvals, candidates, and raw evidence. Budgets cannot trim extra mandatory team resources. Confluence configuration/installation/authentication is not knowledge_publish authorization; ordinary setup/update and Hooks do not install/log in automatically.
 
-## 0.3.0 历史记录：独立阶段子 Agent 与 update
+Official Skill quick_validate.py could not run because PyYAML was missing; no dependencies were installed and the validator cannot be reported as passed. Node frontmatter/discovery metadata/link checks passed for 19 Skills. See [context efficiency](context-efficiency.md) and [knowledge setup/login](../bootstrap/knowledge.md). Historical outcomes remain intact.
 
-验证日期：2026-09-16。对象是本地未发布的 `0.3.0` 指令包，不是旧版 CI 或此前可执行原型。
+## 0.10.0: single execution chain, two human reviews, and bounded implementation feedback
 
-| 验证 | 实际结果与边界 |
+Validation date: 2026-09-27; local unpublished 0.10.0 instruction package, Node v26.8.1. Remote CI was not run; historical conclusions below were not rewritten.
+
+| Scope | Result and boundary |
 |---|---|
-| 本地内容测试 | 11 项通过；包含九阶段批准依赖图、独立上下文/无 inline 回退配置、dispatch/result/review 契约、14 个 Skill 元数据及原有包检查 |
-| 独立文档读者 | 8 个场景能正确解释：父子分工、正式阶段串行、两 worker 容量、叶子汇合、过期结果、未完成工作阻止更新、bridge 保留、更新身份/中断恢复 |
-| 真正的新上下文 Intake | 实际使用宿主 spawn，显式不继承父聊天。child 返回 intake.md、project-context.md、证据及 ready_for_review 结果；父 Agent 核对实际文件和 SHA-256 |
-| 缺批准的负向派发 | 在隔离夹具刻意提交 Spec packet，但无 Intake 批准；独立 child 返回 blocked，没有编造 Spec 产物、批准或业务修改。这是故障注入，不是正常调度示例 |
-| 旧安装更新阻断 | 独立执行者检查 0.2.0 安装及 waiting-approval 工作，停止更新；父 Agent 比对全部 76 个文件，摘要和修改时间不变 |
+| Content checks | 20 passed: existing JSON/links/18 Skills/installation/team/Gate/knowledge contracts plus checkpoint metadata and default-no-authority checks for policy/dispatch/result/feedback ledger |
+| New approval/feedback model | 17 passed: human first/final reviews with delegated intermediate approval; continuation is not Verify approval; rejection of team overrides/fake PASS/missing Gates/zero tests/drift; separate feedback authorization for three modes, cumulative cross-session/policy budgets, reserve-before-dispatch, Oracle/test protection, revocation/out-of-scope/unknown-failure blocking. All authorizations/records explicitly synthetic |
+| Existing regression | 37 DAG-model, 12 simulated knowledge-sync/provenance, and 4 Node business-fixture checks passed. Models/controlled fixture edits are not real delivery |
+| Independent instruction reader | A read-only child without inherited chat checked 8 scenarios. Found/fixed cross-file ambiguities in delegation-revocation exceptions, approval/continuation fields, expected negative evidence, and feedback candidate baselines. Bounded re-review found no remaining actionable contradiction. Instruction-comprehension testing, not stage execution or human approval |
+| Real host delivery/behavior evaluation, install/update | NOT_RUN: no genuinely authorized two-review delivery chain, feedback-budget recovery, or team installation. No new real-candidate dual-Gate/approval execution evidence |
+| Real connectors / Confluence | NOT_RUN: no page creation/update or other external writes; simulated sync cannot replace actual integration |
 
-阶段实验的安装方法文件共 76 个，全部摘要经实际核对。方法快照身份为 `local-unreleased:7a5d2e9da940f6654c17f260403cbb1f39632724af41d8f9bdc3f41d249adb1c`，摘要算法是 source.file_hashes 按路径排序后的紧凑 JSON 的 SHA-256。它是测试夹具身份，不是发布 commit。实验未产生真实人类审批或业务接受；主 Agent 只登记实际 worker ID、收回并检查结果，没有代写 Intake。
+Command: `node --test tests/*.test.mjs`, 90 passed / 0 failed / 0 skipped; `git diff --check` passed. Models/fixtures are maintainer-only, excluded from installation, and add no user setup dependency or runner. They validate supplied-record contracts without authenticating users, executing Gates, or enforcing host permissions.
 
-父 Agent 复核发现首版产物使用 `../evidence/`，复制到 review 后会失效。已在共同契约中明确外部证据使用项目根相对路径，并回送原 child 修正、重算摘要。最终结果摘要：Intake `60d5f322bba7a715f0621252a83893ef9a87a1e276b74d7380329868c50635f8`；缺批准 Spec `a5434f4adf9c74122f643dabdd85e38708ee881a287ee8aa5f6bd99de362234f`。最终 85 个既有夹具文件未被 child 改动，仅新增 6 个授权 run 输出文件；父 Agent 自身登记 active_runs 的变动单独纳入基线。
+Reduction scope: against pre-change HEAD, six shared execution documents—router, protocol, orchestration, profiles, approval, common—fell from 59,152 to 25,486 bytes. Including new on-demand feedback/legacy documents, the total was 31,266 bytes, a net reduction of about 47%. These are file-byte statistics, not repository size, actual loaded tokens, or delivery-efficiency measurements.
 
-实验后仅补充上述证据引用规则和本记录；固定测试方法副本未被改写。新规则做内容检查且返回产物已修正，不声称整个 setup/工作流已在最终文本上重新跑完。官方 skill-creator 的 Python 格式校验因现有环境缺 PyYAML 未成功运行，未安装依赖；14 个 Skill 的前置信息/路径由本包 Node 检查覆盖，不把它说成官方校验已通过。
+Official quick_validate.py for both changed Skills could not run because PyYAML was missing. No dependencies were installed; no passing-validator claim. Node metadata/reference checks passed. Changes remained local without commit/push. Existing work, historical approvals, and delegations were not migrated; new features require separate authorization for new work after upgrade. See [DAG usage](dag-usage.md) and [approval rules](../workflow/approval.md).
 
-**本版尚未验证**：0.3.0 完整首次安装；允许应用的升级、三方冲突合并、真实中断回滚；九阶段完整审批链；两份真实业务 Gate 并行及集成；所有客户端自动发现/隔离参数；GitHub 远程 CI。更新实验只验证“应阻断时不写入”，不是升级成功证明。子 Agent 的行为验证仍不构成机器强制权限或防篡改保证。
+## 0.9.0: team extensions and composable workflows
 
-复现静态检查：`node --test tests/*.test.mjs`。行为实验使用隔离测试项目及宿主真实子 Agent，没有新增安装器或业务依赖。
+Validation date: 2026-09-25; local unpublished 0.9.0 instruction package. Local Node v26.8.1; maintainer CI still configured for Node 22, with no remote CI run this round. The 0.8 knowledge loop and rehearsal fixtures below were retained without rewriting historical conclusions.
 
-## 0.2.0 历史记录
+| Scope | Result and boundary |
+|---|---|
+| Content checks | 19 passed: JSON/links/18 Skill metadata checks, extension entry points, blank templates without default authority, built-in semantic mappings, resource references for two team packs, and existing installation/short-workflow/Gate/knowledge contracts |
+| DAG reference model | 37 passed: built-in equivalent normalization, team overrides, input contracts, cycle/missing-path blocking, conditional branches, AND joins, parallel read/write boundaries, approval/candidate drift, dual-Gate execution fields, work locks, tool permissions, and bounded automatic approval. Synthetic records do not establish real host execution |
+| Existing knowledge/business fixtures | 12 simulated knowledge-sync/provenance and 4 Node business-fixture checks passed. Retained 0.8 simulation/controlled-edit boundaries without claiming a delivery chain |
+| Independent instruction reader | fresh-reader checked API branching, template-change isolation, read-only design endpoints, and no implicit tool authority. Feedback led to complete core-role paths/frozen-asset mappings; re-review found no actionable contradiction. Also checked that locks and external publishing authorization have no cyclic digest dependency. Not actual stage execution |
+| Real host DAG / team install/update / delivery rehearsal | NOT_RUN: no business-repository team-pack setup, conditional parallel-stage execution, or real per-stage/initial-auto authorization. Example packs are parseable definitions, not completed requests |
+| Real connectors / Confluence | NOT_RUN: no external create/update or API side effects. Declaring an interface does not establish connection or authorization |
 
-以下保留该版当时的验证边界，不能用来替代 0.3.0 的新执行模式验证。验证日期：2026-09-16。
+Command: `node --test tests/*.test.mjs`, 72 passed / 0 failed / 0 skipped; `git diff --check` passed. The reference model is maintainer-only, excluded from installation, and not a new runner. It enumerates at most 128 branch combinations and explicitly rejects larger sets; this does not prove validation of arbitrary graph sizes.
 
-### 已完成
+Official quick_validate.py for the new Skill failed because the environment lacked PyYAML. No dependencies were installed or passing-validator claim made. Node metadata/link checks passed. All changes remained local without commit/push. Real behavioral validation needs separate authorization under [team setup](team-workflows.md) and the [rehearsal runbook](delivery-rehearsal.md).
 
-| 检查 | 结果 | 能说明什么 |
+### Usage-documentation addendum (2026-09-25)
+
+Added the [DAG guide](dag-usage.md) and README/team-guide links. Independent fresh-reader checks covered first requests, team setup, AI stage selection, conditional/parallel joins, manual/automatic approval, graph changes, and analysis endpoints. Copyable instruction paths found by the review were corrected to business-repository installation paths. After the documentation additions, all 72 tests and `git diff --check` passed again. This checked documentation/existing models only, without new conclusions about real host DAGs, business delivery, or connectors.
+
+## 0.8.0: knowledge loop, publishing Hook, and rehearsal fixtures
+
+Validation date: 2026-09-25; local unpublished 0.8.0 instruction package. Local Node v26.8.1; maintainer CI remained Node 22, with no remote CI run this round.
+
+| Scope | Result and boundary |
+|---|---|
+| Content checks | 17 Node tests passed: JSON/links/17 Skill metadata checks, Hook reachability, no default publishing authority, unchanged short workflows/dual Gates. Not proof of host auto-discovery or approval execution |
+| Simulated sync/contracts | 12 passed: two file-simulated targets, partial failure/replay/timeout recovery/manual edits/revocation/out-of-scope/drift/single-write budgets/new-version rollback prevention/additional targets/applicability/four content types/provenance mapping. standard and Learn inputs explicitly synthetic |
+| Business-fixture tests | 4 passed: real Node CLI reproduction, controlled temporary-copy edits failing before/passing after plus adjacent regression, real module dependency edges/negative violations, and Gate-record contracts. Controlled test edits are not real Agent delivery |
+| Real child-Agent delivery/behavior evaluation | NOT_RUN: no per-stage-human-review fix or initial automatic enhance delegation; no formal-candidate independent dual-Gate delivery record. Negative host-action validation also unexecuted |
+| Real Confluence | NOT_RUN: no test parent page or publishing authority; no create/update. The adapter was written against the official Page API, not tested integration |
+
+Command: `node --test tests/*.test.mjs`, 33 passed / 0 failed / 0 skipped; `git diff --check` passed. Tests use only Node built-ins; maintainer fixtures/models are not installed into business repositories.
+
+An independent fresh-reader using the documentation-collaboration skill checked 7 recovery/permission scenarios and led to corrections for old-knowledge rollback, live revocation reads, additional-target snapshot binding, and superseded enum consistency. Reader checks are not real delivery behavior.
+
+Official Skill quick_validate.py was attempted but lacked PyYAML; no dependencies were installed and the validator cannot be reported as passed. Node metadata and all documentation-link checks passed. No enterprise-knowledge writes, complete rehearsal, or commit/push occurred. Next steps require real authorization under the [rehearsal runbook](delivery-rehearsal.md).
+
+## 0.7.0: pre-run update checks and automatic updates
+
+Validation date: 2026-09-17; local unpublished 0.7.0 instruction package.
+
+- 16 content checks passed, including preflight references in four tool entry points, blank templates without update preauthorization, existing approval boundaries, and JSON/link/Skill metadata. git diff --check passed.
+- Independent read-only reader tests covered 10 scenarios: clean update for new work, same semver/different commit, continuation of old work awaiting approval, new work blocked by existing work, network failure, deletion/local conflicts, interrupted recovery, old installations/pinned sources, rereading rules after updates, and control/child/leaf exemptions. Feedback clarified pinned offline behavior and update authorization during first setup.
+- No actual online automatic update, failure recovery, or post-update stage dispatch ran in a business repository. Reader/static contracts are not end-to-end execution or enforced permissions. No installer, runner, or dependency was added.
+
+## 0.6.0 historical record: proactive evidence collection and direct closure
+
+Validation date: 2026-09-16; local unpublished 0.6.0 instruction package.
+
+- Existing 15 content checks passed, covering JSON, templates/links, Skill metadata, and existing routing/approval/Gate contracts; git diff --check passed. Field existence was not treated as behavioral execution evidence.
+- Independent read-only reader tests covered 12 scenarios: candidate/CI mismatch, digest types, undeployed state, Jira-feedback semantics, conflicts/pagination/access failure, proactive reading, leaf collection, closure with missing evidence, unstopped workers, no closure authority in auto policy, update eligibility, and closure recovery without spawn.
+- No real business Git/CI/Jira connection, online image/feedback validation, real process interruption, or full state progression. Host Agents still execute closure/evidence instructions; no runner added. Historical limits from missing official Skill Python-validation dependencies remained.
+
+Reproduce static checks: `node --test tests/*.test.mjs`. Historical work/approvals/source snapshots retain their method versions; this record cannot fabricate past execution.
+
+## 0.5.0 historical record: approver resolution and dual Gates on every workflow
+
+Validation date: 2026-09-16; local unpublished 0.5.0 instruction package.
+
+| Validation | Actual result and boundary |
+|---|---|
+| Local content checks | 15 passed. Added contracts for identity priority/empty fields/separate actual decisions, mandatory dual Gates across profiles, nonempty execution, and no manual substitutes; existing path/metadata/approval/security checks retained |
+| Independent reader tests | 10 scenarios: hidden Jira email/unassigned/no access, Git/system fallback, missing approval/reassignment, creating missing Gates, absent implementation in Verify, zero checks/manual substitutes, single-Gate leaf collection, and design-draft authority. Fixed dual-report scope and conflicts between same-stage drafts and role loading |
+| Formatting | git diff --check passed; no installer, extra runner, or business dependency |
+
+No real Jira connection, approval signed by a real logged-in user, or business-project missing-Gate implementation/negative tests/dual Gates/three-stage loop was executed. Reader tests are not runtime behavior evidence; static contracts do not enforce permissions. The official Skill-validation dependency limitation remained, with no PyYAML installation; package Node checks covered 16 Skill metadata records.
+
+Reproduce: `node --test tests/*.test.mjs`. Existing installations require explicit update for these capabilities; historical approvers and Gate evidence are not backfilled.
+
+## 0.4.0 historical record: tiered workflows, compact artifacts, and automatic approval
+
+Validation date: 2026-09-16. This section records the local unpublished 0.4.0 instruction package, without treating earlier behavioral experiments as new-version results.
+
+| Validation | Actual result and boundary |
+|---|---|
+| Local content tests | 13 passed: automatic approval disabled by default/per-request authorization, stages/implementation authority for three workflows, two compact main-document types/output coverage, 16 Skill metadata records, paths/JSON/execution contracts, and existing security checks |
+| Independent documentation reader | Correctly answered 7 scenarios: small enhancement, unknown root cause, high-risk bug, implementation approval, short-workflow completion, historical preservation on upgrade, and old-install update. Found/fixed Plan-only, Spec-only, wrong rework-stage, and old drafts wording in reused roles/Prompts |
+| Automatic-approval reader tests | Explained 9 scenarios: manual default, automatic continuation on/off, DEV/QE check timing, failure/missing manual evidence, high risk, revocation/recovery, changed command side effects, and final completion. Added active-worker revocation and immutable-digest card binding |
+| Formatting/dependencies | git diff --check passed. Official Skill formatting validation did not succeed because existing Python lacked PyYAML; no dependency installation. Node metadata checks are not the official validator |
+
+This version did not execute a complete real three-stage enhance/fix loop, manual/automatic approval progression, runtime revocation/negative-risk blocking, or an allowed-to-apply old-install upgrade. Deployment, business acceptance, and remote CI remained unverified. Reader tests establish document comprehensibility, not that actual children always obey. The earlier 0.3 independent-execution experiment proves only its version and scenarios.
+
+Reproduce static checks: `node --test tests/*.test.mjs`. No new runner, Python setup, or user installation dependency.
+
+## 0.3.0 historical record: independent stage children and update
+
+Validation date: 2026-09-16. The subject was the local unpublished `0.3.0` instruction package, not old CI or the earlier executable prototype.
+
+| Validation | Actual result and boundary |
+|---|---|
+| Local content tests | 11 passed, including nine-stage approval dependencies, independent context/no-inline-fallback settings, dispatch/result/review contracts, 14 Skill metadata records, and existing package checks |
+| Independent documentation reader | Correctly explained 8 scenarios: parent/child responsibilities, serial formal stages, two-worker capacity, leaf joins, expired results, unfinished-work update blocking, bridge preservation, and update identity/interruption recovery |
+| Real fresh-context Intake | Used actual host spawn with explicit no-parent-history. Child returned intake.md, project-context.md, evidence, and ready_for_review; parent verified actual files and SHA-256 |
+| Negative dispatch without approval | Deliberately submitted a Spec packet in an isolated fixture without Intake approval. The independent child returned blocked without fabricating Spec artifacts, approvals, or business changes. Fault injection, not normal scheduling |
+| Old-install update block | Independent executor inspected a 0.2.0 installation with waiting-approval work and stopped the update. Parent compared all 76 files; digests and modification times were unchanged |
+
+The stage experiment installed 76 method files; all digests were actually verified. Method snapshot identity was `local-unreleased:7a5d2e9da940f6654c17f260403cbb1f39632724af41d8f9bdc3f41d249adb1c`, computed as SHA-256 of compact JSON for source.file_hashes sorted by path. This identifies a test fixture, not a release commit. The experiment produced no real human approval or business acceptance. The main Agent recorded actual worker IDs, collected/checked results, and did not write Intake for the child.
+
+Parent review found that initial artifacts used `../evidence/`, which would break after copying into review. The common contract was clarified to use project-root-relative external evidence paths; the original child corrected outputs and recomputed digests. Final result digests: Intake `60d5f322bba7a715f0621252a83893ef9a87a1e276b74d7380329868c50635f8`; unapproved Spec `a5434f4adf9c74122f643dabdd85e38708ee881a287ee8aa5f6bd99de362234f`. The child left all 85 existing fixture files unchanged and added only 6 authorized run outputs. Parent changes to active_runs were included separately in the baseline.
+
+After the experiment, only the evidence-reference rule and this record were added; the frozen test-method copy was unchanged. The new rule passed content checks and returned artifacts were corrected, but the full setup/workflow was not rerun on the final text. Official skill-creator Python formatting validation failed due to missing PyYAML; no dependency installation. Package Node checks covered frontmatter/paths for 14 Skills, without claiming official validation passed.
+
+**Unverified in this version:** complete 0.3.0 first installation; allowed-to-apply upgrades, three-way conflict resolution, and actual interrupted rollback; full nine-stage approval chain; parallel/integrated real business Gates; every client's automatic discovery/isolation arguments; GitHub remote CI. The update experiment proves “no writes when blocked,” not successful upgrade. Child behavioral validation still provides no machine-enforced permission or tamper-proof guarantee.
+
+Reproduce static checks: `node --test tests/*.test.mjs`. Behavioral experiments used isolated test projects and real host children, without new installers or business dependencies.
+
+## 0.2.0 historical record
+
+These are this version's original validation boundaries and cannot substitute for validation of 0.3.0's new execution model. Validation date: 2026-09-16.
+
+### Completed
+
+| Check | Result | What it establishes |
 |---|---|---|
-| 包一致性测试 | 8 项通过 | manifest/payload、阶段引用、JSON、14 个 Skill、文档链接、bridge、发布内容和维护者 CI 配置满足当前静态规则 |
-| Skill 格式校验 | 14 个通过 | 指令文件格式和基础元数据有效，不代表模型一定正确执行 |
-| 独立 README 读者测试 | 8 个使用问题均能回答 | 读者能找到接入、审批、恢复、权限和验证边界；发现的 3 处措辞歧义已修正 |
-| AI 实际 setup | 通过 | 独立 AI 按 bootstrap，在带已有规则和业务文件的隔离项目中完成本地副本接入 |
-| 重复 setup | 通过 | `already-installed`；全部 75 个文件的摘要及修改时间不变，无重复 marker 或状态重置 |
+| Package consistency | 8 passed | manifest/payload, stage references, JSON, 14 Skills, documentation links, bridges, release content, and maintainer CI configuration satisfy the static rules |
+| Skill formatting | 14 passed | Instruction format/basic metadata are valid, not a guarantee of correct model execution |
+| Independent README reader | All 8 usage questions answered | Reader could find setup, approvals, recovery, permissions, and validation boundaries; 3 wording ambiguities were corrected |
+| Actual AI setup | Passed | Independent AI followed bootstrap to install a local copy into an isolated project with existing rules/business files |
+| Repeated setup | Passed | `already-installed`; all 75 file digests/modification times unchanged, with no duplicate marker or reset state |
 
-维护者复现内容检查：
+Maintainer reproduction:
 
 ```sh
 node --test tests/*.test.mjs
 ```
 
-这是包维护者的静态检查，不是安装依赖，也不是使用者业务仓库的质量门禁。
+These are package-maintenance static checks, not an installation dependency or a quality Gate for the user's business repository.
 
-### 实际接入测试的范围
+### Scope of actual setup testing
 
-- 来源为明确指定的 `local-unreleased` 副本，版本 `0.2.0`、`revision=null`，不是远程发布版。
-- 测试执行者使用 Codex 的文件和终端能力；没有 Python、安装脚本、依赖安装、另一套 Agent CLI 或常驻服务。
-- 原样复制 70 个 payload 文件；71 个受管文件（含 Codex bridge）的真实 SHA-256 均匹配。
-- 配置中记录来源文件清单、实际摘要、工具和安装时间；保留已有 AGENTS 原文、README 和业务代码。
-- 显式读取 canonical router/protocol，并正确解析 Intake 的 BA/PO 责任、阶段 Prompt、两个产物及人工审批点。
-- 未创建需求、阶段批准或业务改动；未安装可选原生 Skill；未 commit、push、部署或改变 CI。
+- Explicitly selected `local-unreleased` source, version `0.2.0`, `revision=null`; not a remote release.
+- Executor used Codex file/terminal capabilities, without Python, installation scripts, dependency installation, another Agent CLI, or a background service.
+- Copied 70 payload files unchanged; real SHA-256 values matched for all 71 managed files, including the Codex bridge.
+- Configuration recorded source-file inventory, actual digests, tool, and install time. Existing AGENTS text, README, and business code were preserved.
+- Explicitly read canonical router/protocol and correctly resolved Intake's BA/PO responsibility, stage Prompt, two artifacts, and human approval checkpoint.
+- Created no requests, stage approvals, or business changes; installed no optional native Skill; no commit, push, deployment, or CI changes.
 
-该接入测试的来源清单摘要为 `24db12da0d1b81d9f6a2039b80fda741465dd2ab10143c8af925a1c60c4edf61`。它标识测试时的本地快照，不是发布 commit；之后仅修正文档中的网络授权、setup/演练边界、Quality 返工措辞，并补充本验证记录。最终包需继续通过内容检查，不将这些文档修订冒充重新完成了接入测试。
+The tested source-manifest digest was `24db12da0d1b81d9f6a2039b80fda741465dd2ab10143c8af925a1c60c4edf61`. It identifies the local test snapshot, not a release commit. Subsequent changes only corrected network authorization, setup/rehearsal boundaries, Quality rework wording, and added this record. The final package still needs content checks; these documentation revisions are not a repeated completed setup test.
 
-### 当时尚未验证
+### Unverified at that time
 
-- GitHub 在线 bootstrap 发布及下载路径；用户推送后才可验证。
-- Codex 原生自动发现，以及 Claude Code、Cursor、Copilot 的客户端端到端接入。
-- 一条真实业务需求从 Intake 到 Learn 的全链路、批准后推进、返工和漂移阻断行为。
-- 业务项目 Architecture/Quality Fitness 的真实执行、CI 强制门禁、分支保护或平台身份审批。
-- 本仓库 GitHub Actions 的远程运行结果；本次仅本地运行同一内容测试。
+- GitHub online bootstrap publication/download paths, verifiable only after the user pushes.
+- Codex native automatic discovery and end-to-end client setup for Claude Code, Cursor, and Copilot.
+- A real business request's entire Intake-to-Learn chain, post-approval progression, rework, and drift blocking.
+- Actual business-project Architecture/Quality Fitness execution, enforced CI Gates, branch protection, or platform identity approvals.
+- Remote GitHub Actions results for this repository; only the same local content tests ran.
 
-不将包格式检查等同于业务需求验收，不将本地副本接入等同于 GitHub 在线下载已发布，不将一个工具的试用等同于所有工具兼容。Prompt 和本地记录不能提供不可绕过的权限或防篡改保证。
+Package formatting is not business acceptance; local-copy setup is not published GitHub download availability; one tool's trial is not universal tool compatibility. Prompts and local records cannot provide non-bypassable permission or tamper-proof guarantees.

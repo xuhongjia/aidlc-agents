@@ -1,0 +1,11 @@
+{
+  "case_id": null,
+  "case_revision": null,
+  "case_digest": null,
+  "status": "NOT_RUN",
+  "mode": null,
+  "actor_id": null,
+  "data_ref": null,
+  "execution_ref": null,
+  "steps": [{"step_id": null, "actual": null, "status": "NOT_RUN", "evidence_ref": null}]
+}

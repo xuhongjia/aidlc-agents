@@ -1,0 +1,48 @@
+{
+  "contract_version": 1,
+  "id": "role-story-zh-CN",
+  "version": "1.0.0",
+  "core_contract": 1,
+  "stages": [],
+  "workflows": [],
+  "overrides": [
+    {
+      "kind": "stage",
+      "id": "team.story",
+      "replacement": {
+        "id": "team.story",
+        "kind": "specification",
+        "role": "core:agents/po.md",
+        "prompt": "team:prompts/story.md",
+        "instructions": [
+          "core:workflow/role-worker.md"
+        ],
+        "inputs": [
+          "request"
+        ],
+        "optional_inputs": [
+          "project"
+        ],
+        "outputs": [
+          {
+            "name": "story.md",
+            "contract": "spec",
+            "template": "core:templates/collaboration/story.zh-CN.md"
+          },
+          {
+            "name": "acceptance.json",
+            "contract": "spec",
+            "template": "core:templates/spec/acceptance.json"
+          }
+        ],
+        "capabilities": [
+          "evidence.read"
+        ],
+        "tool_binding_ids": [],
+        "auto_eligible": false,
+        "routing_facts": {}
+      }
+    }
+  ],
+  "tool_bindings": []
+}

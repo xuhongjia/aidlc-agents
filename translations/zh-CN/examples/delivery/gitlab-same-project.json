@@ -1,0 +1,45 @@
+{
+  "delivery": {
+    "contract_version": 1,
+    "gate_mode": "hybrid",
+    "wait": {"mode": "native_wakeup", "interval_seconds": 300, "timeout_seconds": 7200},
+    "bindings": [
+      {
+        "id": "application-ci",
+        "phase": "ci",
+        "provider": "gitlab",
+        "connection_ref": "gitlab-read",
+        "project": "example/application",
+        "apply_to": [{"kind": "verification", "workflow_ids": [], "step_ids": []}],
+        "selector": {"pipeline_id": null, "ref": "main", "sources": ["push"], "upstream_binding": null},
+        "required_jobs": ["architecture", "quality", "build"],
+        "reports": [
+          {"id": "architecture-report", "job": "architecture", "artifact_path": "reports/architecture.json", "format": "json", "type": "gate", "gate_kind": "architecture", "mapping": {"candidate_commit": "source_commit", "rule_digest": "rule_sha256", "checks": "checks"}},
+          {"id": "quality-report", "job": "quality", "artifact_path": "reports/quality.json", "format": "json", "type": "gate", "gate_kind": "quality", "mapping": {"candidate_commit": "source_commit", "rule_digest": "rule_sha256", "checks": "checks"}},
+          {"id": "build-report", "job": "build", "artifact_path": "reports/build.json", "format": "json", "type": "artifact", "mapping": {"producer": "producer", "artifacts": "artifacts"}}
+        ],
+        "environment": null,
+        "approval_dependency": "none"
+      },
+      {
+        "id": "application-cd",
+        "phase": "cd",
+        "provider": "gitlab",
+        "connection_ref": "gitlab-read",
+        "project": "example/application",
+        "apply_to": [
+          {"kind": "release_readiness", "workflow_ids": [], "step_ids": []},
+          {"kind": "verification", "workflow_ids": ["core.fix", "core.enhance"], "step_ids": []}
+        ],
+        "selector": {"pipeline_id": null, "ref": "main", "sources": ["push"], "upstream_binding": "application-ci"},
+        "required_jobs": ["deploy", "smoke"],
+        "reports": [
+          {"id": "deployment-report", "job": "deploy", "artifact_path": "reports/deployment.json", "format": "json", "type": "deployment", "mapping": {"upstream": "upstream", "deployments": "deployments"}},
+          {"id": "environment-report", "job": "smoke", "artifact_path": "reports/environment.json", "format": "json", "type": "environment", "mapping": {"upstream": "upstream", "observed_artifacts": "observed_artifacts", "environment_checks": "environment_checks"}}
+        ],
+        "environment": {"name": "test", "required_checks": ["smoke", "health"]},
+        "approval_dependency": "none"
+      }
+    ]
+  }
+}

@@ -8,5 +8,5 @@
   "executed_at": null,
   "execution_refs": [],
   "checks": [],
-  "blockers": ["尚未执行 Gate"]
+  "blockers": ["Gate has not run"]
 }

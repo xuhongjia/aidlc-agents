@@ -1,24 +1,24 @@
-# Outcome & Learning
+# Outcome
 
-AIDLC_DRAFT — 有真实交付/业务观察后填写并替换本标志；测试绿灯或离线示例不是业务收益证据。
+AIDLC_DRAFT — actual delivery/business observations; green tests/examples do not prove benefit.
 
-## 观察身份
+## Observation identity
 
-记录实际候选/镜像 digest、环境、观察窗口、来源和反馈者，引用自动检索的 source-index.json。按批准目标区分 UAT 和生产观察；若所需环境/版本或证据无法确认，保持 inconclusive。
+Candidate/image digest, environment, window, source-index.json and feedback authors. Separate UAT/production under approved goals. Unconfirmed required identity/evidence remains inconclusive.
 
-## 需求结果
+## Requirement outcomes
 
-| 原始目标/验收 | 实际观察 | 来源证据 | 与预期差异 |
+| Original goal/acceptance | Actual observation | Source evidence | Difference from expectation |
 |---|---|---|---|
 
-Jira 反馈保留 issue/comment ID、作者、必要原文、发生/更新时间、链接与候选关联依据；同时保留支持与反对意见。Done/Resolved、fixVersion 或一次构建成功不能代替业务反馈。
+Jira evidence retains issue/comment ID, author, necessary wording, occurrence/update time, link and candidate association, including counterevidence. Done/Resolved, fixVersion or build success is not business feedback.
 
-## 结果判定
+## Outcome decision
 
-`outcome.json` 的 `result` 使用 `accepted`、`rejected` 或 `inconclusive`；`observed_at` 使用实际带时区时间，`evidence` 引用真实证据。结论须由真实用户反馈或约定的观察证明，不从 Gate PASS 推断业务接受。无证据时保留 `null`/空数组并 `blocked`。
+outcome.json: result=accepted/rejected/inconclusive, actual timezone-aware observed_at and real evidence. Require user feedback/agreed observations, not inferred Gate acceptance. Missing evidence keeps null/empty arrays and blocked.
 
-## 学习与后续建议
+## Learning and next steps
 
-按影响记录有证据的返工、漏测、无效/有效 Fitness，以及导航、工具输出、重复指令等工程摩擦：事实→影响→最小改进→验证方法。无发现不造条目；建议机械规则交自动检查，不因一次问题堆入常驻 Prompt。没有前后基线不计算提效收益；建议标 proposed，不自动改 Skills/规范或授予实施权。拒绝结果可以结束本轮观察，但不等于需求成功完成。
+Record evidenced rework, missed tests, effective/ineffective Fitness and navigation/output/instruction friction by impact: fact→impact→minimal improvement→verification. Invent no findings. Without before/after baselines, calculate no efficiency gains. Prefer automated mechanical checks over permanent incident-specific Prompts. Advice is proposed; no automatic Skill/standard changes or implementation authority.
 
-如结果不足，给出具体来源/权限/观察缺口；审批人可直接终结当前工作，记录 closed 并保留实际业务结果，无需补造反馈或继续剩余阶段。
+Rejected outcomes may end observation without successful delivery. Name exact evidence/permission/observation gaps. An approver may directly close work, preserving actual results without inventing feedback or remaining stages.

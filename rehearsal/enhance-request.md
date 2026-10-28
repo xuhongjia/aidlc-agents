@@ -1,10 +1,10 @@
-# ENH-001 · 自动审批演练输入
+# ENH-001 · automatic-approval rehearsal input
 
-在 FIX-001 真实完成后的同一隔离仓库增加 `--status open|done`，使用 enhance 路线。先准备完整工作授权卡给我确认；本文件不是自动审批授权。
+After FIX-001 actually completes, add `--status open|done` in the same isolated repository using enhance. Prepare a complete work-authorization card for my confirmation first; this file does not authorize automatic approval.
 
-- FR-1：status 与 search 取交集；未传 status 保持兼容。
-- FR-2：空结果 total=0；非法/空 status 退出非零并解释允许值。
-- NFR-1：结果保留输入顺序，命令不写数据文件、不访问网络。
-- NFR-2：继续执行真实依赖边界 Architecture Gate 与业务 Quality Gate，冻结同一候选，由 Verify 独立执行。
+- FR-1: Intersect status with search; preserve behavior when status is omitted.
+- FR-2: Empty results have total=0; invalid/empty status exits nonzero and explains allowed values.
+- NFR-1: Preserve input order; the command writes no data files and accesses no network.
+- NFR-2: Continue real dependency-boundary Architecture Gate and behavioral Quality Gate checks on one frozen candidate, independently executed by Verify.
 
-Scope 读取 FIX-001 获批知识，核实当前适用性。授权卡必须列具体产品路径、命令/入口摘要、允许副作用/资源和自动继续边界；测试入口变更按审批协议重新授权或提前以冻结草案授权。模拟发布另行明确授权两个隔离目标，不得替换为真实 Confluence。真实 Confluence 需额外指定测试父页面和发布范围。
+Scope reads approved FIX-001 knowledge and checks current applicability. The authorization card must specify product paths, command/entry hashes, allowed effects/resources, and automatic-continuation boundaries. Changed test entry points require renewed authorization under the approval protocol or prior authorization of a frozen draft. Mock publication separately requires explicit authorization for two isolated targets; never substitute real Confluence. Real Confluence additionally requires a specified test parent and publication scope.

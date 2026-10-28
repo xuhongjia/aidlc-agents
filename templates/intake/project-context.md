@@ -1,31 +1,31 @@
 # Project Context
 
-AIDLC_DRAFT — 首次只读了解项目后填写并替换本标志；与 Intake 一同审核。事实必须有路径、版本或实际诊断来源。
+AIDLC_DRAFT — read-only discovery reviewed with Intake; cite paths, versions or diagnostics.
 
-## 项目与基线
+## Project and baseline
 
-记录新建/存量、目标路径、版本及用户未提交改动。引用既有画像时核对当前适用性，不继承旧结论。
+New/existing project, target path/version and user changes. Recheck prior-profile applicability.
 
-## 实际工具入口
+## Actual tool entry points
 
-| 事实 | 已确认值或未知项 | 文件/版本/实际输出来源 |
+| Fact | Confirmed value/unknown | File/version/actual output |
 |---|---|---|
 
-覆盖语言、框架、包管理器、构建、启动、测试、Lint、工作目录及依赖前提。仅扫描不等于命令成功；不自动安装依赖。
+Language/framework, package manager, build/start/test/Lint, cwd and dependencies. Inspection is not execution; no automatic installation.
 
-## 现有验证状态
+## Existing verification
 
-| 检查/命令 | 已运行/未运行及原因 | 当前结果与既有失败 | 证据 |
+| Check/command | Run/not run and reason | Current result/existing failure | Evidence |
 |---|---|---|---|
 
-## 规范、边界与目录
+## Standards, boundaries, and paths
 
-列出适用项目指令、编码/架构规范、ADR、CI、交付源码、测试、生成物、禁止修改路径和本次回归面。冲突须显式解决，不能覆盖已有规范。
+Applicable instructions, standards, ADRs, CI, source/tests/generated/prohibited paths and regression scope. Resolve conflicts, never overwrite standards.
 
-## 信息与权限
+## Information and permissions
 
-说明允许提供给 AI 的上下文、禁止输入、外部网络/系统需求及授权缺口。不复制凭据或生产敏感数据。
+Allowed AI context, prohibited inputs, network/system needs and authority gaps. No credentials or sensitive production data.
 
-## 复用与缺口
+## Reuse and gaps
 
-列出可复用的规格、规则、Oracle、测试及当前版本。规则可复用，旧 PASS 不能复用为新候选证据。
+Reusable Specs/rules/Oracles/tests and current versions. Old PASS never proves a new candidate.

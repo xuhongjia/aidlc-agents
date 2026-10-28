@@ -1,31 +1,29 @@
 # Quality Design & Fitness
 
-AIDLC_DRAFT — 根据批准的验收条件定义测试与 Oracle，完成后替换本标志。不得用当前实现的输出倒推应有行为。
+AIDLC_DRAFT — derive tests/Oracles from approved acceptance, not implementation outputs.
 
-## 基线与风险
+## Baseline and risk
 
-引用批准 Spec/Architecture、测试基线与重点失败风险。
+Approved Spec/Architecture, test baseline and failure risks.
 
-## 测试模型
+## Test model
 
-| Test ID | AC/NFR | 场景/层级 | 输入与前置条件 | 精确预期/不变量 | 能捕获的错误 |
+| Test ID | AC/NFR | Scenario/level | Inputs/preconditions | Exact expectation/invariant | Detectable errors |
 |---|---|---|---|---|---|
 
-## 全量验收覆盖
+## Complete acceptance coverage
 
-`coverage.json` 的 `criteria` 与批准的 `acceptance.json` AC ID 集合一致，每项含 `id`、`checks`（Quality check ID 数组）、`manual_protocol`（人工步骤/预期/证据要求；无则 `null`）。自动 AC 至少映射一个实际 blocking check；人工 AC 有可执行协议。不得用架构检查或仅 advisory 检查代替必要质量验证。
+coverage.json criteria must equal approved acceptance.json AC IDs: `id`, `checks` (Quality check IDs), `manual_protocol` (steps/expectations/evidence or null). Every automated AC needs a real blocking check; every manual AC an executable protocol. Architecture/advisory checks cannot substitute.
 
-## Quality Fitness 审核预览
+## Quality Fitness review preview
 
-| Check ID | AC/NFR | 完整命令或扫描范围 | 成功判据/预期执行数量 | 超时 | 副作用 | Blocking/Advisory |
+| Check ID | AC/NFR | Full command/scan scope | Success criteria/expected count | Timeout | Effects | Blocking/Advisory |
 |---|---|---|---|---|---|---|
 
-填充 `quality-fitness.json` 的真实 `id`、`checks`。检查字段：`id`、`type`、`mode`、`description`；命令型记录完整 `argv`、前提和成功判据，模式型记录 `paths`、`pattern` 及预期。不把退出码 0、空测试集、全跳过或缺失输出直接视为通过。空规则包不是 PASS。
+Populate quality-fitness.json id/checks with `id,type,mode,description`. Commands need full argv, prerequisites and success criteria; patterns need paths/pattern/expectations. Empty rules/tests, all-skipped checks or missing outputs cannot pass; exit 0 alone is insufficient.
 
-## 测试附件与人工验证
+## Attachments and review
 
-列出测试文件预定路径、核心断言、数据来源、安装/运行前提；未经实施批准不修改项目测试基线。人工验证注明实际执行者、环境、候选和证据要求；未执行不能预填成功。
+Planned test paths/assertions, data sources and installation/run prerequisites. No project-test changes before implementation approval. Human checks name actual executor, environment, candidate and evidence; never prefill success.
 
-## 审核与限制
-
-人类确认 Oracle、覆盖、命令、阈值及残余风险；Agent 不填写批准结论。命令不得暗含依赖安装、推送、部署或其他外部写入。
+Humans approve Oracles, coverage, commands, thresholds and residual risk. Commands cannot hide installation, push, deployment or external writes.

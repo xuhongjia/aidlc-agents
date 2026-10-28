@@ -1,6 +1,6 @@
 # Scope a local API enhancement
 
-Follow `core:prompts/common.md` and the core approval, gates, risk and knowledge protocols. Resolve input artifacts by their declared semantic contracts. This team stage owns only its declared work-record output; do not edit product code, tests or configuration.
+Follow `core:prompts/common.md` and this node's frozen instruction_refs; parent coordination protocols are not child inputs. Resolve input artifacts by their declared semantic contracts. This team stage owns only its declared work-record output; do not edit product code, tests or configuration.
 
 Use the bound request and current project evidence to define a small, local enhancement. Record the stable acceptance criteria and observable Oracle, affected paths, exact commands and side effects, implementation steps and rollback. Map every requested FR/NFR to an AC or an explicitly approved exclusion. Include both Architecture and Quality Gate definitions with real blocking checks, versions, commands, thresholds and evidence locations. If missing, request the core Architect/QE gate-design leaves and incorporate their reviewed plans before claiming readiness. A review branch cannot replace either gate.
 

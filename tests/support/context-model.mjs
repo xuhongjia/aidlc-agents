@@ -55,7 +55,7 @@ export function instructionPlan(context, stage, node, { feedback = 0, leaf = nul
     }
   }
   const result = [...refs.values()];
-  requireThat(stage.kind === 'implementation' && !leaf || !result.some(r => /:skills\/(test-driven-development|incremental-implementation|debugging-and-error-recovery|code-review-and-quality)\//.test(r.ref)), 'engineering execution Skill belongs to implementation only');
+  requireThat(stage.kind === 'implementation' && !leaf || !result.some(r => /:skills\/(?:reusable-capability\/)?(test-driven-development|incremental-implementation|debugging-and-error-recovery|code-review-and-quality)\//.test(r.ref)), 'engineering execution Skill belongs to implementation only');
   return result;
 }
 export function optionalInstructionPlan(context, stage, { leaf = null } = {}) {

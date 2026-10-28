@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "name": "aidlc-agents",
+  "version": "0.15.0",
+  "kind": "instruction-package",
+  "repository": "https://github.com/xuhongjia/aidlc-agents",
+  "bootstrap": "bootstrap/setup.md",
+  "update": "bootstrap/update.md",
+  "preflight": "workflow/preflight.md",
+  "entrypoint": "skills/orchestration/aidlc/SKILL.md",
+  "skill_catalog": "skills/catalog.json",
+  "protocol": "workflow/protocol.md",
+  "orchestration": "workflow/orchestration.md",
+  "stage_catalog": "workflow/stages.json",
+  "composition": "workflow/extensions.md",
+  "runtime": "none",
+  "payload_directories": ["agents", "skills", "prompts", "workflow", "templates", "adapters", "bootstrap", "docs", "examples"],
+  "payload_files": ["manifest.json"],
+  "install_root": ".aidlc/system",
+  "work_root": ".aidlc/work"
+}

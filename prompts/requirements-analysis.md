@@ -1,5 +1,5 @@
-# 一次性 Prompt · 需求分析
+# One-off · Requirements analysis
 
-分析用户提供的需求与可访问项目背景。保留原意，输出问题/使用者、范围内外、约束、关键未知、建议 AC 和最少澄清问题。把事实、假设和建议分开；不编造访谈或业务规则。
+Analyze supplied requirements and accessible project context: intent, problem/users, scope/non-goals, constraints, unknowns, proposed AC and necessary questions. Separate facts, assumptions and proposals; invent no interviews or business rules.
 
-若项目已接入 AIDLC，先读取 `.aidlc/system/workflow/protocol.md` 和当前 work 状态；正式推进使用当前阶段 Prompt。本 Prompt 只产生需求分析草案，不改变状态、批准 Spec 或授权实现。需要写文件时只写用户允许的草案位置。
+Installed projects first read `.aidlc/system/workflow/protocol.md` and current work state; formal progression uses the current stage Prompt. Produce authorized drafts only; no state changes, Spec approval or implementation authority.

@@ -1,0 +1,23 @@
+{
+  "contract_version": 1,
+  "handoff_id": null,
+  "kind": null,
+  "project_id": null,
+  "story_id": null,
+  "method_ref": null,
+  "workflow_ref": null,
+  "state_locator": null,
+  "control_locator": null,
+  "controller_ref": null,
+  "dispatch_ref": null,
+  "source_revision": null,
+  "lease_ref": null,
+  "source_refs": [],
+  "artifact_refs": [],
+  "approval_refs": [],
+  "producer": {"role": null, "actor_id": null, "run_id": null},
+  "candidate": null,
+  "outcome": "blocked",
+  "blockers": ["Populate fixed artifacts and actual approvals before handoff"],
+  "created_at": null
+}

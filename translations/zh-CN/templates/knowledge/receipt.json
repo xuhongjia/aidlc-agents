@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "run_id": null,
+  "snapshot_ref": null,
+  "approval_ref": null,
+  "authorization_ref": null,
+  "target": null,
+  "idempotency_key": null,
+  "previous_receipt_ref": null,
+  "status": "pending",
+  "attempt_started_at": null,
+  "operation": null,
+  "remote": {"id": null, "version": null, "url": null},
+  "before_sha256": null,
+  "payload_sha256": null,
+  "readback_sha256": null,
+  "evidence_refs": [],
+  "reason": null
+}

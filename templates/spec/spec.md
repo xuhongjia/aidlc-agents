@@ -1,29 +1,29 @@
 # Specification
 
-AIDLC_DRAFT — 以已批准 Intake 和项目事实填写可实现、可验证的规格，再替换本标志。
+AIDLC_DRAFT — verifiable requirements from approved Intake and current project facts.
 
-## 输入基线与边界
+## Input baseline and boundaries
 
-引用已批准 review、项目画像、原始需求、范围及非目标；解释本次改变与保留的行为。
+Approved review, project profile, original request, scope/exclusions and changed/preserved behavior.
 
-## 功能与验收
+## Functions and acceptance
 
-| FR ID / 原始来源引用 | 场景 | 行为 | AC ID 或排除批准/理由 | Given / When / Then |
+| FR ID / original source | Scenario | Behavior | AC ID or approved exclusion/reason | Given / When / Then |
 |---|---|---|---|---|
 
-将每个 AC 同步写入 `acceptance.json` 的 `criteria`，每项为唯一 `id`、可验证的 `statement`、`verification`（`automated` 或 `manual`）和 `source_refs`。在同一 JSON 的 `requirements` 保存每个 FR/NFR 的 `{id, source_ref, ac_ids, exclusion}`；exclusion 默认为 null，排除必须有明确理由及批准依据。真实验收集合不得为空或遗漏；模板空数组只表示未定义。
+acceptance.json criteria: unique id, testable statement, verification (automated/manual), source_refs. requirements: every FR/NFR as {id,source_ref,ac_ids,exclusion}; exclusion is null or explicit reason/approval evidence. Empty/incomplete acceptance is undefined, not ready.
 
-## 契约、状态和边界
+## Contracts, states, and boundaries
 
-记录输入输出、数据与接口、权限、错误、边界情况、状态变化、兼容性及迁移约束。沿用团队领域术语；有歧义在此写“术语→含义→来源/待决定”，不默认新增术语文档。
+Inputs/outputs, data/interfaces, permissions, errors/edges, states, compatibility and migration. Reuse team terms; clarify term→meaning→source/pending decision here, without a separate glossary by default.
 
-## 非功能要求
+## Nonfunctional requirements
 
-| NFR ID | 可测要求与阈值 | 原始来源引用 | AC ID 或排除批准/理由 | 验证方法 |
+| NFR ID | Measurable requirement/threshold | Original source | AC ID or approved exclusion/reason | Verification |
 |---|---|---|---|---|
 
-阈值必须有依据；Agent 建议须经人类审核，不能写成组织既定要求。
+Evidence supports thresholds; proposed thresholds need human review, not claims of organizational policy.
 
-## 追踪与未决事项
+## Traceability and open items
 
-说明需求 → FR/NFR → AC → 验证方法的对应关系。关键业务歧义及影响验收的未知项未解决时保持 `blocked`。
+Request→FR/NFR→AC→verification. Critical business ambiguity or acceptance-affecting unknowns remain blocked.

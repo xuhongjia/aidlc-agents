@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "work_id": null,
+  "workflow_ref": null,
+  "step_id": null,
+  "revision": null,
+  "dispatch_digest": null,
+  "candidate_ref": null,
+  "delivery_digest": null,
+  "input_refs": [],
+  "baseline_refs": [],
+  "binding_ids": [],
+  "targets": [],
+  "reason": null,
+  "observed_at": null,
+  "evidence_refs": [],
+  "reusable_checks": []
+}

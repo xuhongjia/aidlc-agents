@@ -1,8 +1,8 @@
-# Questions & Decisions
+# Clarifications
 
-AIDLC_DRAFT — 根据当前需求替换本标志及说明；没有问题时记录依据，不编造问答。
+AIDLC_DRAFT — replace this marker/instructions using the actual request. If no questions exist, record why; invent no questions or answers.
 
-| ID | 问题/假设 | 影响与是否阻断 | 用户实际答复或证据 | 状态 |
+| ID | Question/assumption | Impact/blocking status | Actual user answer/evidence | Status |
 |---|---|---|---|---|
 
-未答复不是同意。低影响、可逆的工作假设单列，并在审核摘要显式暴露；涉及验收、权限或范围的关键未知项须等待澄清。
+No reply is not consent. List low-impact reversible assumptions separately and expose them in review summaries. Critical unknowns affecting acceptance, permissions, or scope must await clarification.

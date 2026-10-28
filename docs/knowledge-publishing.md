@@ -1,12 +1,12 @@
-# 知识发布接入
+# Configure knowledge publishing
 
-使用 `.aidlc/system/skills/aidlc-knowledge-setup/SKILL.md` 接入。Confluence 使用 TWG CLI，缺失时仅在明确配置请求中按用户给定安装命令安装，并引导用户执行 twg login；只读确认真实站点、空间及父页面后合并配置。普通方法 setup/update 和发布 Hook 不安装/登录，凭据不进仓库。详细 [安装与认证步骤](../bootstrap/knowledge.md)。
+Use `.aidlc/system/skills/setup/aidlc-knowledge-setup/SKILL.md`. Confluence uses TWG: install a missing CLI only during explicit configuration with the user-provided command; user performs login. Verify site/space/parent read-only before merging config. Ordinary setup/update/Hooks neither install nor authenticate. Keep credentials out of the repository. See [authentication](../bootstrap/knowledge.md).
 
-一句话：
+Copyable prompt:
 
-> 请用 aidlc-knowledge-setup 配置当前项目的 Confluence 知识库：目标为我指定的站点/空间/父页面，选择四类知识；检查 twg，缺 CLI 时按规定命令安装，引导我登录认证，只读验证后保留其它配置并保存目标。不要发布内容。
+> Use aidlc-knowledge-setup for <site/space/parent>, all four types. Check/install missing twg using the prescribed command and guide login. Verify read-only, merge target preserving settings, and stop without publishing.
 
-site、space ID 和父页面 ID 必须真实，不用示例值投递：
+site, space ID, and parent page ID must be real; never publish to example values:
 
 ```json
 {
@@ -24,26 +24,26 @@ site、space ID 和父页面 ID 必须真实，不用示例值投递：
 }
 ```
 
-新 Confluence 目标 transport=twg_cli，配置只是传输选择，不授予 shell/网络/知识写入权限。旧 work/快照仍用原 adapter，不回填 transport 或迁移批准。
+New targets use transport=twg_cli without granting shell/network/write permissions. Existing snapshots retain adapters/approvals; no backfill.
 
-目标 ID 唯一且定位字段齐全；types 为上述枚举的非空子集。多个目标独立订阅；首版实际 provider 只实现 confluence_cloud，模拟目标仅供维护测试。未知类型、重复 ID、缺定位或不支持 provider 不获得投递权。
+Require unique IDs, complete locations, and a nonempty enumerated types subset. Targets subscribe independently. Production supports confluence_cloud only; simulations are maintainer-only. Invalid types/IDs/locations/providers grant no authority.
 
-下一句可以是：
+Next, you may ask:
 
-> 为 ENH-001 准备自动批准授权卡，列明实施路径/命令和停止条件，同时允许将获批项目知识发布到 project-wiki 的指定空间和父页面，四类知识均允许，仅创建或更新能证明属于本项目的知识页面。先给我完整卡确认。
+> Prepare ENH-001’s authorization card: implementation paths/commands/stop conditions, plus approved knowledge of all four types to project-wiki’s space/parent. Limit create/update to proven project-owned pages. Show the frozen card for confirmation.
 
-卡由父协调器写入固定文件，使用 [publish-scope](../templates/knowledge/publish-scope.json) 填真实 work/project；targets 保存完整定位/类型而不是动态引用 ID，operations 仅 `create`、`update_owned` 的明确授权子集。policy.knowledge_publish 保存该文件的 path/sha256；人工阶段 approval.knowledge_publish 同样引用本次确实确认的授权。自动模式中授权来自真实确认的工作卡；不能在 auto decision 时编造人类原话。
+The parent writes the card to a frozen file using [publish-scope](../templates/knowledge/publish-scope.json) with real work/project values. targets stores complete locations/types, not dynamic ID references. operations is an explicitly authorized subset of `create` and `update_owned`. policy.knowledge_publish stores the file's path/sha256; manual-stage approval.knowledge_publish similarly references the authorization actually confirmed for this review. Automatic mode derives authority from the genuinely confirmed work card; auto decisions cannot invent human statements.
 
-先显示卡、取得确认，之后范围内的已批准知识直接投递。standard 仍每阶段人审；发布 Hook 不能批准 standard 阶段。当前不需要企业同步可 targets=[]，正常本地知识复用不受影响。
+Confirm the card before publishing approved snapshots within scope. Hooks cannot approve standard stages. targets=[] disables enterprise sync while preserving local reuse.
 
-## 文件契约速查
+## File-contract reference
 
-所有 ref 为 `{path, sha256}`；destinations/targets 均使用上述完整 target。index.items 每项为 `{id, type, latest_ref, approval_ref}`；版本是否适用读取快照，不仅看 latest。knowledge/runs.json 为 `{schema_version:1, active_runs:[], history:[]}`，运行项含 run_id/work_id/真实 worker_id/dispatch_ref/状态/停止证据引用；缺 worker 标识不能声称已执行。
+All refs are `{path, sha256}`; destinations/targets use the complete target above. Each index.items entry is `{id, type, latest_ref, approval_ref}`. Read snapshots to determine applicability rather than relying on latest alone. knowledge/runs.json is `{schema_version:1, active_runs:[], history:[]}`. Run entries include run_id/work_id/actual worker_id/dispatch_ref/state/stop-evidence references; missing worker identity prevents a claim of execution.
 
-Hook result 保存 `{run_id, dispatch_digest, status, receipts, blockers}`，status 为 completed/blocked/failed；completed 只表示本次 Hook 已结束，具体投递看每目标 receipt。result/receipt 不授予批准权。parent 的完成记录保存 result 引用与实际停止依据，不能只清空 active_runs。
+Hook result: `{run_id, dispatch_digest, status, receipts, blockers}`, status completed/blocked/failed. completed means ended; receipts carry target outcomes, not approval authority. Parent retains result/actual stop evidence; clearing active_runs is insufficient.
 
-快照 source.review_refs 指向已存在的上游批准，当前 Verify/Learn 的批准通过外置 approvals 凭据关联，避免自引用。design_refs 每项额外记录 approval_ref；implementation_verification 包含 candidate_ref、两份 gate_refs、AC/检查映射与覆盖限制，未执行明确 NOT_RUN，不把设计批准混同验证。Learn 新版本保留 supersedes，新增真实 source evidence，claim_status 不自动升级。
+Snapshot source.review_refs points to existing upstream approvals. External approvals credentials link the current Verify/Learn approval to avoid self-reference. Each design_refs item also records approval_ref. implementation_verification contains candidate_ref, both gate_refs, AC/check mappings, and coverage limits. Mark unexecuted checks NOT_RUN; design approval is not verification. A new Learn version retains supersedes and adds real source evidence without automatically upgrading claim_status.
 
-schema 1 的快照字段 origin 取 approved_document/derived/observed_revision；source.stage 为 verify 或 learn；source.method_revision 保留来源方法身份。版本为正整数；applicability、invalid_when 与 evidence_refs 非空。ID 只能使用字母、数字、短横线和下划线，拒绝路径穿越。创建标题/正文冻结身份块；完整正文和脱敏投影区别见 [准备协议](../workflow/knowledge-prepare.md)。
+Schema 1 snapshot origin is approved_document/derived/observed_revision; source.stage is verify or learn; source.method_revision preserves the source method identity. Versions are positive integers; applicability, invalid_when, and evidence_refs are nonempty. IDs allow only letters, digits, hyphens, and underscores, rejecting path traversal. Freeze the identity block in created titles/content. See [preparation](../workflow/knowledge-prepare.md) for full content versus redacted projections.
 
-敏感内容需先脱敏并新审查；权限不足、人工编辑、版本冲突或未知写结果只停止相关目标。不得通过换标题再创建绕过冲突。更新/重试不扩大发布授权，不自动安装插件或写 token。
+Redact then obtain new review. Permission gaps, human edits, version conflicts, or unknown writes stop affected targets. Never recreate under another title to bypass conflict. Retries widen no authority or permit plugin installs/token storage.

@@ -38,5 +38,5 @@ test('package onboarding and adapter expose bounded TWG setup and OCC instead of
   assert.ok(read('bootstrap/knowledge.md').includes('twg login'));
   assert.ok(read('adapters/knowledge/confluence-cloud.md').includes('--snapshot-token'));
   assert.ok(read('adapters/knowledge/confluence-cloud.md').includes('--body-file'));
-  assert.ok(read('skills/aidlc-knowledge-sync/SKILL.md').includes('workflow/knowledge-publish.md'));
+  assert.ok(read('skills/sync-publication/aidlc-knowledge-sync/SKILL.md').includes('workflow/knowledge-publish.md'));
 });

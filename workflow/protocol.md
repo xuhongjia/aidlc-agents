@@ -1,50 +1,50 @@
-# 当前工作共同契约
+# Shared current-work contract
 
-0.13 新工作只有一条父协调链：router → [extensions](extensions.md) 固定图 → [dag](dag.md) 依赖/分支 → [orchestration](orchestration.md) 真实派发 → [approval](approval.md) 决策。child 的必读名单按 [context](context.md)，不加载本协调协议。旧工作只读 [原版本规则](legacy.md)，不迁移。宿主是执行者，本包没有运行器、身份认证或防篡改保证；硬门禁由项目 [CI/权限](../docs/fitness-and-ci.md) 执行。
+New 0.13 work has one parent chain: router → [extensions](extensions.md) frozen graph → [dag](dag.md) dependencies/branches → [orchestration](orchestration.md) dispatch → [approval](approval.md) decisions. Children use [context](context.md) required reads, not this protocol. Existing work uses [original-version rules](legacy.md), never migration. Host executes; package provides no runner/authentication/tamper protection. Project [CI/permissions](../docs/fitness-and-ci.md) enforce hard gates.
 
-父协调器维护控制记录；每个 stage/run 新建隔离 child，只有 implementation 的批准范围允许产品写入。项目规范冲突、输入不足、越权和漂移先停，不靠加载更多角色覆盖约束。
+Parent owns control records; every stage/run gets a new isolated child. Product writes require approved implementation scope. Project-rule conflicts, missing inputs, overreach/drift stop work; extra roles cannot override constraints.
 
-## 记录与权威来源
+## Records and authorities
 
-从业务项目根解释路径。每项 work 保留 request/questions、state、runs/RUN 的 dispatch/result/artifacts/evidence、reviews/STEP/rN 的不可变产物与 review.json、approvals、policies；只有获授权纠错时增添 feedback/STEP-rN 的技术账本。原始来源、用户陈述、实际时间和实际 worker 身份不可编造。
+Paths resolve from business project root. Retain request/questions/state, runs/RUN dispatch/result/artifacts/evidence, immutable reviews/STEP/rN artifacts/review.json, approvals/policies. Add feedback/STEP-rN ledgers only for authorized correction. Never invent sources/user statements/times/worker identities.
 
-state.schema_version=5 的 nodes/branch_decisions 按 DAG 解释；profile/stages/current_stage 仅兼容，不决定权限。active_runs/run_history 包括 leaf、汇总与内部纠错 lineage；waits/wait_monitor 按 [pipeline-wait](pipeline-wait.md) 留存，待外部结果释放槽位。方法完整 commit 或 local-unreleased 摘要与 workflow_ref 固定；新需求按 [preflight](preflight.md) 查新，旧需求不热更新。
+state.schema_version=5 nodes/branch_decisions are DAG authority; profile/stages/current_stage are compatibility only. active_runs/run_history include leaves/collectors/correction lineage. Retain waits/wait_monitor under [pipeline-wait](pipeline-wait.md); awaiting external results releases slots. Freeze full method commit or local-unreleased digest and workflow_ref. New requests check [preflight](preflight.md); existing work never hot-updates.
 
-每类事实只认一个权威来源：原始需求来自已绑定请求/Jira 版本，获批范围来自该 work 的 review；代码来自完整候选，执行结果来自工具原始证据。Jira/Confluence 链接、工作副本或知识投影不得独立修改批准结论；来源变更需显式差异与新 review，不静默双向合并。知识按 [knowledge](knowledge.md) 保存批准快照。
+Authority per fact: bound request/Jira version → requirements; work review → approved scope; full candidate → code; raw tool evidence → execution. Jira/Confluence links, working copies/knowledge projections cannot change approvals. Source changes need explicit differences/new review, never silent bidirectional merging. Preserve [knowledge](knowledge.md) approved snapshots.
 
-ID 只用字母、数字、下划线或连字符；路径拒绝穿越、软链接及包外引用。多个活动 work 未指明 ID 则询问。一个工作树只有一条产品写入流，现有用户修改不可覆盖；不自行开分支/复制生产数据。
+IDs allow letters/digits/underscores/hyphens only; reject traversal/symlinks/out-of-package refs. Multiple active works require an ID. One product-writing flow/worktree; preserve user changes. Never independently create branches/copy production data.
 
-## review 是唯一审查快照
+## Review is the sole review snapshot
 
-核对实际 dispatch/result、独立 worker、全部必需产物/证据、范围和上游批准后，从 run 直接晋升 review，不新增 drafts/handoff。正文只写本次差异、决定、风险；日志链接而不复述。模板占位或未解决 blocking 问题不能 ready。
+Validate actual dispatch/result, independent worker, all outputs/evidence, scope/upstream approvals; promote run directly to review without drafts/handoff layers. Body: current differences/decisions/risks; link logs. Placeholders/blocking questions prevent ready status.
 
-按 [review 模板](../templates/work/review.json) 保存：
+Use [review template](../templates/work/review.json):
 
-- files：全部产物相对 artifacts 的路径与真实 SHA-256；输入/外部证据用项目根相对路径，晋升后仍能解析，不能留下失效的 ../evidence 引用。
-- inputs：请求和上游 review 摘要；持续追加的 questions 不整本哈希，采用的答复及真实归属冻结到本次正文。答案改变已批准决定则使依赖失效。
-- candidate：从 Implement 开始覆盖交付源码、测试、配置、锁文件及必需资源的完整集合；注明真实排除的生成物。批准/检查前后重枚举，新删文件也计入，不只哈希 diff/HEAD；.aidlc 控制记录不属于产品，产品源码不能放该目录。
-- gate_evidence：完整 Verify 有同候选、同获批规则的 Architecture/Quality 两份报告及原始执行证据，按 [gates](gates.md) 核验，非零相关检查才可 PASS。
-- tdd_evidence：Implement 的任务切片/例外、真实 RED/GREEN/REFACTOR 和最终候选回归来源；Verify 只独立核对。适用性/原始证据缺失不能完成工程交付，详见 [TDD](tdd.md)。
-- external_evidence：Release/Learn 的真实 source-index、来源快照、时间和候选关联，按 [external-evidence](external-evidence.md)。
-- pipeline_evidence：已绑定 Verify/Release/Learn 的每项 pipeline-result 路径/摘要及 source-index；按 [pipelines](pipelines.md) 核对最新必需 job、规则、构建物、目标环境和实际观察。未收齐或 WAITING 不建立完整 review。
-- execution：所有关联 stage/leaf/汇总/纠错 run 的实际 agent_id、dispatch/result 路径与摘要，不能遗漏失败历史。
+- files: every artifact-relative output/actual SHA-256. Inputs/external evidence use project-relative paths surviving promotion, never broken ../evidence links.
+- inputs: request/upstream review digests. Freeze adopted answers/actual attribution in this body, not the entire append-only questions log. Changed approved decisions invalidate dependents.
+- candidate: from Implement, full delivered source/test/config/lockfile/required-resource set with actual generated-output exclusions. Re-enumerate before/after approval/checks, including additions/deletions, never only diff/HEAD. .aidlc controls are not products; place no product source there.
+- gate_evidence: complete Verify needs same-candidate/approved-rule Architecture/Quality reports and raw execution under [gates](gates.md). PASS needs nonzero relevant checks.
+- tdd_evidence: Implement slices/exceptions, real RED/GREEN/REFACTOR/final-candidate regressions. Verify checks independently only. Missing applicability/raw evidence blocks engineering delivery; see [TDD](tdd.md).
+- external_evidence: actual Release/Learn source-index/snapshots/times/candidate links under [external-evidence](external-evidence.md).
+- pipeline_evidence: every bound Verify/Release/Learn pipeline-result path/digest/source-index. [pipelines](pipelines.md) checks latest required jobs/rules/artifacts/target environment/actual observations. Incomplete/WAITING cannot form complete review.
+- execution: actual agent_id/dispatch/result paths/digests for all stage/leaf/collector/correction runs, including failures.
 
-使用现有摘要工具实际计算原始字节。review 不自存 digest，写完后 hash 写到 state/approval，不能再格式化；文件变动创建新 revision，不修改旧快照。父协调器不得改写 child 结论消除冲突。
+Write the review, then tool-hash its raw bytes and store the digest in state/approval; review has no self-digest. Never reformat/mutate snapshots: changes need new revision. Parent cannot rewrite child conclusions to erase conflicts.
 
-## 批准与失效
+## Approval and invalidation
 
-[identity](identity.md) 解析 Jira 经办人 → Git name/email → 系统登录人，记录前刷新；预填身份不是实际签字。按 approval 核对精确 step/revision/workflow_ref/review_digest，manual 保存真实原话；委托决策保存 policy 与逐项证据，署 parent-coordinator。澄清、“继续优化”、静默或旧批准不是本版授权。
+[identity](identity.md) resolves Jira assignee → Git name/email → system login; refresh before recording. Prefills are not signatures. approval validates exact step/revision/workflow_ref/review_digest. Manual retains real words; delegated decisions retain policy/itemized evidence signed parent-coordinator. Clarification, “keep improving,” silence/old approvals never authorize this revision.
 
-审查卡只展示新增决定、风险/失败、正文与证据链接、要确认的范围和下一步；必要副作用不能藏在精简文字后。只是批准而未获继续权就停；checkpoint 的首卡可明确包含后续 Implement→Verify 继续权，最终人审不可替代。
+Cards show new decisions/risks/failures, body/evidence links, requested scope/next action without hiding effects. Approval without continuation means stop. checkpoint entry may explicitly delegate Implement→Verify continuation, never replace final human review.
 
-用户拒绝、候选/输入/Oracle/范围变化：保留原决定，标记受影响下游和 Gate superseded，新 revision 重新批准，不回滚用户代码。图/模板/职责变动新锁及新授权。只有 [内部自纠错](implementation-feedback.md) 的窄授权可在首次候选 review 前继续本 Implement；它不处理正式 Verify 失败，不修改历史 PASS。
+Rejection or candidate/input/Oracle/scope changes preserve decisions, supersede affected downstream work/Gates and require newly approved revisions; never roll back user code. Graph/template/responsibility changes need new lock/authority. Only narrow [internal feedback](implementation-feedback.md) permits same-Implement continuation before first candidate review, never formal Verify failures/historical PASS changes.
 
-## 验证与完成
+## Verification and completion
 
-原始 FR/NFR 必须映射到 AC 或真实批准的排除。AC 集合非空、ID 唯一，注明 automated/manual；标准输出 acceptance/coverage/results 的集合完全一致，短流程在同一 change/verification 表完成映射，不新建报告。人工 AC 需具体观察协议和真实证据，不能 AI 补签；自动 AC 必须映射相关 Quality blocking 检查与实际执行。零检查、全跳过、空范围、未知、超时、不相关测试、候选漂移都不是 PASS。DEV 自测不能代替独立 QE，两 Gate 不替代需求完整性。
+Map every original FR/NFR to AC/real approved exclusion. AC: nonempty, unique, automated/manual. Standard acceptance/coverage/results sets match exactly; compact uses existing change/verification tables without extra reports. Manual AC need specific protocols/real observations, never AI signatures. Automated AC map to relevant Quality blocking checks/actual executions. Zero/all-skipped/irrelevant checks, empty scope, unknowns/timeouts/drift cannot PASS. DEV self-tests never replace independent QE; dual Gates never replace requirement completeness.
 
-正常完成依 DAG 的所有选中节点批准、终点、无活动阶段和无有效等待/监控条件。短流程 verified/business not_evaluated，启用 CD 时另列实际环境验证范围；analysis_complete 为 not_implemented/not_evaluated；Release 未绑定 CD 为就绪，绑定后还要实际部署校验，不自动授权部署；Learn 的真实观察 accepted/rejected 经人审才可完成，inconclusive 阻塞，rejected 不是业务成功。知识同步状态单列，活动 Hook 仍阻止更新/终结。
+Completion requires all selected DAG nodes approved, terminal node, no active stages/valid waits/monitors. Compact: verified/business not_evaluated; list enabled-CD environment validation separately. analysis_complete: not_implemented/not_evaluated. Unbound Release means readiness; bound CD also needs actual deployment validation without granting deployment rights. Learn needs human-reviewed real accepted/rejected observations; inconclusive blocks, rejected is not success. Knowledge sync is separate; active Hooks block updates/closure.
 
-[直接终结](closure.md) 可结束未完成工作，先实际停所有 worker，保留真实状态，不补造 Gate/部署/业务接受。安装依赖、生产数据、付费、push/merge/deploy 与网络写入均需各自授权；knowledge_publish 仅是已限定的知识发布例外。
+[Direct closure](closure.md) ends unfinished work only after stopping every worker/preserving true status, never inventing Gates/deployment/acceptance. Dependency installation, production data, paid actions, push/merge/deploy/network writes need authorization; knowledge_publish is only its scoped publication exception.
 
-0.13 Standard 与短流程终点为 Implementation Verified Handoff，默认不激活 Release/Learn/Production。Implement 的候选批准只是 Verify 输入，不是已验证完成；TDD、必需测试、两个独立 Reviewer 的同候选 Gate、全 AC、无漂移与必要批准齐全后才设置 state.implementation_verified_handoff。团队明确扩展的发布链和旧工作按原固定图处理。
+0.13 Standard/compact end at Implementation Verified Handoff; Release/Learn/Production default inactive. Implement candidate approval supplies Verify input only. Set state.implementation_verified_handoff only after TDD, required tests, same-candidate Gates from two independent Reviewers, all AC, no drift and required approvals. Explicit team release extensions/old work keep frozen graphs.

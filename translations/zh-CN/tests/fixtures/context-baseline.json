@@ -1,0 +1,11 @@
+{
+  "source_commit": "b726a1e36b06a5f35b6304cf319432b6a7095f07",
+  "unit": "utf8_bytes",
+  "measurement": "Conservative selected method-body sets; excludes templates, business inputs, lock/evidence and host context. Includes the feedback branch in both versions.",
+  "stages": {
+    "scope": {"bytes": 44538, "files": ["prompts/composed-stage.md","workflow/extensions.md","workflow/dag.md","workflow/protocol.md","agents/engineer.md","prompts/scope.md","workflow/knowledge.md"]},
+    "diagnose": {"bytes": 44624, "files": ["prompts/composed-stage.md","workflow/extensions.md","workflow/dag.md","workflow/protocol.md","agents/engineer.md","prompts/diagnose.md","workflow/knowledge.md"]},
+    "implement": {"bytes": 39579, "files": ["prompts/composed-stage.md","workflow/extensions.md","workflow/dag.md","workflow/protocol.md","agents/engineer.md","prompts/implement.md","workflow/implementation-feedback.md"]},
+    "verify": {"bytes": 61082, "files": ["prompts/composed-stage.md","workflow/extensions.md","workflow/dag.md","workflow/protocol.md","agents/qe.md","prompts/verify.md","workflow/orchestration.md","prompts/common.md","workflow/knowledge.md","workflow/gates.md","skills/aidlc-fitness-check/SKILL.md"]}
+  }
+}
