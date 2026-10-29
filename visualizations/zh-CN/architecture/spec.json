@@ -1,0 +1,399 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "aidlc-agents · 交付架构",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1320,
+      800
+    ],
+    "repository": {
+      "url": "https://github.com/xuhongjia/aidlc-agents",
+      "revision": "1015e2b9a0369d70b5c0c52116721626b120624e"
+    }
+  },
+  "components": [
+    {
+      "id": "owners",
+      "type": "frontend",
+      "label": "业务角色与审批人",
+      "sublabel": "PO / DEV / QA · 可一人兼任",
+      "pos": [
+        40,
+        80
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "workflow/role-delivery.md",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "id": "method",
+      "type": "database",
+      "label": "版本化方法包",
+      "sublabel": "Skills · Prompts · DAG · Templates",
+      "tag": "runtime=none",
+      "pos": [
+        370,
+        80
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "workflow/extensions.md",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "id": "architecture_review",
+      "type": "security",
+      "label": "Architecture Reviewer",
+      "sublabel": "独立验证架构 Fitness",
+      "pos": [
+        700,
+        80
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "workflow/gate-execution.md",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "id": "quality_review",
+      "type": "security",
+      "label": "Quality Reviewer",
+      "sublabel": "独立验证 AC / 测试 / QA 证据",
+      "pos": [
+        1030,
+        340
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "workflow/gate-execution.md",
+          "line": 11
+        }
+      ]
+    },
+    {
+      "id": "coordinator",
+      "type": "backend",
+      "label": "父协调器",
+      "sublabel": "路由 · 派发 · 审批与状态",
+      "tag": "唯一状态写入者",
+      "pos": [
+        40,
+        340
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "workflow/orchestration.md",
+          "line": 7
+        },
+        {
+          "path": "workflow/role-delivery.md",
+          "line": 39
+        }
+      ]
+    },
+    {
+      "id": "stage_workers",
+      "type": "backend",
+      "label": "阶段子 Agent",
+      "sublabel": "每阶段新上下文 · 按需加载",
+      "tag": "TDD 仅在 Implement",
+      "pos": [
+        370,
+        340
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "workflow/worker.md",
+          "line": 13
+        },
+        {
+          "path": "workflow/worker.md",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "id": "work_records",
+      "type": "database",
+      "label": "冻结工作档案",
+      "sublabel": "候选 · 规则 · 审批 · 原始证据",
+      "pos": [
+        700,
+        340
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "workflow/extensions.md",
+          "line": 62
+        },
+        {
+          "path": "workflow/worker.md",
+          "line": 20
+        }
+      ]
+    },
+    {
+      "id": "collector",
+      "type": "backend",
+      "label": "独立 Verify Collector",
+      "sublabel": "核对双 Gate · AC · 证据完整性",
+      "pos": [
+        1030,
+        80
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "workflow/orchestration.md",
+          "line": 32
+        },
+        {
+          "path": "workflow/gate-execution.md",
+          "line": 21
+        }
+      ]
+    },
+    {
+      "id": "confluence",
+      "type": "external",
+      "label": "Confluence 知识库",
+      "sublabel": "批准快照 · TWG 单向发布",
+      "tag": "可选",
+      "pos": [
+        40,
+        620
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "docs/knowledge-publishing.md",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "jira",
+      "type": "external",
+      "label": "Jira",
+      "sublabel": "业务 Story · 共享用例 · 结果摘要",
+      "tag": "可选",
+      "pos": [
+        370,
+        620
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "adapters/collaboration/jira.md",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "id": "gitlab",
+      "type": "external",
+      "label": "GitLab / 公司 CI/CD",
+      "sublabel": "技术 Spec · 脚本 · 构建与部署证据",
+      "tag": "可选",
+      "pos": [
+        700,
+        620
+      ],
+      "size": [
+        230,
+        86
+      ],
+      "sources": [
+        {
+          "path": "adapters/delivery/gitlab.md",
+          "line": 17
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "由宿主 AI 工具执行 · 文件 / 命令 / 子 Agent / 连接器",
+      "wraps": [
+        "owners",
+        "method",
+        "architecture_review",
+        "quality_review",
+        "coordinator",
+        "stage_workers",
+        "work_records",
+        "collector"
+      ],
+      "pad": 26
+    }
+  ],
+  "connections": [
+    {
+      "id": "owners_coord",
+      "from": "owners",
+      "to": "coordinator",
+      "label": "需求 / 审批",
+      "variant": "emphasis",
+      "labelAt": [
+        155,
+        245
+      ]
+    },
+    {
+      "id": "method_coord",
+      "from": "method",
+      "to": "coordinator",
+      "label": "冻结规则"
+    },
+    {
+      "id": "coord_workers",
+      "from": "coordinator",
+      "to": "stage_workers",
+      "label": "限定派发",
+      "variant": "emphasis",
+      "labelDy": 20
+    },
+    {
+      "id": "workers_records",
+      "from": "stage_workers",
+      "to": "work_records",
+      "label": "候选 / 证据",
+      "variant": "emphasis"
+    },
+    {
+      "id": "records_arch",
+      "from": "work_records",
+      "to": "architecture_review",
+      "label": "同一候选",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "records_quality",
+      "from": "work_records",
+      "to": "quality_review",
+      "label": "同一候选",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "arch_collector",
+      "from": "architecture_review",
+      "to": "collector",
+      "label": "架构报告",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "quality_collector",
+      "from": "quality_review",
+      "to": "collector",
+      "label": "质量报告",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "coord_knowledge",
+      "from": "coordinator",
+      "to": "confluence",
+      "label": "独立同步子 Agent",
+      "variant": "dashed",
+      "labelAt": [
+        155,
+        520
+      ]
+    },
+    {
+      "id": "jira_workers",
+      "from": "jira",
+      "to": "stage_workers",
+      "label": "需求 / 用例",
+      "variant": "dashed"
+    },
+    {
+      "id": "gitlab_records",
+      "from": "gitlab",
+      "to": "work_records",
+      "label": "读取 / 等待",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "执行方式",
+      "items": [
+        "父协调器派发全部子 Agent，收集结果后推进。",
+        "隔离上下文不等于宿主权限隔离。"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "按任务选流程",
+      "items": [
+        "standard / fix / enhance；团队可组合 DAG。",
+        "可选 PO → DEV → QA；QA 证据齐备后正式双 Gate。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "交付终点",
+      "items": [
+        "双 Gate + 逐项 AC + 真实批准 → Verified Handoff。",
+        "公司流水线保持外部；不自动 Done 或发布生产。"
+      ]
+    }
+  ]
+}

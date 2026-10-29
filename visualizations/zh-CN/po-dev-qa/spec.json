@@ -1,0 +1,366 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "PO → DEV → QA · 需求到验证交接",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "frontend": {
+          "label": "业务与用例设计"
+        },
+        "backend": {
+          "label": "工程与测试执行"
+        },
+        "security": {
+          "label": "审批或独立检查"
+        },
+        "database": {
+          "label": "冻结输入"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "prepare",
+      "label": "准备 · PRD / Story / Cases"
+    },
+    {
+      "id": "design",
+      "label": "准入与设计"
+    },
+    {
+      "id": "execute",
+      "label": "实现 / 架构审查"
+    },
+    {
+      "id": "review",
+      "label": "QA 执行 / 证据汇总"
+    },
+    {
+      "id": "accept",
+      "label": "用例变更 / 质量审查 / 最终确认"
+    }
+  ],
+  "phases": [
+    {
+      "id": "business",
+      "label": "① 业务意图",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "baseline",
+      "label": "② 批准基线",
+      "fromCol": 2,
+      "toCol": 2,
+      "variant": "security"
+    },
+    {
+      "id": "build",
+      "label": "③ 实现 / QA",
+      "fromCol": 3,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "gate",
+      "label": "④ 双 Gate / 最终验收",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "security"
+    }
+  ],
+  "mainPath": [
+    "prd",
+    "story",
+    "cases",
+    "intake",
+    "technical",
+    "implement",
+    "qa",
+    "architecture",
+    "collector",
+    "acceptance"
+  ],
+  "nodes": [
+    {
+      "id": "prd",
+      "lane": "prepare",
+      "col": 0,
+      "type": "frontend",
+      "label": "PO · PRD",
+      "sublabel": "BRD → PRD / FR / NFR",
+      "tag": "① PO 批准 PRD",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "story",
+      "lane": "prepare",
+      "col": 1,
+      "type": "frontend",
+      "label": "PO · Jira Story",
+      "sublabel": "PRD → Story / AC / 来源",
+      "tag": "② PO 批准 Story / AC",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "cases",
+      "lane": "prepare",
+      "col": 2,
+      "type": "frontend",
+      "label": "QA · 共享 Test Case",
+      "sublabel": "Story / AC → Cases / 数据 / 预期",
+      "tag": "③ QA 批准用例版本",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "intake",
+      "lane": "design",
+      "col": 2,
+      "type": "database",
+      "label": "Intake · 接收基线",
+      "sublabel": "批准快照 → 锁定基线",
+      "tag": "按角色确认准入",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "technical",
+      "lane": "design",
+      "col": 3,
+      "type": "backend",
+      "label": "DEV · 技术设计",
+      "sublabel": "AC / Cases → Spec / 任务 / 规则",
+      "tag": "④ 技术负责人 / QA 分责批准",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "implement",
+      "lane": "execute",
+      "col": 3,
+      "type": "backend",
+      "label": "DEV · Implement",
+      "sublabel": "Spec → 代码 / 脚本 / 候选",
+      "tag": "⑤ 技术负责人确认待测版",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "qa",
+      "lane": "review",
+      "col": 3,
+      "type": "backend",
+      "label": "QA · UI / 人工测试",
+      "sublabel": "候选 / Cases → 逐项测试结果",
+      "tag": "⑥ QA 确认执行结果",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "architecture",
+      "lane": "execute",
+      "col": 4,
+      "type": "security",
+      "label": "独立 Architecture Gate",
+      "sublabel": "候选 / 规则 → 架构报告",
+      "tag": "独立 Reviewer",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "quality",
+      "lane": "accept",
+      "col": 4,
+      "type": "security",
+      "label": "独立 Quality Gate",
+      "sublabel": "候选 / 测试 / QA → 质量报告",
+      "tag": "独立 Reviewer",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "collector",
+      "lane": "review",
+      "col": 5,
+      "type": "backend",
+      "label": "Verify · 汇总核验",
+      "sublabel": "双 Gate / AC / 证据 → 审查包",
+      "tag": "全新独立 Collector",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "acceptance",
+      "lane": "accept",
+      "col": 5,
+      "type": "security",
+      "label": "最终批准 → 验证交接",
+      "sublabel": "批准审查包 → Verified Handoff",
+      "tag": "⑦ 最终责任人批准",
+      "height": 100,
+      "width": 250
+    },
+    {
+      "id": "case_sync",
+      "lane": "accept",
+      "col": 2,
+      "type": "backend",
+      "label": "用例变更 · 受控同步",
+      "sublabel": "已批用例差异 → 脚本变更范围",
+      "tag": "AC 变化先由 PO 批准",
+      "height": 100,
+      "width": 250
+    }
+  ],
+  "edges": [
+    {
+      "id": "prd_story",
+      "from": "prd",
+      "to": "story",
+      "variant": "emphasis"
+    },
+    {
+      "id": "story_cases",
+      "from": "story",
+      "to": "cases",
+      "variant": "emphasis"
+    },
+    {
+      "id": "cases_intake",
+      "from": "cases",
+      "to": "intake",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "intake_technical",
+      "from": "intake",
+      "to": "technical",
+      "variant": "emphasis"
+    },
+    {
+      "id": "technical_implement",
+      "from": "technical",
+      "to": "implement",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "implement_qa",
+      "from": "implement",
+      "to": "qa",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "qa_architecture",
+      "from": "qa",
+      "to": "architecture",
+      "label": "同一冻结候选",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "bottom"
+    },
+    {
+      "id": "qa_quality",
+      "from": "qa",
+      "to": "quality",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "top"
+    },
+    {
+      "id": "architecture_collector",
+      "from": "architecture",
+      "to": "collector",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "top"
+    },
+    {
+      "id": "quality_collector",
+      "from": "quality",
+      "to": "collector",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "left",
+      "via": [
+        [
+          1485,
+          920
+        ],
+        [
+          1485,
+          726
+        ]
+      ]
+    },
+    {
+      "id": "collector_acceptance",
+      "from": "collector",
+      "to": "acceptance",
+      "label": "全部满足",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "qa_case_sync",
+      "from": "qa",
+      "to": "case_sync",
+      "label": "用例改动",
+      "variant": "dashed",
+      "role": "return",
+      "fromSide": "left",
+      "toSide": "top"
+    },
+    {
+      "id": "case_sync_implement",
+      "from": "case_sync",
+      "to": "implement",
+      "label": "授权后返工",
+      "variant": "dashed",
+      "role": "return",
+      "fromSide": "left",
+      "toSide": "left",
+      "route": "return-left"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "共享 Test Case · Jira",
+      "items": [
+        "Story / AC → 一个 Test Design Task：Case ID、数据、步骤、预期、清理。",
+        "QA 批准；DEV 维护关联脚本。变更先评估、按影响重批与复验。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "实现与测试证据 · GitLab",
+      "items": [
+        "技术 Spec / 脚本 / 完整报告留在代码库；TDD 仅 Implement。",
+        "QA 记录用例、候选、环境、数据版本；人工项需真实观察。"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "正式 Verify · QA 证据齐备之后",
+      "items": [
+        "父协调器派发独立双 Reviewer，再派独立 Collector；资源隔离才可并行。",
+        "FAIL / NOT_RUN / 漂移阻止通过。批准绑定身份与版本；不自动 Done / 发布。"
+      ]
+    }
+  ]
+}

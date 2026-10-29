@@ -1,0 +1,42 @@
+diff --git a/renderers/workflow/render-workflow.mjs b/renderers/workflow/render-workflow.mjs
+index 994173d..3d62bad 100644
+--- a/renderers/workflow/render-workflow.mjs
++++ b/renderers/workflow/render-workflow.mjs
+@@ -50,6 +50,6 @@ const layout = {
+-  laneW: 640,
+-  laneH: 104,
+-  laneGap: 20,
+-  laneTitleH: 30,
+-  colXs: [88, 220, 300, 430, 500, 625],
+-  nodeW: 92,
++  laneW: 1740,
++  laneH: 150,
++  laneGap: 44,
++  laneTitleH: 34,
++  colXs: [180, 470, 760, 1050, 1340, 1630],
++  nodeW: 230,
+@@ -64 +64 @@ const autoHeight = layout.laneY
+-const viewBox = workflow.meta?.viewBox || [720, autoHeight];
++const viewBox = workflow.meta?.viewBox || [1820, autoHeight];
+@@ -111,6 +111,6 @@ const nodeTextFit = {
+-  labelPreferred: 11,
+-  labelMinimum: 9,
+-  sublabelPreferred: 8,
+-  sublabelMinimum: 6,
+-  tagPreferred: 7,
+-  tagMinimum: 6,
++  labelPreferred: 17,
++  labelMinimum: 13,
++  sublabelPreferred: 12,
++  sublabelMinimum: 10,
++  tagPreferred: 12,
++  tagMinimum: 11,
+@@ -646 +646 @@ function renderNode(node) {
+-    ? `\n          <text data-detail="context" x="${node.cx}" y="${node.y + 38}" class="t-muted" font-size="${sublabelFontSize}" text-anchor="middle">${esc(node.sublabel)}</text>`
++    ? `\n          <text data-detail="context" x="${node.cx}" y="${node.y + 55}" class="t-muted" font-size="${sublabelFontSize}" text-anchor="middle">${esc(node.sublabel)}</text>`
+@@ -649 +649 @@ function renderNode(node) {
+-    ? `\n        <text data-detail="fine" x="${node.cx}" y="${node.y + node.height - 12}" class="${accent}" font-size="${fittedNodeFontSize(node.tag, node.width, nodeTextFit.tagPreferred, nodeTextFit.tagMinimum)}" text-anchor="middle">${esc(node.tag)}</text>`
++    ? `\n        <text data-detail="context" x="${node.cx}" y="${node.y + node.height - 14}" class="${accent}" font-size="${fittedNodeFontSize(node.tag, node.width, nodeTextFit.tagPreferred, nodeTextFit.tagMinimum)}" text-anchor="middle">${esc(node.tag)}</text>`
+@@ -658 +658 @@ function renderNode(node) {
+-          <text data-node-label=""${hasSub ? ' data-detail-anchor=""' : ''} x="${node.cx}" y="${node.y + 21}" class="t-primary" font-size="${labelFontSize}" font-weight="600" text-anchor="middle">${esc(node.label)}</text>${sub}${tag}
++          <text data-node-label=""${hasSub ? ' data-detail-anchor=""' : ''} x="${node.cx}" y="${node.y + 30}" class="t-primary" font-size="${labelFontSize}" font-weight="600" text-anchor="middle">${esc(node.label)}</text>${sub}${tag}

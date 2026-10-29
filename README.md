@@ -6,6 +6,8 @@ AI-assisted, Spec-driven, Human-governed. No Python installer, extra Agent CLI, 
 
 English primary · [Original Chinese snapshot](translations/zh-CN/README.md) · [Archive notes](translations/README.md). The pre-English archive is neither installed automatically nor kept in sync.
 
+[Visual guides](visualizations/README.md): delivery architecture and PO / DEV / QA workflow, with interactive HTML and image previews (Simplified Chinese).
+
 ## Where to start
 
 | Your situation | Guide | First action |

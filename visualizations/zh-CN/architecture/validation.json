@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "source_revision": "1015e2b9a0369d70b5c0c52116721626b120624e",
+  "renderer": {
+    "name": "Archify",
+    "version": "2.16",
+    "layout_patch": null
+  },
+  "specification": {
+    "path": "spec.json",
+    "sha256": "02d123fb61982a2d9f0125baabed49fb8356bb0e027eaf39daf02565b6714c1e",
+    "bytes": 8160
+  },
+  "artifact": {
+    "path": "index.html",
+    "sha256": "f4aec473267a7dfb73ccecb3872a56637663a30d66261a7a9e0fb091febc6823",
+    "bytes": 717360
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "visual_review": {
+    "status": "passed",
+    "correction_rounds": 2,
+    "reviewed_themes": [
+      "light",
+      "dark"
+    ],
+    "reviewed_screenshot_sizes": [
+      [
+        1440,
+        900
+      ],
+      [
+        2048,
+        1320
+      ]
+    ],
+    "containment": [
+      {
+        "width": 1440,
+        "height": 900,
+        "ok": true,
+        "overflowX": false,
+        "overflowY": false
+      },
+      {
+        "width": 1600,
+        "height": 1000,
+        "ok": true,
+        "overflowX": false,
+        "overflowY": false
+      },
+      {
+        "width": 1920,
+        "height": 1080,
+        "ok": true,
+        "overflowX": false,
+        "overflowY": false
+      },
+      {
+        "width": 2048,
+        "height": 1320,
+        "ok": true,
+        "overflowX": false,
+        "overflowY": false
+      }
+    ],
+    "preview": {
+      "path": "preview.png",
+      "sha256": "cfa80d3a95f67be3b3e5ec63816142287180fec5d39561a78e9051123fae3b56"
+    },
+    "note": "Summary of successful tool receipts and separate screenshot inspection; only the large light-theme preview is included. Interactive export behavior was not tested."
+  }
+}
