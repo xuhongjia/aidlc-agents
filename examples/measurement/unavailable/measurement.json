@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "measurement_id": "demo-measurement-1",
+  "work_id": "demo-work",
+  "business_root_id": "demo-root",
+  "observed_at": "2026-01-01T10:00:00Z",
+  "policy_ref": null,
+  "expected_head": {
+    "sequence": 1,
+    "event_hash": "563fa226036b99196dd6516909ccb916a8506bd57db8627be03a2a46380106b1"
+  },
+  "baseline": {
+    "kind": "none",
+    "hours": null,
+    "scope_ids": [],
+    "provenance": null,
+    "source_refs": [],
+    "comparability": []
+  },
+  "actual": {
+    "scope_ids": [],
+    "coverage": "unknown",
+    "all_team_roles_confirmed": false,
+    "review_rework_included": false,
+    "zero_attested": false,
+    "source_refs": [],
+    "entries": []
+  },
+  "overhead": {
+    "coverage": "unknown",
+    "excluded_from_actual_confirmed": false,
+    "zero_attested": false,
+    "source_refs": [],
+    "entries": []
+  },
+  "cycle": {
+    "intake_event_id": "demo-intake-1",
+    "final_verify_event_id": null,
+    "workflow_ref": null,
+    "review_ref": null,
+    "approval_ref": null,
+    "candidate_ref": null,
+    "waiting_coverage": "unknown",
+    "waiting_zero_attested": false,
+    "waiting_source_refs": [],
+    "waiting": []
+  },
+  "cost": {
+    "coverage": "unknown",
+    "all_inputs_included": false,
+    "currency": null,
+    "accepted_work_units": null,
+    "zero_attested": false,
+    "source_refs": [],
+    "entries": []
+  },
+  "quality": {
+    "status": "unavailable",
+    "window_start": null,
+    "window_end": null,
+    "matured": null,
+    "artifact_ids": [],
+    "source_refs": []
+  }
+}

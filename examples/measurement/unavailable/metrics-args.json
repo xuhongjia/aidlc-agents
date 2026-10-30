@@ -1,0 +1,13 @@
+{
+  "request": {
+    "work_id": "demo-work",
+    "ledger_ref": {
+      "path": "events.jsonl",
+      "sha256": "e00600ee772d4c868ca472ff6ee98777d3ab745b0837e76b57af18cc2e7560fa"
+    },
+    "measurement_ref": {
+      "path": "measurement.json",
+      "sha256": "b12defa0aa71160b0c8ce9d57ad9aa4ac4d371613de8425039753a23c0207e37"
+    }
+  }
+}

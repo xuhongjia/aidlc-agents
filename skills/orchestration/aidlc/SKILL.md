@@ -24,6 +24,7 @@ Software delivery action requests enter by default, without an AIDLC keyword or 
 | BRD to PRD / standardize requirements / design-review cases | Respectively skills/role-collaboration/aidlc-prd/SKILL.md, skills/role-collaboration/aidlc-story/SKILL.md, skills/role-collaboration/aidlc-test-design/SKILL.md; chosen entry only |
 | QA testing / sync cases or results | Respectively skills/role-collaboration/aidlc-qa/SKILL.md, skills/sync-publication/aidlc-test-sync/SKILL.md; verify the original handoff, no duplicate delivery |
 | Status | Specified work state/evidence; clarify ambiguous work identity, no worker |
+| Metrics / AI efficiency report | skills/sync-publication/aidlc-metrics/SKILL.md; read source-backed work records, compute locally, no delivery or publication |
 | Approval only | Original review/approval/candidate, workflow/approval.md and workflow/identity.md; stop without continuation authority |
 | Close / closing / closed | workflow/closure.md; do not mark closed before workers stop |
 | Retry knowledge publication | workflow/knowledge-publish.md; verify original snapshot/grant, do not restart delivery |
@@ -46,3 +47,5 @@ Load workflow/implementation-feedback.md only for feedback_request with nonzero 
 Load only when triggered: Verify parent checks → workflow/gates.md; identity refresh → identity; knowledge approval/promotion → .aidlc/system/workflow/knowledge.md; publication → separate Hook; Release/Learn evidence → external-evidence. Stages/leaves/Hooks all count toward capacity and update blocking.
 
 Graph/responsibility/grant changes preserve snapshots and require reconfirmation. Never redispatch completed work or revive closed grants. This host cooperation protocol is not an unbypassable permission system.
+
+For new measurement-enabled locks, lifecycle edges follow workflow/measurement.md through the existing parent. Record actual sources and unavailable data, not estimates disguised as facts; no extra worker or default full-log reads.

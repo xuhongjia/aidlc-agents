@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "event_id": null,
+  "work_id": null,
+  "sequence": 1,
+  "occurred_at": null,
+  "recorded_at": null,
+  "actor": { "kind": null, "id": null },
+  "type": null,
+  "step_id": null,
+  "run_id": null,
+  "attempt": null,
+  "candidate_ref": null,
+  "source_refs": [],
+  "corrects_event_id": null,
+  "prev_hash": null,
+  "event_hash": null
+}

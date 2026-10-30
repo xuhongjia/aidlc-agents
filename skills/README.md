@@ -1,6 +1,6 @@
 # Skills by category and stage
 
-31 Skills, each in one category; stages below are navigation, not required execution order. Browse this page or [catalog.json](catalog.json) on demand. Children load only current dispatch resources under the locked workflow and grants, never all Skill bodies.
+32 Skills, each in one category; stages below are navigation, not required execution order. Browse this page or [catalog.json](catalog.json) on demand. Children load only current dispatch resources under the locked workflow and grants, never all Skill bodies.
 
 | Category | Skill | Stage / purpose |
 |---|---|---|
@@ -33,8 +33,9 @@
 | | [incremental-implementation](reusable-capability/incremental-implementation/SKILL.md) | Implement only: independently testable behavior slices |
 | | [debugging-and-error-recovery](reusable-capability/debugging-and-error-recovery/SKILL.md) | Implement failures, on demand; no additional repair authority |
 | | [code-review-and-quality](reusable-capability/code-review-and-quality/SKILL.md) | Implement self-review, on demand; no independent Gate authority |
-| sync-publication (2) | [aidlc-knowledge-sync](sync-publication/aidlc-knowledge-sync/SKILL.md) | Approved Verify/Learn publication Hook or explicit retry |
+| sync-publication (3) | [aidlc-knowledge-sync](sync-publication/aidlc-knowledge-sync/SKILL.md) | Approved Verify/Learn publication Hook or explicit retry |
 | | [aidlc-test-sync](sync-publication/aidlc-test-sync/SKILL.md) | Explicit case/result sync or DEV continuation check |
+| | [aidlc-metrics](sync-publication/aidlc-metrics/SKILL.md) | Requested evidence-backed metrics; local report only, no delivery or publication |
 
 ## Execution boundaries
 

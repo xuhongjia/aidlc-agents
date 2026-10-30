@@ -1,6 +1,6 @@
 {
   "contract_version": 1,
-  "execution_assets": ["workflow/execution.md", "workflow/execution-policy.json", "workflow/review-cards.json", "helpers/execution-policy.mjs", "helpers/prepare-execution.mjs", "helpers/review-cards.mjs", "helpers/validate-work.mjs", "templates/work/execution-dispatch.json", "templates/work/execution-receipt.json", "templates/work/validation-request.json", "templates/work/validation-evidence.json", "templates/work/validation-requirements.json", "templates/work/host-check.json", "helpers/check.mjs", "templates/work/helper-request.json"],
+  "execution_assets": ["workflow/execution.md", "workflow/execution-policy.json", "workflow/review-cards.json", "helpers/execution-policy.mjs", "helpers/prepare-execution.mjs", "helpers/review-cards.mjs", "helpers/validate-work.mjs", "templates/work/execution-dispatch.json", "templates/work/execution-receipt.json", "templates/work/validation-request.json", "templates/work/validation-evidence.json", "templates/work/validation-requirements.json", "templates/work/host-check.json", "helpers/check.mjs", "templates/work/helper-request.json", "workflow/measurement.md", "helpers/measurement.mjs", "templates/work/evidence-event.json", "templates/work/measurement.json", "skills/sync-publication/aidlc-metrics/SKILL.md"],
   "common": ["prompts/composed-stage.md", "workflow/worker.md"],
   "by_kind": {
     "design": ["workflow/gate-design.md"],

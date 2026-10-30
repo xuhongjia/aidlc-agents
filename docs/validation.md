@@ -1,5 +1,21 @@
 # Validation records
 
+## 0.17.0: retained evidence, descriptive metrics and English architecture
+
+Validation date: 2026-10-30. Local working-tree implementation; no release, commit/push, business rollout or enterprise data collection was performed by this change.
+
+| Check | Result and boundary |
+|---|---|
+| Full regression | **363/363 PASS**, zero failures/skips; `node --test tests/*.test.mjs`. Adds 71 measurement cases/subcases and 2 fixed-entry tests to the prior 290; existing Gate/context checks also cover frozen measurement assets |
+| Actual helper execution | Temporary files and the fixed CLI verify whole-file hashes, source references, ledger chains/head anchors, duplicates/corrections, safe paths, work identity, missing/zero inputs, baseline scope/risk, provenance, overlap, waits, currency and quality windows. Files remain unchanged; helper grants no approval or Gate PASS |
+| Completion and effort | Unaccepted/cancelled work cannot claim savings. Later changed-candidate evidence invalidates current accepted savings/unit cost; historic cycle may remain separately visible. Future effort is rejected; native/self-reported subtotals and missing counts remain distinct; negative differences remain negative |
+| Fixed entry / synthetic example | `metrics` supports bounded summaries and complete saved results. Replayed summaries remain historical. The bundled unavailable example executes with all ten metrics null, not invented zeros; synthetic fixtures are not real company evidence |
+| Loading | fix/enhance remain 63,935 / 63,841 declared bytes including templates. Parent-only measurement assets/reporting Skill add no default child reads, delivery stage or Agent per event. Parent protocol/reporting load is separate; actual token comparison **NOT_RUN** |
+| English architecture | **9/9 showcase**, zero errors/warnings; containment at 1440x900, 1600x1000, 1920x1080 and 2048x1320. Light/dark captures and full preview inspected. Receipt records 19 current source hashes plus specification/HTML/preview hashes; historical Chinese diagrams preserved |
+| Real telemetry and AI effect | **NOT_RUN**: no live GitLab/Jira/billing/time collection, full delivery rehearsal, production acceptance or causal AI improvement measurement. Hashes/structural joins require host-verified source authority and independent head retention |
+
+Independent review corrected unknown source times, duplicate observations, missing risk comparisons, unsourced zero waiting, cancelled/stale acceptance, future effort and mixed-provenance totals. Package/link/language checks pass; the optional standalone Skill validator requires unavailable PyYAML, so it was not run successfully and no dependency was installed. See [measurement usage](measurement.md), [synthetic request](../examples/measurement/unavailable/metrics-request.json) and [English architecture](../visualizations/README.md).
+
 ## Default request routing
 
 Validation date: 2026-10-30. Installed bridges now send software delivery action requests to the router without requiring an AIDLC keyword. The parent selects a suitable registered workflow and the existing entry child verifies risk; no extra stage, routing Agent or approval is added.

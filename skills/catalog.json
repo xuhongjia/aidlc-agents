@@ -376,6 +376,13 @@
       "category": "sync-publication",
       "stages": [],
       "scope": "Explicit case/result sync or DEV continuation checks; script changes return to Implement"
+    },
+    {
+      "name": "aidlc-metrics",
+      "path": "skills/sync-publication/aidlc-metrics/SKILL.md",
+      "category": "sync-publication",
+      "stages": [],
+      "scope": "Requested source-backed work metrics and local reports; no delivery or publication"
     }
   ]
 }

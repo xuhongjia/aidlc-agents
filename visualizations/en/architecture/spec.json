@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AIDLC Delivery & Measurement Architecture",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1350,
+      625
+    ]
+  },
+  "components": [
+    {
+      "id": "entry-router",
+      "type": "frontend",
+      "label": "Canonical Router",
+      "sublabel": "Auto: standard / fix / enhance",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "parent-control",
+      "type": "backend",
+      "label": "Parent Coordinator",
+      "sublabel": "Frozen DAG \u00b7 permissions \u00b7 approvals",
+      "pos": [
+        380,
+        40
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "stage-workers",
+      "type": "backend",
+      "label": "Independent Stage Children",
+      "sublabel": "TDD in Implement only",
+      "pos": [
+        720,
+        40
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "frozen-review-candidate",
+      "type": "backend",
+      "label": "Frozen Candidate",
+      "sublabel": "Same evidence for both reviewers",
+      "pos": [
+        1060,
+        250
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "architecture-review",
+      "type": "security",
+      "label": "Architecture Reviewer",
+      "sublabel": "Independent architecture decision",
+      "pos": [
+        720,
+        170
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "quality-review",
+      "type": "security",
+      "label": "Quality Reviewer",
+      "sublabel": "Independent quality decision",
+      "pos": [
+        720,
+        330
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "approval-collector",
+      "type": "security",
+      "label": "Collector + Required Approval",
+      "sublabel": "Independent evidence collection",
+      "pos": [
+        380,
+        250
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "verified-handoff",
+      "type": "frontend",
+      "label": "Implementation Verified Handoff",
+      "sublabel": "Production release is a separate gate",
+      "pos": [
+        40,
+        250
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "source-evidence",
+      "type": "external",
+      "label": "Source Records + Host Receipts",
+      "sublabel": "Tool results \u00b7 receipts \u00b7 human effort",
+      "pos": [
+        40,
+        480
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "readonly-validation",
+      "type": "backend",
+      "label": "Fixed Read-only Helpers",
+      "sublabel": "Validate sources and input structure",
+      "pos": [
+        720,
+        480
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "append-only-ledger",
+      "type": "backend",
+      "label": "Append-only Evidence Ledger",
+      "sublabel": "Events + immutable raw snapshot refs",
+      "pos": [
+        380,
+        480
+      ],
+      "size": [
+        250,
+        76
+      ]
+    },
+    {
+      "id": "measurement-consumer",
+      "type": "frontend",
+      "label": "Measurement Analysis",
+      "sublabel": "On request \u00b7 baseline \u00b7 native usage",
+      "pos": [
+        1060,
+        480
+      ],
+      "size": [
+        250,
+        76
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "route-selection",
+      "from": "entry-router",
+      "to": "parent-control",
+      "label": "select path",
+      "variant": "emphasis"
+    },
+    {
+      "id": "controlled-dispatch",
+      "from": "parent-control",
+      "to": "stage-workers",
+      "label": "dispatch",
+      "variant": "emphasis"
+    },
+    {
+      "id": "freeze-candidate",
+      "from": "stage-workers",
+      "to": "frozen-review-candidate",
+      "label": "freeze",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "top"
+    },
+    {
+      "id": "same-candidate-architecture",
+      "from": "frozen-review-candidate",
+      "to": "architecture-review",
+      "label": "same candidate",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "same-candidate-quality",
+      "from": "frozen-review-candidate",
+      "to": "quality-review",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "architecture-result",
+      "from": "architecture-review",
+      "to": "approval-collector",
+      "label": "review result",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "quality-result",
+      "from": "quality-review",
+      "to": "approval-collector",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "verified-result",
+      "from": "approval-collector",
+      "to": "verified-handoff",
+      "label": "approved",
+      "variant": "emphasis",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "parent-ledger-append",
+      "from": "source-evidence",
+      "to": "append-only-ledger",
+      "label": "parent appends",
+      "variant": "dashed"
+    },
+    {
+      "id": "ledger-validation",
+      "from": "append-only-ledger",
+      "to": "readonly-validation",
+      "label": "read + check",
+      "variant": "dashed"
+    },
+    {
+      "id": "measurement-inputs",
+      "from": "readonly-validation",
+      "to": "measurement-consumer",
+      "label": "derive report",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "left"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Instruction architecture",
+      "items": [
+        "Skills + host tools; no new runtime, service, database, or per-event agent.",
+        "The parent controls the frozen plan and appends source-backed lifecycle events."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Evidence authority",
+      "items": [
+        "Git, Jira, CI/CD and host receipts supply evidence; model-written logs are claims.",
+        "Helpers validate bindings and structure; they do not grant PASS or approval."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Measurement boundary",
+      "items": [
+        "Compare all-role human effort and comparable baselines; retain native usage separately.",
+        "Unknowns remain unknown. Verified handoff does not prove business benefit or AI causality."
+      ]
+    }
+  ]
+}

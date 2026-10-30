@@ -7,9 +7,10 @@ import { summarizeUsage, checkBudget } from './execution-policy.mjs';
 import { prepareExecution, reconcileExecution, verificationPlan } from './prepare-execution.mjs';
 import { selectReviewCards, validateFindings } from './review-cards.mjs';
 import { validateWork } from './validate-work.mjs';
+import { measureWork } from './measurement.mjs';
 
 export const SUMMARY_MAX_BYTES = 2048;
-export const OPERATIONS = Object.freeze(['validate', 'prepare', 'usage', 'budget', 'cards', 'findings', 'reconcile', 'verify-plan', 'summary']);
+export const OPERATIONS = Object.freeze(['validate', 'prepare', 'usage', 'budget', 'cards', 'findings', 'reconcile', 'verify-plan', 'metrics', 'summary']);
 const METRICS = ['input_tokens', 'cached_input_tokens', 'output_tokens', 'tool_output_bytes', 'calls', 'retries', 'noncached_input_tokens'];
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const encode = value => JSON.stringify(value) + '\n';
@@ -68,6 +69,7 @@ const ARGUMENTS = {
   findings: [['findings', 'context'], []],
   reconcile: [['plan', 'receipt', 'expected'], []],
   'verify-plan': [['preflight', 'ids'], []],
+  metrics: [['request'], []],
   summary: [['result_ref'], []]
 };
 function argumentsFor(operation, args) {
@@ -87,13 +89,18 @@ function argumentsFor(operation, args) {
     if (request.invocation_id != null) ensure(typeof request.invocation_id === 'string', 'invalid invocation identity');
   }
   if (operation === 'summary') reference(args.result_ref);
+  if (operation === 'metrics') {
+    fields(args.request, ['work_id', 'ledger_ref', 'measurement_ref'], [], 'measurement request');
+    ensure(typeof args.request.work_id === 'string' && args.request.work_id.length > 0, 'measurement work identity required');
+    reference(args.request.ledger_ref); reference(args.request.measurement_ref);
+  }
 }
 
 function statusFor(operation, result) {
   ensure(object(result), 'invalid helper result');
   if (result.status === 'blocked') return 'blocked';
   const allowed = { validate: ['valid', 'blocked'], prepare: ['prepared', 'blocked'], usage: ['measured', 'unavailable'],
-    budget: ['within_budget', 'blocked'], cards: ['selected', 'needs_assessment'] };
+    budget: ['within_budget', 'blocked'], cards: ['selected', 'needs_assessment'], metrics: ['measured', 'partial', 'unavailable', 'blocked'] };
   if (allowed[operation]) {
     ensure(allowed[operation].includes(result.status), 'invalid helper result status');
     return result.status;
@@ -156,6 +163,7 @@ export function executeRequest(root, requestPath) {
       case 'findings': result = validateFindings(args.findings, args.context); break;
       case 'reconcile': result = reconcileExecution(args.plan, args.receipt, args.expected); break;
       case 'verify-plan': result = verificationPlan(args.preflight, args.ids); break;
+      case 'metrics': result = measureWork(root, args.request); break;
     }
   } catch (error) {
     result = { status: 'blocked', blockers: [error?.code ? 'input file unavailable or unsafe' : error.message] };
@@ -214,6 +222,18 @@ export function summarizeResult(envelope, storedResultSha256 = null) {
   if (r.verify) summary.verify = { eligible: r.verify.eligible === true, mode: short(r.verify.mode, 32), host_attested: r.verify.host_attested === true };
   if (envelope.operation === 'verify-plan') summary.mode = short(r.mode, 32);
   if (envelope.operation === 'reconcile') summary.model_verified = r.model_verified === true;
+  if (envelope.operation === 'metrics') {
+    summary.measurement = {
+      work_id: short(r.work_id, 64), comparison_basis: short(r.comparison_basis, 48), causal_proof: false,
+      events: r.ledger?.event_count ?? null, sources: r.ledger?.source_count ?? null, issues: count(r.issues),
+      currency: r.coverage?.cost?.currency == null ? null : short(r.coverage.cost.currency, 12),
+      effort_basis: r.coverage?.actual?.aggregate_basis == null ? null : short(r.coverage.actual.aggregate_basis, 40),
+      metrics: Object.fromEntries(['baseline_hours', 'actual_human_hours', 'overhead_hours', 'net_hours_saved',
+        'net_savings_percent', 'cycle_hours', 'waiting_hours', 'active_cycle_hours', 'total_actual_cost', 'cost_per_accepted_work']
+        .map(key => [key, Number.isFinite(r.metrics?.[key]) ? r.metrics[key] : null])),
+      quality_status: short(r.quality?.status, 40), detail_in_full_result: true
+    };
+  }
   // Fixed schema normally fits. Keep counts and explicit omission if optional samples must shrink.
   for (const group of [summary.warnings, summary.blockers]) {
     while (Buffer.byteLength(encode(summary)) > SUMMARY_MAX_BYTES && group.sample.length) {

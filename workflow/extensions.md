@@ -4,6 +4,8 @@ Optional 0.15 [role-team](../examples/team-packs/role-team/README.md) adds no ki
 
 New 0.16 work freezes [execution](execution.md) policy/catalog/helper assets and structural requirements under lock.execution. Namespace refs may select team/project replacements; unknown roles need explicit mappings, Gate/collector floors remain medium. Model settings, budgets or cards cannot change stage capabilities/approval duties. Old locks lacking execution retain original behavior; no model/receipt/approval migration.
 
+New 0.17 work sets lock.measurement={contract_version:1,protocol_ref:"core:workflow/measurement.md"}, resolved through frozen assets. [Measurement](measurement.md) uses existing parent events and evidence; its bodies remain parent-only. Preserve original locks without backfilled collection history or inferred effort. Measurement revisions retain source and baseline versions and grant no delivery authority.
+
 New 0.10 work resolves here/executes under [DAG](dag.md), retaining 0.9 contract_version=1. runtime=none: host AI reads/hashes/validates/dispatches; maintainer models are not installers/runtimes/permission systems. Existing work retains [original method](legacy.md), never invented locks/migrated approvals/new budgets.
 
 ## Three definition layers without core edits

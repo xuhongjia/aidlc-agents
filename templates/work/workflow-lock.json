@@ -11,6 +11,7 @@
   "delivery": null,
   "collaboration": null,
   "execution": null,
+  "measurement": null,
   "assets": [],
   "selection_evidence": [],
   "path_checks": []

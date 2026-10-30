@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "operation": "metrics",
+  "args_ref": {
+    "path": "metrics-args.json",
+    "sha256": "af74ee093221af5cff91d742ea3a7df622b744b627b9d04fccf6a3d408a772c6"
+  }
+}

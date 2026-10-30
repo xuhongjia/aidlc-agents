@@ -34,6 +34,7 @@ The host creates the parameter file, computes its digest, and supplies the reque
 | `findings` | `{findings, context}` | `validateFindings` |
 | `reconcile` | `{plan, receipt, expected}` | `reconcileExecution` |
 | `verify-plan` | `{preflight, ids}` | `verificationPlan` |
+| `metrics` | `{request: {work_id, ledger_ref, measurement_ref}}` | `measureWork`; both file references use `{path, sha256}`; see [measurement](measurement.md) |
 | `summary` | `{result_ref: {path, sha256}}` | Verify and summarize a previously stored full result; no original helper rerun |
 
 Request/reference keys and operation parameter keys are closed: unknown keys, operations, missing fields and wrong container types fail. Nested domain data keeps the existing helpers' validation contracts. A validation request has `schema_version`, `operation`, `dispatch_ref` and optional `invocation_id`/`host_receipt_ref`. Parameters are data, never executable code. A parameter digest binds the supplied data; it does not prove that a policy, receipt, finding or approval came from an authorized source.

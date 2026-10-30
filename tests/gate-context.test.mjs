@@ -126,8 +126,10 @@ test('all three actual read sets retain shared independence, authority, candidat
   assert.doesNotMatch(read(collector.slice(5)).toString(), /workflow\/gate-reviewer\.md/);
 });
 
-test('new helper assets freeze without joining default child instructions', () => {
-  for (const file of ['helpers/check.mjs', 'templates/work/helper-request.json']) {
+test('helper and measurement assets freeze without joining default child instructions', () => {
+  for (const file of ['helpers/check.mjs', 'templates/work/helper-request.json', 'helpers/measurement.mjs',
+    'workflow/measurement.md', 'templates/work/evidence-event.json', 'templates/work/measurement.json',
+    'skills/sync-publication/aidlc-metrics/SKILL.md']) {
     assert.ok(context.execution_assets.includes(file));
     for (const plan of [instructionPlan(context, verify, {}), leafPlan('architecture'), leafPlan('quality')]) {
       assert.ok(!refs(plan).includes('core:' + file));

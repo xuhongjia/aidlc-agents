@@ -295,9 +295,9 @@ test('all JSON artifacts parse, templates start without fabricated approvals or 
   assert.equal(Object.hasOwn(json('templates/work/review.json'), 'digest'), false, 'No self-referential manifest hash');
 });
 
-test('thirty-one unique skills have valid discovery metadata', () => {
+test('thirty-two unique skills have valid discovery metadata', () => {
   const skillFiles = all.filter(file => path.basename(file) === 'SKILL.md');
-  assert.equal(skillFiles.length, 31);
+  assert.equal(skillFiles.length, 32);
   const names = new Set();
   for (const file of skillFiles) {
     const text = readFileSync(file, 'utf8');
@@ -317,7 +317,7 @@ test('Skill catalog categories and paths exactly match the physical package layo
   const categories = skillCatalog.categories.map(category => category.id);
   assert.deepEqual(categories.toSorted(), ['orchestration', 'reusable-capability', 'role-collaboration', 'setup', 'stage-entry', 'sync-publication']);
   assert.equal(skillCatalog.purpose, 'navigation-only');
-  assert.equal(new Set(skillCatalog.skills.map(skill => skill.name)).size, 31);
+  assert.equal(new Set(skillCatalog.skills.map(skill => skill.name)).size, 32);
   assert.equal(new Set(skillCatalog.skills.map(skill => skill.path)).size, skillCatalog.skills.length);
   assert.deepEqual(readdirSync(path.join(root, 'skills'), { withFileTypes: true })
     .filter(entry => entry.isDirectory()).map(entry => entry.name).sort(), categories.toSorted());

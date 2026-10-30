@@ -21,6 +21,8 @@ Host tools verify complete workflow_ref before returning this node/definition/re
 
 For 0.16 freeze execution policy/catalog, every card/source and helper module without injecting their bodies. Parent derives review_cards from the locked catalog and evidenced risk/path assessment, verifies selected assets, and appends assigned Reviewer card refs (purpose=review-card) plus their source refs (purpose=review-card-source), deduplicating existing required reads. No cards on other leaves/stages; mandatory team instructions remain. Record unmatched/unknown risks for assessment, never infer clearance. Model policy and usage are parent metadata, not another child read list.
 
+0.17 additionally freezes measurement protocol/helper/templates and reporting Skill through execution_assets. Only the parent records lifecycle events; the reporting Skill loads on explicit request. Do not add measurement bodies or full ledgers to child instruction_refs. Retain raw evidence in files and show bounded tool summaries.
+
 Unknown kinds/capabilities, missing reads, illegal/symlink paths, changed frozen bytes or mismatched producers/approvals/authority block. After collection parent still checks complete candidates/required checks/raw evidence/failure lineage. Valid read lists grant no stage/Gate pass.
 
 ## Output and measurement

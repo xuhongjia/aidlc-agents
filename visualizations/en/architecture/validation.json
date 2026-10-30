@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "source_provenance": {
+    "kind": "current_working_tree",
+    "base_revision": "9607217288f8319ff11a61220c03e4d50de91efe",
+    "note": "Base revision identifies the checkout foundation; source hashes below bind current working-tree bytes, including unpublished 0.17 changes. This is not a release, committed state, deployment or successful business-outcome claim.",
+    "assets": [
+      {
+        "path": "adapters/README.md",
+        "sha256": "ea5ea182875424d51aa1aa290711327056a964c00c6fa46f2b7cd1555197aebe",
+        "bytes": 3342,
+        "nodes": [
+          "entry-router"
+        ]
+      },
+      {
+        "path": "agents/architecture-gate-reviewer.md",
+        "sha256": "b7909e19a481d10aa50c01b397ab3c7baf3758933e15b3b59dfd59d9c4a82347",
+        "bytes": 655,
+        "nodes": [
+          "architecture-review"
+        ]
+      },
+      {
+        "path": "agents/quality-gate-reviewer.md",
+        "sha256": "b688c071118384cd312acca934fff6580f87d534961d4d1ed34f92d12d66948c",
+        "bytes": 736,
+        "nodes": [
+          "quality-review"
+        ]
+      },
+      {
+        "path": "docs/helper-usage.md",
+        "sha256": "69af5fa9f18ff2571ac3eb77bdd7eb2f0fd9f5d4db36847d46b0ec60dd770163",
+        "bytes": 5248,
+        "nodes": [
+          "readonly-validation"
+        ]
+      },
+      {
+        "path": "docs/measurement.md",
+        "sha256": "fe518aa9bd0956f7f17184f133a48a74ec17c645eb66e5ea7e0e21f380bd9c55",
+        "bytes": 11840,
+        "nodes": [
+          "measurement-consumer"
+        ]
+      },
+      {
+        "path": "helpers/measurement.mjs",
+        "sha256": "0f993a2ebeea50e32a0b1fa30f00e3f70e719aa4d1b92adc5c8e4751bf79f057",
+        "bytes": 31664,
+        "nodes": [
+          "readonly-validation"
+        ]
+      },
+      {
+        "path": "skills/orchestration/aidlc/SKILL.md",
+        "sha256": "43a212a920f3cdcee617ccf92d9a4b8bb37ee28388931d7e6444283470a3b986",
+        "bytes": 5972,
+        "nodes": [
+          "entry-router"
+        ]
+      },
+      {
+        "path": "skills/sync-publication/aidlc-metrics/SKILL.md",
+        "sha256": "14651d8625f326461f477e250f8c6b2091fc8da8df6de3a71b412b0d36908322",
+        "bytes": 2275,
+        "nodes": [
+          "measurement-consumer"
+        ]
+      },
+      {
+        "path": "templates/work/evidence-event.json",
+        "sha256": "20aeb0064eb4c31b8defe5e3debf64db9c09c7369eb3f0e6f5ad6045f9065811",
+        "bytes": 359,
+        "nodes": [
+          "append-only-ledger"
+        ]
+      },
+      {
+        "path": "templates/work/measurement.json",
+        "sha256": "e39a9cd614a40f43faf729aed332fa8628e67c388a51e84656ae2ef4c65da980",
+        "bytes": 1401,
+        "nodes": [
+          "append-only-ledger"
+        ]
+      },
+      {
+        "path": "workflow/approval.md",
+        "sha256": "5540100ade9f9bd44d7132a6f4fa3f02d3e7a5d2751a3f3e30dfb0f96677b3da",
+        "bytes": 7858,
+        "nodes": [
+          "approval-collector"
+        ]
+      },
+      {
+        "path": "workflow/external-evidence.md",
+        "sha256": "7d3065d29a4ca166f3015617388c40c452d29cea118cb5432598385d60c1ebe0",
+        "bytes": 6948,
+        "nodes": [
+          "source-evidence"
+        ]
+      },
+      {
+        "path": "workflow/gate-collector.md",
+        "sha256": "9c80256d5ea74b0597433c90028131002f8c32978375303c8b3057babcd08232",
+        "bytes": 1617,
+        "nodes": [
+          "approval-collector"
+        ]
+      },
+      {
+        "path": "workflow/gate-execution.md",
+        "sha256": "22d9d17ad2586c042a1a97c1ce6d64872e67a4ec8b9d05e8966335f517133550",
+        "bytes": 1239,
+        "nodes": [
+          "frozen-review-candidate"
+        ]
+      },
+      {
+        "path": "workflow/measurement.md",
+        "sha256": "833557204697d03e9c2e278cf47e3ee5109f716ce054dc32739d6bc4ff1616db",
+        "bytes": 12628,
+        "nodes": [
+          "parent-control",
+          "source-evidence",
+          "append-only-ledger"
+        ]
+      },
+      {
+        "path": "workflow/orchestration.md",
+        "sha256": "0de4c447eb130841cc117e25a77861931f1486ff8a6c0d19a13cdee8a89a350e",
+        "bytes": 8147,
+        "nodes": [
+          "parent-control"
+        ]
+      },
+      {
+        "path": "workflow/role-delivery.md",
+        "sha256": "7c59595e69e0d119bc19e4b274a1710686f8aa1ccfee771001979d0d7e5bdd8f",
+        "bytes": 11962,
+        "nodes": [
+          "verified-handoff"
+        ]
+      },
+      {
+        "path": "workflow/tdd.md",
+        "sha256": "f8264bd274ea70986385d62cafb1a678e03406c10c070eada192988b39bf9347",
+        "bytes": 4713,
+        "nodes": [
+          "stage-workers"
+        ]
+      },
+      {
+        "path": "workflow/worker.md",
+        "sha256": "f73ed7d4390684c4a527f293aec9096e5384ed4de15a34d7e07ad9c8f5181434",
+        "bytes": 3720,
+        "nodes": [
+          "stage-workers"
+        ]
+      }
+    ],
+    "method_version": "0.17 local working tree"
+  },
+  "renderer": {
+    "name": "Archify",
+    "version": "2.16",
+    "layout_patch": null
+  },
+  "specification": {
+    "path": "spec.json",
+    "sha256": "82de4192132cfc9eda0f32b7276062c4036c8c0d6c04376e3765dc5038ede62e",
+    "bytes": 6447
+  },
+  "artifact": {
+    "path": "index.html",
+    "sha256": "46754f96e0e83f351c668a66cde764af766b6ee75c29a089e9cd0e7640b31611",
+    "bytes": 712841
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "visual_review": {
+    "status": "passed",
+    "correction_rounds": 2,
+    "reviewed_themes": [
+      "light",
+      "dark"
+    ],
+    "reviewed_screenshot_sizes": [
+      [
+        1440,
+        900
+      ],
+      [
+        2048,
+        1320
+      ]
+    ],
+    "contact_sheet_inspected": true,
+    "containment": [
+      {
+        "width": 1440,
+        "height": 900,
+        "ok": true,
+        "overflowX": false,
+        "overflowY": false
+      },
+      {
+        "width": 1600,
+        "height": 1000,
+        "ok": true,
+        "overflowX": false,
+        "overflowY": false
+      },
+      {
+        "width": 1920,
+        "height": 1080,
+        "ok": true,
+        "overflowX": false,
+        "overflowY": false
+      },
+      {
+        "width": 2048,
+        "height": 1320,
+        "ok": true,
+        "overflowX": false,
+        "overflowY": false
+      }
+    ],
+    "preview": {
+      "path": "preview.png",
+      "sha256": "0e1bc0bd78336c14e4f8e77f1705467f1c8b713e42602117b2b9953dfc9df227",
+      "bytes": 189456
+    },
+    "captures": [
+      {
+        "width": 1440,
+        "height": 900,
+        "theme": "light",
+        "sha256": "51c5cbb5691677106870c3f567342050f718f0f413d0941ccf3f2859790a4b63",
+        "retained_as": null
+      },
+      {
+        "width": 1440,
+        "height": 900,
+        "theme": "dark",
+        "sha256": "6271b764769d4affcae3fa4fef86ae8ca8a1d1eec7b5cac9f011df242f523741",
+        "retained_as": null
+      },
+      {
+        "width": 2048,
+        "height": 1320,
+        "theme": "light",
+        "sha256": "0e1bc0bd78336c14e4f8e77f1705467f1c8b713e42602117b2b9953dfc9df227",
+        "retained_as": "preview.png"
+      },
+      {
+        "width": 2048,
+        "height": 1320,
+        "theme": "dark",
+        "sha256": "3e2b0cd2ea9e816bfc7059e2eb3330dd8cbea2402196cd8f4dce3aee51110a47",
+        "retained_as": null
+      }
+    ],
+    "note": "Automated visual-check reported visualReview pending; separate inspection of its contact sheet and full-size screenshots passed. Only the large light-theme preview is retained. Interactive export behavior was not tested."
+  }
+}

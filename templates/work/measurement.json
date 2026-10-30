@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "measurement_id": null,
+  "work_id": null,
+  "business_root_id": null,
+  "observed_at": null,
+  "policy_ref": null,
+  "expected_head": { "sequence": 0, "event_hash": null },
+  "baseline": {
+    "kind": "none",
+    "hours": null,
+    "scope_ids": [],
+    "provenance": null,
+    "source_refs": [],
+    "comparability": []
+  },
+  "actual": {
+    "scope_ids": [],
+    "coverage": "unknown",
+    "all_team_roles_confirmed": false,
+    "review_rework_included": false,
+    "zero_attested": false,
+    "source_refs": [],
+    "entries": []
+  },
+  "overhead": {
+    "coverage": "unknown",
+    "excluded_from_actual_confirmed": false,
+    "zero_attested": false,
+    "source_refs": [],
+    "entries": []
+  },
+  "cycle": {
+    "intake_event_id": null,
+    "final_verify_event_id": null,
+    "workflow_ref": null,
+    "review_ref": null,
+    "approval_ref": null,
+    "candidate_ref": null,
+    "waiting_coverage": "unknown",
+    "waiting_zero_attested": false,
+    "waiting_source_refs": [],
+    "waiting": []
+  },
+  "cost": {
+    "coverage": "unknown",
+    "all_inputs_included": false,
+    "currency": null,
+    "accepted_work_units": null,
+    "zero_attested": false,
+    "source_refs": [],
+    "entries": []
+  },
+  "quality": {
+    "status": "unavailable",
+    "window_start": null,
+    "window_end": null,
+    "matured": null,
+    "artifact_ids": [],
+    "source_refs": []
+  }
+}

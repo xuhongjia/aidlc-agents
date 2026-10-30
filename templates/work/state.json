@@ -20,6 +20,7 @@
   "run_history": [],
   "execution_receipts": [],
   "execution_reservations": [],
+  "measurement": null,
   "waits": [],
   "wait_monitor": null,
   "wait_authorization_ref": null,

@@ -2,6 +2,8 @@
 
 English-primary applies to new method content only. `language=en` grants no rewriting of business artifacts, locked assets, or approvals. `translations/zh-CN/` stays immutable and outside installed payload.
 
+0.16 -> 0.17 adds parent-only evidence events, source-backed measurement and an on-demand metrics Skill/helper. New work freezes measurement contract 1; old locks, approvals, source records and effort remain unchanged. Preserve business event ledgers, measurement revisions, raw evidence and metric exports outside managed_files. Do not infer historical events/effort, install dependencies, start reporting/publication or add monitoring during update. Same normal source/hash transaction and active-work deferral apply.
+
 0.15 -> 0.16: install helpers/ from the manifest; add missing execution.policy_ref/review_catalog_ref with core defaults, preserving custom refs/settings. Model selection remains disabled and budgets unset until configured. New work freezes execution contract 1/requirements/cards and records native receipts. Existing dispatch/state/result schema numbers remain; optional new fields grant no authority and must not be backfilled into old work. No retroactive model switch, budget reset, candidate approval or history migration. Pending/live work still defers method updates. Helpers need an existing Node only; never install dependencies or change host models during update.
 
 Compacted 0.16 sources add check.mjs/helper-request and split Gate invariants/Reviewer/collector instructions. Freeze their exact hashes for new work; retain old work's original read lists and approvals. Even at the same semver, changed source hashes require the normal update transaction. No host settings change.

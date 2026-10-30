@@ -7,6 +7,7 @@
 - New work may use the [execution policy](execution-policy.md): deterministic checks in tools, selected risk cards only on Gate leaves, and one final collector when Verify is fully prepared. Record actual exclusive attempt usage, including failures/parent/Hooks; structural savings are not measured tokens. Model selection is opt-in and never weakens review or approval.
 - Common execution rules live in worker.md; composed-stage only bootstraps verified inputs. Gate leaves read shared invariants plus Reviewer duties; Verify reads shared invariants plus collector duties. Two distinct Reviewers and required approvals remain.
 - Use the fixed [JSON helper entry](helper-usage.md), not helper source or newly written check scripts. Save full results once, then return the bounded summary. This changes display volume; complete evidence, omitted blockers and fresh preflight checks remain required.
+- Measurement events use existing parent lifecycle hooks. Freeze [measurement](measurement.md) assets without child injection; load the reporting Skill only on request. Keep ledger/raw logs in files and calculate through the fixed helper, not another Agent per event.
 
 See the [context contract](../workflow/context.md) and [measured validation](validation.md). Existing work keeps its original definitions; no approval or frozen asset migration.
 

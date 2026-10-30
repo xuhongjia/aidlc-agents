@@ -4,6 +4,8 @@
 
 New 0.16 locks apply [execution policy](execution.md) before each dispatch: resolve role/task/risk tier and selected cards, verify structural prerequisites, check cumulative usage plus outstanding reservations, then use actual host capabilities. Helpers return decisions, never spawn or approve. Parent-only policy/helper bodies stay outside child context.
 
+New 0.17 work also freezes [measurement](measurement.md). The existing parent records source-backed events at intake, dispatch/result, review/approval, retry/correction, wait/resume and closure; include failed/late/cancelled attempts and Hook outcomes. Append through the single-writer protocol, using original identities and evidence references. No extra Agent, stage or approval. Missing telemetry makes metrics incomplete; missing mandatory delivery evidence still blocks its Gate. Reporting never changes the delivery state.
+
 ## Execution boundaries
 
 Parent alone spawns/owns dispatch, actual worker registration, validation, review/approval. Stage children execute one node; leaves one bounded task. Neither writes state/questions/reviews/approvals/policies/feedback ledgers, spawns/publishes/advances stages. Product writes require implementation authority ∩ dispatch; preserve others' edits.

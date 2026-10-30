@@ -81,6 +81,14 @@ function envelope(operation, result) {
     result_sha256: hash(JSON.stringify(result)), grants_approval: false, gate_pass_evaluated: false };
 }
 
+function emptyMeasurement(f) {
+  const value = JSON.parse(readFileSync(new URL('../templates/work/measurement.json', import.meta.url)));
+  Object.assign(value, { measurement_id: 'measurement-1', work_id: 'work-1', business_root_id: 'work-1',
+    observed_at: '2026-10-30T12:00:00Z', policy_ref: f.put('work/measurement-policy.json', {}) });
+  return { request: { work_id: 'work-1', ledger_ref: f.put('work/events.jsonl', ''),
+    measurement_ref: f.put('work/measurement.json', value) } };
+}
+
 test('CLI exposes every fixed operation and all successful summaries retain their decision boundary', t => {
   const f = fixture(t), p = prepare();
   const seen = new Set();
@@ -108,12 +116,52 @@ test('CLI exposes every fixed operation and all successful summaries retain thei
     expected: { work_id: r.work_id, run_id: r.run_id, attempt: 1, executor_id: r.executor_id } }, 'valid');
   check('verify-plan', { preflight: { status: 'valid', verify: { eligible: false, mode: 'fallback' } },
     ids: { architecture: 'a', quality: 'q', collector: 'c', initial_collector: 'c0' } }, 'planned');
+  check('metrics', emptyMeasurement(f), 'unavailable');
   const stored = f.put('work/stored.json', plan);
   f.request('summary', { result_ref: stored });
   const summarized = f.run(); seen.add('summary');
   assert.equal(summarized.status, 0); assert.equal(summarized.output.from_stored_result, true);
   assert.equal(summarized.output.full_result_sha256, stored.sha256);
   assert.deepEqual([...seen].sort(), [...OPERATIONS].sort());
+});
+
+test('metrics CLI keeps absent evidence unavailable and replays a saved result without refreshing it', t => {
+  const f = fixture(t), args = emptyMeasurement(f);
+  f.request('metrics', args);
+  const compact = f.run(), full = f.run(true);
+  assert.equal(compact.status, 0);
+  assert.equal(compact.output.status, 'unavailable');
+  assert.equal(compact.output.measurement.causal_proof, false);
+  assert.ok(Object.values(compact.output.measurement.metrics).every(value => value === null));
+  assert.equal(compact.output.measurement.detail_in_full_result, true);
+  assert.equal(compact.output.measurement.events, 0);
+  assert.equal(compact.output.measurement.sources, 0);
+  assert.equal(compact.output.measurement.currency, null);
+  assert.ok(compact.output.measurement.issues > 0);
+  assert.ok(full.output.result.issues.length > 0);
+  assert.equal(compact.output.full_result_sha256, hash(full.stdout));
+  const saved = f.put('work/saved-metrics.json', full.stdout);
+  f.put('work/measurement.json', 'changed since original result');
+  f.request('summary', { result_ref: saved });
+  const historical = f.run();
+  assert.equal(historical.output.from_stored_result, true);
+  assert.equal(historical.output.status, 'unavailable');
+  assert.deepEqual(historical.output.measurement, compact.output.measurement);
+  f.request('metrics', args);
+  const current = f.run();
+  assert.equal(current.status, 1);
+  assert.equal(current.output.status, 'blocked');
+  assert.equal(current.output.gate_pass_evaluated, false);
+});
+
+test('metrics CLI rejects work/file substitution and does not rewrite source evidence', t => {
+  const f = fixture(t), args = emptyMeasurement(f);
+  const original = readFileSync(path.join(f.root, args.request.measurement_ref.path));
+  f.request('metrics', { request: { ...args.request, work_id: 'another-work' } });
+  assert.equal(f.run().status, 1);
+  f.request('metrics', { request: { ...args.request, ledger_ref: { ...args.request.ledger_ref, path: '../escape' } } });
+  assert.equal(f.run().status, 1);
+  assert.deepEqual(readFileSync(path.join(f.root, args.request.measurement_ref.path)), original);
 });
 
 test('thousands of actual usage runs stay complete in --full and compact stdout stays below 2 KiB', t => {
