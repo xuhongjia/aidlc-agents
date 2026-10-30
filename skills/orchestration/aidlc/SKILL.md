@@ -1,11 +1,13 @@
 ---
 name: aidlc
-description: Route AIDLC requests and coordinate isolated stages, approvals and recovery.
+description: Route feature, change and bug-fix requests into AIDLC; coordinate workflows, approvals and recovery.
 ---
 
 # AIDLC · Parent coordinator
 
 Route, schedule, verify and process approvals; formal stages need real fresh-context children, never inline execution/role switching. Unprefixed paths are relative to .aidlc/system; prefixed paths to project root. Existing work uses its original method copy, not the active install.
+
+Software delivery action requests enter by default, without an AIDLC keyword or workflow choice. Infer intent from the request, not keywords alone: explanations, reviews, proposals and explicit analysis-only requests start no delivery. Preserve explicit scope and role handoffs; continuing existing work resumes its frozen route.
 
 ## Load one entry by intent
 
@@ -26,7 +28,7 @@ Route, schedule, verify and process approvals; formal stages need real fresh-con
 | Close / closing / closed | workflow/closure.md; do not mark closed before workers stop |
 | Retry knowledge publication | workflow/knowledge-publish.md; verify original snapshot/grant, do not restart delivery |
 | Pipeline wakeup / stop waiting | Original workflow/pipeline-wait.md for existing waits; legacy/unregistered waits get status only, no new fields/monitor |
-| New requirement / continue implementation | First .aidlc/system/workflow/preflight.md; update before new work, pin old method/graph/grants. Before 0.12 use workflow/legacy.md |
+| New feature / behavior change / bug fix / continue implementation | First .aidlc/system/workflow/preflight.md; update before new work, pin old method/graph/grants. Before 0.12 use workflow/legacy.md |
 
 Configuration stops without delivery, monitoring or publication. Reference/discussion grants no work creation, tickets or external writes.
 
@@ -34,9 +36,9 @@ Only explicit role workflows load workflow/role-delivery.md for setup, approvals
 
 ## Delivery chain
 
-1. Read config/state and .aidlc/system/workflow/protocol.md. Resolve registered new graphs with profiles + extensions; existing work verifies workflow_ref.
+1. Read config/state and .aidlc/system/workflow/protocol.md. For new work under auto, assess intended behavior, scope, risk and unknowns; select the smallest suitable registered graph under profiles + extensions. State the workflow and brief reasons before its first dispatch; do not ask the user to pick when facts suffice. Respect explicit preferences subject to risk rules. Existing work verifies workflow_ref instead of reselecting.
 2. workflow/dag.md selects ready nodes; workflow/orchestration.md governs spawn/collect, candidates and stops. Derive complete instruction_refs via workflow/context.md; runs use prompts/composed-stage.md and fixed packets, never parent history/all Skills.
-3. First read-only child verifies risk; first card confirms graph/scope/outputs. workflow/approval.md governs manual/checkpoint_low_risk/auto_low_risk. Route auto is not approval; checkpoint final Verify stays human-reviewed.
+3. The selected route's first read-only child verifies risk; no extra routing Agent/stage. Record reasons/unknowns in state.routing_reason and review.routing_facts; first card confirms graph/scope/outputs. Ask only unresolved questions that change the route or authorized scope. workflow/approval.md governs manual/checkpoint_low_risk/auto_low_risk. Route auto is not approval; checkpoint final Verify stays human-reviewed.
 4. Verify worker, inputs, full candidate and required checks/evidence; create immutable review. Cards show differences, decisions, risk and links. Results are not approvals; no continuation authority means stop.
 
 Load workflow/implementation-feedback.md only for feedback_request with nonzero budget; record attempts before new runs. Other failures stop and revoke delegation/escalate under the original protocol. waiting_external follows pipeline-wait without PASS/approval; new work freezes configured delivery under pipeline-config.

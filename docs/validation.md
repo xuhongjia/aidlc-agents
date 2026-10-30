@@ -1,5 +1,16 @@
 # Validation records
 
+## Default request routing
+
+Validation date: 2026-10-30. Installed bridges now send software delivery action requests to the router without requiring an AIDLC keyword. The parent selects a suitable registered workflow and the existing entry child verifies risk; no extra stage, routing Agent or approval is added.
+
+- Full regression: **290/290 PASS**, zero failures/skips. Existing compact-load baselines remain unchanged: fix 63,935 and enhance 63,841 total declared bytes. Only parent/bridge guidance changed; the extra parent text is outside those child-load totals.
+- Independent entry-decision probe: **8/8 expected outcomes**, actual fresh child `/root/routing_behavior_probe`. Localized bug → fix; bounded filter → enhance; new shared identity service and a one-line authorization bypass → standard safeguards; explanation, review and proposal-only requests → no delivery; existing work → original frozen graph. No case requested a workflow choice or treated routing as implementation approval.
+- The probe read only the current Codex bridge, router and profiles, using hypothetical requests. It did not execute a real delivery stage, test host auto-discovery or prove end-to-end behavior; those remain **NOT_RUN**.
+- `git diff --check` passed. The optional standalone Skill validator could not start because the existing Python lacks PyYAML; no dependency was installed. Package/language regression passed. Old methods/approvals and the Chinese archive are unchanged.
+
+See [starting a request](getting-started.md#first-work). Existing installations receive the managed bridge/router changes through normal Update; files on disk alone do not prove host loading.
+
 ## 0.16.0: compact helper entry and role-specific contracts
 
 Validation date: 2026-10-30. Compared with the uncommitted 0.16 source immediately before this optimization, recorded in [the immutable baseline](../tests/fixtures/context-v016-pre-compact.json). The previous direct-Verify optimization is already in this baseline and is not counted again.

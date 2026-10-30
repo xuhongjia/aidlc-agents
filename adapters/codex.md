@@ -1,7 +1,7 @@
 <!-- AIDLC-AGENTS:START -->
 ## AIDLC Agents
 
-For an AIDLC request, first read only `.aidlc/system/skills/orchestration/aidlc/SKILL.md`; let the router choose the control or delivery instructions. Status and approval controls do not preload delivery protocols. A valid dispatched child reads its frozen instruction_refs instead of re-routing as the parent.
+For software delivery action requests (new features, behavior changes, bug fixes), even without an AIDLC keyword, or explicit AIDLC controls, first read only `.aidlc/system/skills/orchestration/aidlc/SKILL.md`. Let the router infer standard/enhance/fix and choose control/delivery instructions before loading protocols. Respect explicit user constraints; status, review, explanation or discussion alone does not start delivery. Existing work retains its frozen workflow. A valid fresh dispatched child uses frozen instruction_refs instead of parent routing.
 
 Before parent delivery execution follow `.aidlc/system/workflow/preflight.md`: check GitHub, update before new work, keep existing work pinned. Reload the installed router after updates; children never check or install methods.
 

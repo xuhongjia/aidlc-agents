@@ -36,14 +36,15 @@ AI pins the source, configures `.aidlc/` and the current tool entry point, and t
 
 Create an empty product repository if needed; PO/QA may explicitly choose a non-code workspace. Keep it separate from the method repository. Unpublished/offline use needs a [pinned local source](docs/getting-started.md#local-source). Do not install every Skill manually.
 
-## Choose your workflow
+## Let AI select the workflow
+
+After setup, describe the feature, change or bug directly; no `aidlc` prefix or workflow name is required. AI explains its initial choice, then the selected route's first child checks risk. The existing entry card confirms scope and workflow. Questions, reviews and analysis-only requests start no delivery; existing work resumes its frozen route. This depends on the host loading the installed project bridge.
 
 ### Solo teams and general engineering work
 
 ```text
-Use aidlc in solo mode for <goal, scope, behavior, constraints>, initially without
-external systems. Recommend standard/enhance/fix, complete the first stage,
-then show its summary/links and wait for my approval and continuation.
+Implement <goal, scope, expected behavior, constraints>. Explain the selected workflow,
+complete its first stage, then show the review card and wait for my approval and continuation.
 ```
 
 | Workflow | Use for | Stages |

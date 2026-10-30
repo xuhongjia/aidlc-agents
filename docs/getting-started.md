@@ -99,7 +99,9 @@ approval instruction; wait for my approval and continuation.
 Adapt this example to actual project standards, owners, and team workflows.
 
 <a id="first-work"></a>
-### 2. Choose subsequent workflows by the change
+### 2. Describe the change; AI selects the workflow
+
+With the installed bridge loaded, ordinary feature/change/fix requests enter AIDLC automatically. AI chooses from the facts, explains its choice and uses the route's first child to verify risk; no separate routing stage or request to pick a workflow. An explicit workflow remains a preference subject to risk rules. Analysis/review questions start no delivery; continuing a work preserves its original graph.
 
 | Workflow | Use for | Stages |
 |---|---|---|
@@ -108,17 +110,17 @@ Adapt this example to actual project standards, owners, and team workflows.
 | `fix` | Local defects restoring clearly established behavior | Diagnose → Implement → Verify |
 
 ```text
-Use aidlc enhance: add status filtering to the existing task list, preserving original
+Add status filtering to the existing task list, preserving original
 sorting and unfiltered behavior. Check risk and AC first; show change.md before implementation.
 ```
 
 ```text
-Use aidlc fix: when search returns zero results, the list incorrectly displays a total of 1.
+Fix the task list: when search returns zero results, it incorrectly displays a total of 1.
 Reproduce the issue and identify the root cause first. Confirm scope and verification
 before modifying code.
 ```
 
-If unsure: “Use aidlc; recommend a workflow and explain why.” **Automatic selection is not automatic approval.** Permissions, payments, sensitive data, migrations, or new-service risks need human-confirmed safeguards, not a forced short route.
+AI normally selects enhance and fix for the bounded examples above; new capabilities or high-risk changes use standard safeguards. **Automatic selection is not automatic approval.** Missing facts can require clarification or read-only investigation. Permissions, payments, sensitive data, migrations, or new-service risks cannot be forced into a short route. If the host has not loaded the bridge, explicitly say “Use aidlc” and check Setup; earlier installations need Update to receive this default trigger.
 
 ### 3. Review, approve, and continue
 

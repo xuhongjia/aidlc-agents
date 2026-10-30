@@ -2,6 +2,8 @@
 
 Install only the selected bridge. It routes to .aidlc/system/ without embedding all Prompts. Since v0.3, stages/rework require fresh isolated children; bridge files cannot supply that host capability.
 
+Once the host loads the installed bridge, software delivery action requests use the canonical AIDLC router by default; users need not say AIDLC or choose standard/enhance/fix. The router owns inference. Explicit controls still route; status, review, explanation or discussion alone does not start delivery. Explicit user constraints apply, and existing work retains its frozen workflow. Valid dispatched children use their frozen instructions.
+
 | Tool | Template | Project target |
 |---|---|---|
 | Codex | [codex.md](codex.md) | AGENTS.md managed block; check AGENTS.override.md first |
@@ -25,6 +27,6 @@ Authorized routine [preflight](../workflow/preflight.md) updates may replace exa
 
 Read installed router/protocol/[orchestration](../workflow/orchestration.md), then execute [setup](../bootstrap/setup.md)'s read-only fresh-child probe. Record real calls/IDs, isolation semantics/inputs and collected results; no parent history, requirements, approvals or product changes.
 
-Report files, explicit reading, automatic discovery and child capability separately. Missing creation/isolation/collection blocks stages even if files load. Probe success does not prove real delivery, approvals or CI Gates; rehearsals require a separate request.
+Report files, explicit reading, automatic discovery and child capability separately. Installation alone does not prove that the host automatically loads the bridge or routes ordinary requests through it. Missing creation/isolation/collection blocks stages even if files load. Probe success does not prove real delivery, approvals or CI Gates; rehearsals require a separate request.
 
 If automatic loading fails, reload/start a session and explicitly read .aidlc/system/skills/orchestration/aidlc/SKILL.md plus the routed protocols. This supplies loading, not child capability; use a supported client if delegation is unavailable. Never invent a spawn API, execute stages inline or change global settings. See [tool support](../docs/tool-support.md).
