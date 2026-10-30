@@ -13,6 +13,7 @@ Route, schedule, verify and process approvals; formal stages need real fresh-con
 |---|---|
 | Browse Skills by stage/category | skills/README.md or skills/catalog.json; selected group only, no bulk bodies or dispatch |
 | setup aidlc / setup check / setup status / required integrations | skills/setup/aidlc-setup/SKILL.md; install/check/configure then stop, no work |
+| Configure model tiers / execution budgets | skills/setup/aidlc-setup/SKILL.md; selected execution setup only, no model calls or delivery |
 | Choose a workflow / getting started | workflow/profiles.md; give reasons/next step, ask only route-changing questions. Advice starts no work, update check or dispatch |
 | Configure a team workflow | skills/orchestration/aidlc-workflow/SKILL.md and bootstrap/team.md |
 | setup confluence / knowledge integration | skills/setup/aidlc-knowledge-setup/SKILL.md |

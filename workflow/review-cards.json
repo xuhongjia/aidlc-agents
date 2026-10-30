@@ -1,0 +1,41 @@
+{
+  "contract_version": 1,
+  "cards": [
+    {
+      "id": "authorization",
+      "version": 1,
+      "ref": "core:workflow/review-cards/authorization.md",
+      "source_refs": ["core:workflow/gate-execution.md"],
+      "reviewers": ["architecture", "quality"],
+      "risk_tags": ["auth", "security"],
+      "path_patterns": ["**/*auth*", "**/*auth*/**", "**/*permission*", "**/*permission*/**", "**/*security*/**"]
+    },
+    {
+      "id": "api-contract",
+      "version": 1,
+      "ref": "core:workflow/review-cards/api-contract.md",
+      "source_refs": ["core:workflow/gate-execution.md"],
+      "reviewers": ["architecture", "quality"],
+      "risk_tags": ["api-contract", "compatibility", "cross-system"],
+      "path_patterns": ["**/api/**", "**/*schema*", "**/*schema*/**", "**/*.proto", "**/*openapi*"]
+    },
+    {
+      "id": "migration",
+      "version": 1,
+      "ref": "core:workflow/review-cards/migration.md",
+      "source_refs": ["core:workflow/gate-execution.md"],
+      "reviewers": ["architecture", "quality"],
+      "risk_tags": ["data-migration"],
+      "path_patterns": ["**/*migration*/**", "**/*migration*", "**/*.sql"]
+    },
+    {
+      "id": "concurrency-performance",
+      "version": 1,
+      "ref": "core:workflow/review-cards/concurrency-performance.md",
+      "source_refs": ["core:workflow/gate-execution.md"],
+      "reviewers": ["architecture", "quality"],
+      "risk_tags": ["concurrency", "performance"],
+      "path_patterns": ["**/*transaction*", "**/*queue*", "**/*queue*/**", "**/*cache*", "**/*cache*/**"]
+    }
+  ]
+}

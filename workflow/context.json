@@ -1,11 +1,12 @@
 {
   "contract_version": 1,
+  "execution_assets": ["workflow/execution.md", "workflow/execution-policy.json", "workflow/review-cards.json", "helpers/execution-policy.mjs", "helpers/prepare-execution.mjs", "helpers/review-cards.mjs", "helpers/validate-work.mjs", "templates/work/execution-dispatch.json", "templates/work/execution-receipt.json", "templates/work/validation-request.json", "templates/work/validation-evidence.json", "templates/work/validation-requirements.json", "templates/work/host-check.json", "helpers/check.mjs", "templates/work/helper-request.json"],
   "common": ["prompts/composed-stage.md", "workflow/worker.md"],
   "by_kind": {
     "design": ["workflow/gate-design.md"],
     "quality_design": ["workflow/gate-design.md"],
     "implementation": ["workflow/gate-design.md", "workflow/tdd.md", "skills/reusable-capability/test-driven-development/SKILL.md", "skills/reusable-capability/incremental-implementation/SKILL.md", "templates/work/tdd-evidence.json"],
-    "verification": ["workflow/gate-execution.md", "templates/work/gate-result.json"],
+    "verification": ["workflow/gate-execution.md", "workflow/gate-collector.md", "templates/work/gate-result.json"],
     "release_readiness": ["workflow/external-evidence.md"],
     "learning": ["workflow/external-evidence.md"]
   },
@@ -18,7 +19,7 @@
   },
   "implementation_feedback": ["workflow/feedback-request.md"],
   "gate_design_leaf": ["workflow/gate-design.md"],
-  "gate_execution_leaf": ["workflow/gate-execution.md", "skills/reusable-capability/aidlc-fitness-check/SKILL.md", "templates/work/gate-result.json"],
+  "gate_execution_leaf": ["workflow/gate-execution.md", "workflow/gate-reviewer.md", "skills/reusable-capability/aidlc-fitness-check/SKILL.md", "templates/work/gate-result.json"],
   "implementation_optional": {
     "debugging-and-error-recovery": "skills/reusable-capability/debugging-and-error-recovery/SKILL.md",
     "code-review-and-quality": "skills/reusable-capability/code-review-and-quality/SKILL.md"

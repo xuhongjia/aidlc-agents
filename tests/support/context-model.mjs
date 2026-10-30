@@ -18,7 +18,7 @@ export function safeFile(root, relative) {
   requireThat(lstatSync(current).isFile(), 'resource must be a file');
   return current;
 }
-export function instructionPlan(context, stage, node, { feedback = 0, leaf = null, gate_kind = null, pipeline_bindings = [] } = {}) {
+export function instructionPlan(context, stage, node, { feedback = 0, leaf = null, gate_kind = null, pipeline_bindings = [], review_cards = [] } = {}) {
   requireThat(context.contract_version === 1, 'unknown context contract');
   validateStage(stage);
   requireThat([0, 2].includes(feedback), 'unsupported feedback budget');
@@ -55,6 +55,15 @@ export function instructionPlan(context, stage, node, { feedback = 0, leaf = nul
     }
   }
   const result = [...refs.values()];
+  requireThat(!review_cards.length || (leaf === 'gate-execution' && reviewer), 'review cards belong to assigned Reviewer only');
+  for (const card of review_cards) {
+    const instruction = card.instruction_ref ?? card;
+    requireThat(instruction.purpose === 'review-card' && /^(core|team|project):/.test(instruction.ref), 'invalid review card instruction');
+    for (const item of [instruction, ...(card.source_refs ?? []).map(source => ({ ...source, purpose: 'review-card-source' }))]) {
+      requireThat(/^(core|team|project):/.test(item.ref), 'invalid card source');
+      if (!refs.has(item.ref)) { refs.set(item.ref, item); result.push({ ref: item.ref, purpose: item.purpose }); }
+    }
+  }
   requireThat(stage.kind === 'implementation' && !leaf || !result.some(r => /:skills\/(?:reusable-capability\/)?(test-driven-development|incremental-implementation|debugging-and-error-recovery|code-review-and-quality)\//.test(r.ref)), 'engineering execution Skill belongs to implementation only');
   return result;
 }

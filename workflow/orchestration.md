@@ -2,6 +2,8 @@
 
 [dag](dag.md) alone determines dependencies/concurrent readiness; [protocol](protocol.md) governs evidence/snapshots; [approval](approval.md) governs decisions. No second stage order. Existing work uses its [frozen method](legacy.md).
 
+New 0.16 locks apply [execution policy](execution.md) before each dispatch: resolve role/task/risk tier and selected cards, verify structural prerequisites, check cumulative usage plus outstanding reservations, then use actual host capabilities. Helpers return decisions, never spawn or approve. Parent-only policy/helper bodies stay outside child context.
+
 ## Execution boundaries
 
 Parent alone spawns/owns dispatch, actual worker registration, validation, review/approval. Stage children execute one node; leaves one bounded task. Neither writes state/questions/reviews/approvals/policies/feedback ledgers, spawns/publishes/advances stages. Product writes require implementation authority ∩ dispatch; preserve others' edits.
@@ -17,7 +19,7 @@ Verify real config.execution spawn/isolated_context/collect_results probes/curre
 3. Verify required_evidence includes both Gates; Gate leaves only their assignment. Release/Learn add source-index/external read-only scope. knowledge.read/prepare supply capability-required snapshots. Populate [feedback](implementation-feedback.md) budgets explicitly, never from “continue.”
    implementation, including task leaves, needs TDD task/exception attachments; full stages add final-candidate regression. Derive default/optional Skills under context. Quality Reviewer receives every original Implement TDD source, never parent summaries alone.
    Frozen delivery uses [pipeline-config](pipeline-config.md) exact pipeline_requests/source-index/GET scope. Same-node resumption supplies verified continuation_refs without reauthorization/repeating valid checks.
-4. Actually spawn; record agent_id/context options/input digests/active_runs. Children write only their run/explicit product scope.
+4. Reserve capacity/budget before actually spawning; record agent_id/context options/input digests/active_runs. Children write only their run/explicit product scope. Record native model/usage receipts for parent/stages/leaves/Hooks; unknown stays unavailable. Reconcile reservations once with the matching actual attempt, retaining failed/late attempts.
 5. Await real results; validate worker, dispatch_digest, inputs/candidate, every file/hash, raw commands, product diff/lineage. Drift, missing evidence, overreach/unknown state blocks; summary PASS is insufficient.
 6. Collect ended workers/append history. Promote qualifying results to immutable reviews; decide under approval. Failed feedback_requests use narrow same-node authority, never failed-candidate promotion. Other unexpected/disqualifying failures return to humans without automatic rollback. Preserve approved expected negatives under feedback exceptions: no work failure/budget use.
 
@@ -25,7 +27,7 @@ Parent writes no code/outputs while waiting. Results: ready_for_review/blocked/f
 
 ## Parallelism and leaves
 
-0.13 Verify requires distinct architecture-gate-reviewer / quality-gate-reviewer Agents/runs. Resource limits serialize, never combine Gates in one Agent. context/gate-execution validates gate_assignment, candidate/baseline/authority and distinct identities. Initial collector requests leaves/releases slot; parent dispatches fresh collector after collection. No Agent per check/extra TDD Agent.
+Verify requires distinct architecture-gate-reviewer / quality-gate-reviewer Agents/runs. Resource limits serialize, never combine Gates in one Agent. context/gate-execution validates gate_assignment, candidate/baseline/authority and distinct identities. For 0.16, use execution.md's direct path only after valid helper preflight and current host checks: reserve a collector run ID (not an executed Agent), dispatch both Reviewers, then actually spawn that collector. No initial collector is needed. Missing prerequisites block/wait; uncertain preparation uses the original initial-collector request, leaves, fresh-collector path. No Agent per check/extra TDD Agent.
 
 Default maximum: 2 live children, including waiting stages/leaves/collectors/knowledge Hooks, limited further by host. Ready read-only nodes may run concurrently; graph-ordered writers exclude formal candidate readers. Shared files/DB/ports/caches/locks/external targets need proven isolation or serialization; separate paths alone do not suffice.
 

@@ -1,0 +1,12 @@
+{
+  "work_id": null,
+  "workflow_ref": null,
+  "candidate_ref": null,
+  "complete": false,
+  "truncated": false,
+  "raw_refs": [],
+  "checks": [],
+  "binding_id": null,
+  "status": "NOT_RUN",
+  "collection_status": "not_collected"
+}

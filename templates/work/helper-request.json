@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "operation": "validate",
+  "args_ref": {
+    "path": "work/helper-args.json",
+    "sha256": null
+  }
+}

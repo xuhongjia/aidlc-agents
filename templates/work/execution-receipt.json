@@ -1,0 +1,20 @@
+{
+  "receipt_id": null,
+  "work_id": null,
+  "run_id": null,
+  "attempt": 1,
+  "executor_id": null,
+  "kind": "stage",
+  "source_ref": null,
+  "scope": "exclusive",
+  "actual_model": null,
+  "actual_reasoning": null,
+  "usage": {
+    "input_tokens": null,
+    "cached_input_tokens": null,
+    "output_tokens": null,
+    "tool_output_bytes": null,
+    "calls": null,
+    "retries": null
+  }
+}

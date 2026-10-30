@@ -12,6 +12,7 @@
   "run_id": null,
   "kind": "stage",
   "dispatch_digest": null,
+  "execution_receipt_ref": null,
   "status": "blocked",
   "summary": "Not executed; this is not stage completion or human approval.",
   "artifacts": [],

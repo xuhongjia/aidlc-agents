@@ -2,7 +2,7 @@
 
 **AI selects a workflow; independent child agents execute each stage. You own key decisions and approvals.**
 
-AI-assisted, Spec-driven, Human-governed. No Python installer, extra Agent CLI, or background service. Source version: **0.15.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents). Installation identity comes from the selected manifest and full commit/file digests; local features do not prove an online release.
+AI-assisted, Spec-driven, Human-governed. No Python installer, extra Agent CLI, or background service. Source version: **0.16.0** · [GitHub](https://github.com/xuhongjia/aidlc-agents). Installation identity comes from the selected manifest and full commit/file digests; local features do not prove an online release.
 
 English primary · [Original Chinese snapshot](translations/zh-CN/README.md) · [Archive notes](translations/README.md). The pre-English archive is neither installed automatically nor kept in sync.
 
@@ -95,13 +95,16 @@ TDD runs only in Implement; test design may precede it. Every implementation wor
 | Find the Skill for a stage | [Stage / Category index of 31 Skills](skills/README.md) |
 | Understand TDD, independent Gates, and agile slicing | [Engineering Skills](docs/engineering-skills.md) · [Fitness and CI](docs/fitness-and-ci.md) · [Reference mapping](docs/agile-skills.md) |
 | Update an installation, resolve conflicts, and recover | [Update steps](docs/getting-started.md#update) · [Full Update protocol](bootstrap/update.md) |
-| Reduce context loading | [On-demand loading, sessions, and configuration](docs/context-efficiency.md) |
+| Reduce context loading | [On-demand loading and sessions](docs/context-efficiency.md) · [Fixed helper summaries](docs/helper-usage.md) |
+| Configure role/task model tiers, budgets and efficient Verify | [Execution setup and usage](docs/execution-policy.md) · [Risk review cards](docs/risk-review.md) |
 
 Service configuration grants no write, deployment, or approval authority. Preserve mandatory team requirements. New requests follow the update policy; existing requests retain their method/approvals. Unfinished work or live workers defer updates.
 
 ## Engineering boundaries and maintenance
 
 Children read pinned inputs and canonical shared rules. Skills use `skills/<category>/<name>/SKILL.md`; `prompts/`, `workflow/`, `templates/`, `bootstrap/`, and `examples/team-packs/` hold tasks, protocols, outputs, onboarding, and sample packs respectively.
+
+`helpers/` supplies optional read-only Node checks and pure execution decisions. The host still dispatches Agents and enforces real permissions; helpers do not run models, approve stages or install dependencies.
 
 Use a new session per request; resume with its work reference. Chat carries summaries/evidence links, not full history. Static loaded bytes are not measured token or cost savings. The host executes this method; CI, branch protection, real permissions, and human approval remain necessary.
 

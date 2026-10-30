@@ -1,5 +1,45 @@
 # Validation records
 
+## 0.16.0: compact helper entry and role-specific contracts
+
+Validation date: 2026-10-30. Compared with the uncommitted 0.16 source immediately before this optimization, recorded in [the immutable baseline](../tests/fixtures/context-v016-pre-compact.json). The previous direct-Verify optimization is already in this baseline and is not counted again.
+
+| Declared loads | Before: method + templates | After: method + templates | Total reduction |
+|---|---|---|---|
+| fix: five loads | 61,008 + 7,282 = 68,290 | 56,653 + 7,282 = 63,935 | 6.4% |
+| enhance: five loads | 60,914 + 7,282 = 68,196 | 56,559 + 7,282 = 63,841 | 6.4% |
+| fix: fallback with initial collector | 74,341 + 10,185 = 84,526 | 68,549 + 10,185 = 78,734 | 6.9% |
+| enhance: fallback with initial collector | 74,247 + 10,185 = 84,432 | 68,455 + 10,185 = 78,640 | 6.9% |
+
+Units are UTF-8 bytes, deduplicated within each execution. Five loads mean three stages plus two Reviewers; they are not a measured full-delivery Agent count. Common worker/bootstrap bodies fell from 4,292 to 4,093 bytes (4.6%). Gate contract reads across two Reviewers and one collector fell from 10,245 to 7,752 bytes (24.3%); role-specific Prompts also became shorter. These component savings overlap the table, not additional savings. Templates, role bodies, approved input requirements and TDD resources are unchanged. Parent protocols, selected cards/team sources, business inputs, locks, evidence, tools and extra actual executions remain separate.
+
+| Check | Result and boundary |
+|---|---|
+| Full regression | **290/290 PASS**, zero failures/skips; `node --test tests/*.test.mjs`. Adds 21 tests to the prior 269: 12 helper-entry subprocess tests, 6 Gate/context tests and 3 baseline/loading tests |
+| Fixed helper entry | All nine operations, hashed data files, closed request/operation fields, complete result storage, historical summary replay, tampering, paths/symlinks, malformed input and read-only behavior. Default stdout is at most 2,048 bytes, with explicit omitted counts and no approval/Gate-PASS authority |
+| Synthetic tool volume | Same 12,000-receipt input: full stdout **902,691 bytes**, compact stdout **788 bytes**, including newlines; full output retains every run and its digest matches the summary. Input and helper files remain unchanged. This is a synthetic output-volume test, not observed business usage or token savings |
+| Gate/context preservation | Core/team verification nodes, both independent Reviewer roles, custom templates/instructions, selected card/source closure, collector-only pipeline duties and frozen-only helper assets. Existing missing approval/Gate/QA, drift, zero/skipped/truncated evidence, revoke/permission and pipeline regressions pass |
+| Baseline/semantic review | Original historical fixtures remain intact; the new fixture is hash-pinned. Direct/fallback/feedback resource comparisons preserve every prior reference plus exactly the recipient's Gate fragment. Independent review found no weakened approval, candidate, evidence, role or wait boundary |
+| Live host / actual paired tokens / enterprise integrations | **NOT_RUN**. Static bytes and bounded stdout do not establish end-to-end token, latency or billing savings |
+
+No production delivery, commit/push, dependency installation or host configuration change. Old work keeps its frozen method and approvals; the Chinese archive is unchanged. See [efficient context use](context-efficiency.md) and [helper usage](helper-usage.md).
+
+## 0.16.0: execution policy, read-only checks and direct Verify (before compaction)
+
+Validation date: 2026-10-30. Local source only; no commit/push, release, company connection, model configuration or business delivery was performed.
+
+| Check | Result and boundary |
+|---|---|
+| Full regression | **269/269 PASS**, zero failures/skips; `node --test tests/*.test.mjs`. Includes 53 new tests: 14 routing/usage/budget, 21 real-file validation/CLI, 10 card/finding, 8 integration/dispatch planning |
+| Routing and receipts | Role/task/risk maximum, Gate floors, actual host capability/reasoning, same-tier transient fallback, actual model/executor/kind reconciliation, duplicate event ownership, malformed/missing meters and pending reservations. No live model selection or inference calls |
+| Read-only helper | Actual temporary files and subprocess verify full frozen bytes, required reads, safe paths/symlinks, candidate additions/deletions, real producer/approval joins, promoted review-relative paths and graph-edge ancestry. Original source contents are not exposed in JSON parser errors; files remain unchanged |
+| Verify and evidence | Current host-witness binding, QA/custom templates, pipeline prerequisites, missing Gate, wrong candidate, stale approval, zero/skipped/truncated evidence block. Existing execution authority can cover a newly frozen candidate without adding a candidate approval. Planned direct path has two Reviewers plus one collector; fallback retains its initial collector. Synthetic host witnesses are not genuine user approvals |
+| Risk cards | Four versioned cards, selected Reviewer/source closure, mandatory-rule preservation, unknown-risk blocking, candidate-bound confirmed/disproved/inconclusive findings. Structural validation never awards Gate PASS |
+| Context budget | Common child contract: 4,292 bytes, below 6 KB. Five declared compact loads: fix 61,008 method + 7,282 template bytes; enhance 60,914 + 7,282. A fallback collector adds 13,333 + 2,903 bytes. Parent execution policy, selected cards/team sources, business inputs, evidence, helper outputs and extra real runs are separate; frozen helper source is not injected into children |
+| Live host / paired tokens / company integrations | **NOT_RUN**. Model switching, real native usage collection, real delivery approvals and GitLab/Jira/Confluence/browser end-to-end behavior require authorized host/project exercises. Planned Agent counts and source bytes are not measured token/cost savings |
+
+Independent reviews identified and corrected zero-call budget reservations, source-event double attribution, Gate-as-Hook role spoofing, receipt-kind mismatch, incomplete card-source reads, invalid Verify planning, forged input/approval joins, missing required instructions and real snapshot-path/DAG compatibility. Model routing defaults to host inheritance and budgets are unset. Existing work/approvals and the Chinese archive are unchanged; helpers add no Node installation, service, Agent CLI or runtime permissions. See [usage](execution-policy.md) and [execution contract](../workflow/execution.md).
+
 ## Package-wide content reduction
 
 Validation date: 2026-10-28. Compared with the local working tree immediately before this pass, not an older Git commit. Audited 274 active text/source files; compacted 129 of 170 Markdown/MDC files. Historical validation records, Chinese snapshots, licenses, schemas, tests and host settings were preserved. The prose inventory excludes this historical log: 546,538 → 461,079 UTF-8 bytes (**15.64% less**). The 31 Skill discovery descriptions fell from 4,465 to 2,926 bytes (**34.5% less**).

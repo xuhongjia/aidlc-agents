@@ -18,7 +18,7 @@ Parallel nodes use separate run/review paths. Cards may list exact step/revision
 
 Parent alone spawns; each stage/run gets fresh isolated [composed-stage](../prompts/composed-stage.md) context with frozen role/Prompt/templates/minimal inputs. No inline parent execution/child spawning. Results carry workflow_ref/step_id/stage_id/definition identity/dispatch_digest/actual evidence. Archive old-graph/wrong-instance/late results only.
 
-Default max_parallel_workers=2 counts stages/waiting stages/leaves/collectors/knowledge Hooks. Queue when full. Under orchestration: stage returns splits/releases slot → leaves → fresh collector. Never occupy both slots with stages waiting for leaves.
+Default max_parallel_workers=2 counts stages/waiting stages/leaves/collectors/knowledge Hooks. Queue when full. Under orchestration: stage returns splits/releases slot → leaves → fresh collector; execution.md permits verified-ready direct Gate dispatch before the sole collector. Reserving a future run ID consumes no live-worker slot; budget reservations apply before actual dispatch. Never occupy both slots with stages waiting for leaves.
 
 Multiple worktree product writers must be graph-comparable (one ancestor of another), otherwise reject resolution. Writers exclude formal readers of their candidate. Without writers, independent read-only stages may parallelize. Even disjoint files need port/database/cache/external-target conflict checks; queue without proven isolation. Exclusive-path leaves within one Implement remain valid, not unordered stages.
 

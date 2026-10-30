@@ -4,12 +4,15 @@
 - Parent loads protocols by intent. Children load frozen instruction_refs, current role/Stage/templates and required approved inputs. Freeze/verify complete assets but read only assigned content. Required team rules stay mandatory and are measured separately.
 - PO/DEV/QA transfer fixed artifacts, not combined chat histories. Role and sync protocols load only on their routes. Read guides/examples only when configuring or explaining them; links alone are not instructions to preload everything.
 - Persist full logs; return outcome, check counts, failure locations and evidence references. Read targeted raw sections as needed. Truncation or missing evidence never means PASS.
+- New work may use the [execution policy](execution-policy.md): deterministic checks in tools, selected risk cards only on Gate leaves, and one final collector when Verify is fully prepared. Record actual exclusive attempt usage, including failures/parent/Hooks; structural savings are not measured tokens. Model selection is opt-in and never weakens review or approval.
+- Common execution rules live in worker.md; composed-stage only bootstraps verified inputs. Gate leaves read shared invariants plus Reviewer duties; Verify reads shared invariants plus collector duties. Two distinct Reviewers and required approvals remain.
+- Use the fixed [JSON helper entry](helper-usage.md), not helper source or newly written check scripts. Save full results once, then return the bounded summary. This changes display volume; complete evidence, omitted blockers and fresh preflight checks remain required.
 
 See the [context contract](../workflow/context.md) and [measured validation](validation.md). Existing work keeps its original definitions; no approval or frozen asset migration.
 
 ## Static measurement
 
-Maintainers run `node --test tests/context-budget.test.mjs`. The pinned v0.13 baseline records source hashes and mandatory refs. measureCompactWorkflow(profile) in tests/support/context-budget.mjs counts first stage, Implement, Verify collector and two independent Reviewers. Deduplicate within a run, never across Agents. Extra initial/resumed collectors add a full Verify load; these five declared loads are not an end-to-end Agent count.
+Maintainers run `node --test tests/context-budget.test.mjs tests/compact-optimization.test.mjs`. Pinned v0.13 and pre-compaction v0.16 fixtures retain hashes, mandatory refs and bytes. measureCompactWorkflow(profile) in tests/support/context-budget.mjs counts first stage, Implement, Verify collector and two independent Reviewers. Deduplicate within a run, never across Agents. Extra initial/resumed collectors add a full Verify load; these five declared loads are not an end-to-end Agent count.
 
 Report method bytes and template bytes separately. Declared refs do not recursively include every Markdown link; audit required transitive/conditional resources too. Team rules, business inputs, locks/evidence, host catalogs and actual runs need separate accounting. Preserve mandatory inputs and historical baselines; source bytes are not tokens or cost. Agile [reference mappings](agile-skills.md) are reader guidance, not default child context.
 

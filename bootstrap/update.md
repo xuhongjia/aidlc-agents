@@ -2,6 +2,10 @@
 
 English-primary applies to new method content only. `language=en` grants no rewriting of business artifacts, locked assets, or approvals. `translations/zh-CN/` stays immutable and outside installed payload.
 
+0.15 -> 0.16: install helpers/ from the manifest; add missing execution.policy_ref/review_catalog_ref with core defaults, preserving custom refs/settings. Model selection remains disabled and budgets unset until configured. New work freezes execution contract 1/requirements/cards and records native receipts. Existing dispatch/state/result schema numbers remain; optional new fields grant no authority and must not be backfilled into old work. No retroactive model switch, budget reset, candidate approval or history migration. Pending/live work still defers method updates. Helpers need an existing Node only; never install dependencies or change host models during update.
+
+Compacted 0.16 sources add check.mjs/helper-request and split Gate invariants/Reviewer/collector instructions. Freeze their exact hashes for new work; retain old work's original read lists and approvals. Even at the same semver, changed source hashes require the normal update transaction. No host settings change.
+
 0.15 moves Skills to `skills/<category>/<name>/SKILL.md`, preserving names/responsibilities. Resolve target `skills/catalog.json`; update manifest, bridge, registered router, and current references. Native entry stays `aidlc/SKILL.md`. Change new work only; preserve old locks/dispatches/assets/approvals. Three-way compare team references; never guess cross-version replacements.
 
 List old/new paths. Moves still require baseline/current verification and exact deletion confirmation; never recursively delete directories/unknown content. Compare destinations and preserve conflicts. Update managed_files after references/hashes pass. Historical backups/fixed-version test baselines keep old paths. Install manifest payload only; exclude reference-only `translations/`.

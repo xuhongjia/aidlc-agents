@@ -18,6 +18,8 @@
   "execution_mode": "isolated-subagents",
   "active_runs": [],
   "run_history": [],
+  "execution_receipts": [],
+  "execution_reservations": [],
   "waits": [],
   "wait_monitor": null,
   "wait_authorization_ref": null,

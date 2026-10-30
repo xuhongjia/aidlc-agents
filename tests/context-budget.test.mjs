@@ -11,6 +11,15 @@ const historicalSkillRefs = new Map(skillCatalog.skills.map(skill => [
   'core:skills/' + skill.name + '/SKILL.md', 'core:' + skill.path,
 ]));
 const currentRefForBaseline = ref => historicalSkillRefs.get(ref) ?? ref;
+// Explicit responsibility split only: keep the original shared Gate identity and
+// add its recipient's fragment. This does not permit missing historical rules.
+const currentRefsForBaseline = (ref, run) => {
+  const current = currentRefForBaseline(ref);
+  if (current !== 'core:workflow/gate-execution.md') return [current];
+  if (run.kind === 'gate-execution') return [current, 'core:workflow/gate-reviewer.md'];
+  if (run.id === 'verify') return [current, 'core:workflow/gate-collector.md'];
+  return [current];
+};
 const coordinatorResources = new Set(['extensions', 'dag', 'protocol', 'orchestration', 'approval', 'knowledge', 'gates', 'implementation-feedback']
   .map(name => 'core:workflow/' + name + '.md'));
 
@@ -41,7 +50,7 @@ test('current compact runs preserve every baseline mandatory resource while redu
     for (const run of actual.runs) {
       const previous = before.runs.find(item => item.id === run.id);
       assert.ok(previous, 'Unknown default run: ' + run.id);
-      assert.deepEqual(run.files.map(file => file.ref).sort(), previous.refs.map(currentRefForBaseline).sort(), 'Mandatory resources changed for ' + run.id);
+      assert.deepEqual(run.files.map(file => file.ref).sort(), previous.refs.flatMap(ref => currentRefsForBaseline(ref, run)).sort(), 'Mandatory resources changed for ' + run.id);
       assert.ok(run.files.every(file => !coordinatorResources.has(file.ref)), 'Worker loaded a parent coordination protocol');
       assert.equal(run.total_bytes, run.method_bytes + run.template_bytes);
     }

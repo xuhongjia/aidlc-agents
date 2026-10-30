@@ -1,0 +1,9 @@
+{
+  "contract_version": 1,
+  "policy_ref": null,
+  "request": {"role": null, "task_tier": null, "risk_tags": [], "required_capabilities": []},
+  "decision": null,
+  "host_ref": null,
+  "assessment": {"status": "unassessed", "risk_tags": [], "changed_paths": [], "required_card_ids": [], "source_refs": []},
+  "validation": {"input_refs": [], "approval_pairs": [], "evidence_refs": [], "gate_baselines": []}
+}

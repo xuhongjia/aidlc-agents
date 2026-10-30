@@ -6,6 +6,7 @@ New-install defaults:
 
 | Area | Default and boundary |
 |---|---|
+| Execution (0.16) | Core execution policy/card refs; model selection disabled, budgets unset. Record actual native usage or unavailable. Existing Node can run read-only helpers; no Node installation requirement. Explicit [model/budget setup](../docs/execution-policy.md) selects project mappings; no model calls or new approval. |
 | Role delivery (0.15) | `collaboration=null`; no role workflow or Jira writes. Explicit [role setup](../skills/setup/aidlc-role-setup/SKILL.md) may use a user-selected non-Git PO/QE directory. Apply every path/package, pinning, managed-boundary, journal, and fresh-child check below; only Git identity/source scans are not applicable. Permit analysis graphs/fixed QA packets only; `product.write` requires the actual product repository. Never run `git init` or silently bypass ordinary Setup. See [role protocol](../workflow/role-delivery.md). |
 | Project prerequisites (0.14) | AIDLC only. `setup aidlc` may declare required Confluence/GitLab targets; the [Setup Gate](../workflow/setup.md) blocks new delivery until ready. Declaring requirements grants no installation/connection authority; configure each integration separately. |
 | Engineering (0.13) | V2.1: Implement-only TDD, frozen adapted Skills with original names/on-demand resources, two independent Reviewers, Standard verified-handoff endpoint. Release/Learn needs an explicit team extension; no third-party plugin/TDD Agent or production authority. Setup runs no TDD. |

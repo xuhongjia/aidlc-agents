@@ -26,6 +26,8 @@
     "authorization": null
   },
   "execution": {
+    "policy_ref": "core:workflow/execution-policy.json",
+    "review_catalog_ref": "core:workflow/review-cards.json",
     "mode": "isolated-subagents",
     "context_policy": "fresh-minimal",
     "max_parallel_workers": 2,

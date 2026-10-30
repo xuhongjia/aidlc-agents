@@ -21,6 +21,8 @@
   "instruction_refs": [],
   "optional_instruction_refs": [],
   "gate_assignment": null,
+  "execution": null,
+  "review_cards": [],
   "input_refs": [],
   "read_scope": [],
   "external_reads": [],

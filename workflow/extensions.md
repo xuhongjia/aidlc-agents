@@ -2,6 +2,8 @@
 
 Optional 0.15 [role-team](../examples/team-packs/role-team/README.md) adds no kinds/capabilities. Explicit role-graph selection alone snapshots actual nonsecret config.collaboration into new-lock collaboration; external authority stays outside the lock/bound to original graph. [role-delivery](role-delivery.md) resolves roles/handoffs. Disabled=null; never backfill. QA analysis is execution evidence; final Verify alone declares verified.
 
+New 0.16 work freezes [execution](execution.md) policy/catalog/helper assets and structural requirements under lock.execution. Namespace refs may select team/project replacements; unknown roles need explicit mappings, Gate/collector floors remain medium. Model settings, budgets or cards cannot change stage capabilities/approval duties. Old locks lacking execution retain original behavior; no model/receipt/approval migration.
+
 New 0.10 work resolves here/executes under [DAG](dag.md), retaining 0.9 contract_version=1. runtime=none: host AI reads/hashes/validates/dispatches; maintainer models are not installers/runtimes/permission systems. Existing work retains [original method](legacy.md), never invented locks/migrated approvals/new budgets.
 
 ## Three definition layers without core edits

@@ -1,0 +1,45 @@
+{
+  "contract_version": 1,
+  "enabled": false,
+  "role_defaults": {
+    "coordinator": "medium",
+    "ba": "medium",
+    "po": "medium",
+    "pm": "medium",
+    "architect": "heavy",
+    "engineer": "medium",
+    "software-engineer": "medium",
+    "qe": "medium",
+    "qa": "medium",
+    "verifier": "medium",
+    "collector": "medium",
+    "verify-collector": "medium",
+    "architecture-gate-reviewer": "medium",
+    "quality-gate-reviewer": "medium",
+    "fixed-content-helper": "light"
+  },
+  "risk_tiers": {
+    "auth": "heavy",
+    "security": "heavy",
+    "data-migration": "heavy",
+    "concurrency": "heavy",
+    "cross-system": "heavy",
+    "api-contract": "medium",
+    "compatibility": "medium",
+    "performance": "medium"
+  },
+  "models": {
+    "light": {"primary": null, "fallbacks": [], "reasoning": null},
+    "medium": {"primary": null, "fallbacks": [], "reasoning": null},
+    "heavy": {"primary": null, "fallbacks": [], "reasoning": null}
+  },
+  "budgets": {
+    "max_calls": null,
+    "max_agents": null,
+    "max_retries": null,
+    "max_input_tokens": null,
+    "max_output_tokens": null,
+    "max_tool_output_bytes": null,
+    "unknown_usage": "pause"
+  }
+}
